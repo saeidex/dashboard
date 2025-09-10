@@ -8,9 +8,7 @@ import {
   GalleryVerticalEnd,
   HelpCircle,
   LayoutDashboard,
-  ListTodo,
   Lock,
-  MessagesSquare,
   Monitor,
   Package,
   Palette,
@@ -21,16 +19,15 @@ import {
   UserCog,
   UserX,
   Users,
-  Wrench,
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
 
 export const sidebarData: SidebarData = {
   user: {
-    name: 'satnaing',
-    email: 'satnaingdev@gmail.com',
-    avatar: '/avatars/shadcn.jpg',
+    name: 'Example',
+    email: 'example@mail.com',
+    avatar: '/avatars/example.jpg',
   },
   teams: [
     {
@@ -59,31 +56,50 @@ export const sidebarData: SidebarData = {
           icon: LayoutDashboard,
         },
         {
-          title: 'Tasks',
-          url: '/tasks',
-          icon: ListTodo,
+          title: 'Orders',
+          url: '/orders',
+          icon: ShoppingBag,
         },
         {
           title: 'Products',
           url: '/products',
-          icon: ShoppingBag,
-        },
-        {
-          title: 'Apps',
-          url: '/apps',
           icon: Package,
         },
         {
-          title: 'Chats',
-          url: '/chats',
-          badge: '3',
-          icon: MessagesSquare,
+          title: 'Product Categories',
+          url: '/categories',
+          icon: Package,
         },
         {
-          title: 'Users',
+          title: 'Employees',
+          url: '/employees',
+          icon: Users,
+        },
+        {
+          title: 'Vendors',
+          url: '/vendors',
+          icon: Users,
+        },
+        {
+          title: 'Accounts',
+          url: '/accounts',
+          icon: UserCog,
+        },
+        {
+          title: 'Reports',
+          url: '/reports',
+          icon: FileX,
+        },
+        {
+          title: 'Software Users',
           url: '/users',
           icon: Users,
         },
+      ],
+    },
+    {
+      title: 'Pages',
+      items: [
         {
           title: 'Secured by Clerk',
           icon: ClerkLogo,
@@ -102,11 +118,6 @@ export const sidebarData: SidebarData = {
             },
           ],
         },
-      ],
-    },
-    {
-      title: 'Pages',
-      items: [
         {
           title: 'Auth',
           icon: ShieldCheck,
@@ -181,7 +192,7 @@ export const sidebarData: SidebarData = {
             {
               title: 'Account',
               url: '/settings/account',
-              icon: Wrench,
+              icon: UserCog,
             },
             {
               title: 'Appearance',
