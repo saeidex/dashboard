@@ -22,6 +22,7 @@ import {
   UserX,
   Users,
   UsersRound,
+  Wallet,
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
@@ -86,7 +87,7 @@ export const sidebarData: SidebarData = {
         {
           title: 'Accounts',
           url: '/accounts',
-          icon: UserCog,
+          icon: Wallet,
         },
         {
           title: 'Reports',
