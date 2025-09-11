@@ -22,9 +22,9 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { type Vendor } from '../data/schema'
+import { EXPENSE_CATEGORIES, type Expense } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { vendorsColumns } from './vendors-columns'
+import { expensesColumns } from './expenses-columns'
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -34,24 +34,24 @@ declare module '@tanstack/react-table' {
 }
 
 type DataTableProps = {
-  data: Vendor[]
+  data: Expense[]
   search: Record<string, unknown>
   navigate: NavigateFn
 }
 
-export function VendorsTable({ data, search, navigate }: DataTableProps) {
+export function ExpensesTable({ data, search, navigate }: DataTableProps) {
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
 
-  const columns = vendorsColumns
+  const columns = expensesColumns
 
   // Local state management for table (uncomment to use local-only state, not synced with URL)
   // const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>([])
   // const [pagination, onPaginationChange] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 })
 
-  // Synced with URL states (keys/defaults mirror vendors route search schema)
+  // Synced with URL states (keys/defaults mirror expenses route search schema)
   const {
     columnFilters,
     onColumnFiltersChange,
@@ -65,8 +65,8 @@ export function VendorsTable({ data, search, navigate }: DataTableProps) {
     globalFilter: { enabled: false },
     columnFilters: [
       // firstName per-column text filter
-      { columnId: 'name', searchKey: 'name', type: 'string' },
-      { columnId: 'city', searchKey: 'city', type: 'string' },
+      { columnId: 'title', searchKey: 'title', type: 'string' },
+      { columnId: 'category', searchKey: 'category', type: 'string' },
     ],
   })
 
@@ -102,8 +102,20 @@ export function VendorsTable({ data, search, navigate }: DataTableProps) {
     <div className='space-y-4 max-sm:has-[div[role="toolbar"]]:mb-16'>
       <DataTableToolbar
         table={table}
-        searchPlaceholder='Filter vendors...'
-        searchKey='name'
+        searchPlaceholder='Filter expenses...'
+        searchKey='title'
+        filters={[
+          {
+            columnId: 'category',
+            title: 'Category',
+            options: EXPENSE_CATEGORIES.map((category) => ({
+              value: category,
+              label: category
+                .replace(/-/g, ' ')
+                .replace(/\b\w/g, (c) => c.toUpperCase()),
+            })),
+          },
+        ]}
       />
       <div className='overflow-hidden rounded-md border'>
         <Table>

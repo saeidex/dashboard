@@ -82,8 +82,8 @@ export const sidebarData: SidebarData = {
           icon: UsersRound,
         },
         {
-          title: 'Accounts',
-          url: '/accounts',
+          title: 'Expenses',
+          url: '/expenses',
           icon: Wallet,
         },
         {
