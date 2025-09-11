@@ -20,7 +20,6 @@ import {
   UserCog,
   UserSquare,
   UserX,
-  Users,
   UsersRound,
   Wallet,
 } from 'lucide-react'
@@ -94,11 +93,11 @@ export const sidebarData: SidebarData = {
           url: '/reports',
           icon: FileX,
         },
-        {
-          title: 'Software Users',
-          url: '/users',
-          icon: Users,
-        },
+        // {
+        //   title: 'Software Users',
+        //   url: '/users',
+        //   icon: Users,
+        // },
       ],
     },
     {

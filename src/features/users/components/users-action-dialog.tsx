@@ -31,7 +31,7 @@ const formSchema = z
   .object({
     firstName: z.string().min(1, 'First Name is required.'),
     lastName: z.string().min(1, 'Last Name is required.'),
-    username: z.string().min(1, 'Username is required.'),
+    userId: z.string().min(1, 'UserId is required.'),
     phoneNumber: z.string().min(1, 'Phone number is required.'),
     email: z.email({
       error: (iss) => (iss.input === '' ? 'Email is required.' : undefined),
@@ -117,7 +117,7 @@ export function UsersActionDialog({
       : {
           firstName: '',
           lastName: '',
-          username: '',
+          userId: '',
           email: '',
           role: '',
           phoneNumber: '',
@@ -200,11 +200,11 @@ export function UsersActionDialog({
               />
               <FormField
                 control={form.control}
-                name='username'
+                name='userId'
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                     <FormLabel className='col-span-2 text-end'>
-                      Username
+                      UserId
                     </FormLabel>
                     <FormControl>
                       <Input

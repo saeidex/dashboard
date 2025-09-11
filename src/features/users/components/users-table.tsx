@@ -63,9 +63,8 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: false },
     columnFilters: [
-      // username per-column text filter
-      { columnId: 'username', searchKey: 'username', type: 'string' },
-      { columnId: 'status', searchKey: 'status', type: 'array' },
+      // userId per-column text filter
+      { columnId: 'userId', searchKey: 'userId', type: 'string' },
       { columnId: 'role', searchKey: 'role', type: 'array' },
     ],
   })
@@ -105,16 +104,6 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
         searchPlaceholder='Filter users...'
         searchKey='username'
         filters={[
-          {
-            columnId: 'status',
-            title: 'Status',
-            options: [
-              { label: 'Active', value: 'active' },
-              { label: 'Inactive', value: 'inactive' },
-              { label: 'Invited', value: 'invited' },
-              { label: 'Suspended', value: 'suspended' },
-            ],
-          },
           {
             columnId: 'role',
             title: 'Role',
