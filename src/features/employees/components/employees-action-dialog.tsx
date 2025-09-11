@@ -46,13 +46,18 @@ const formSchema = z.object({
 type EmployeeForm = z.infer<typeof formSchema>
 
 const positions: { label: string; value: Position }[] = [
-  { label: 'Machine Operator', value: 'Machine Operator' },
-  { label: 'Quality Inspector', value: 'Quality Inspector' },
-  { label: 'Supervisor', value: 'Supervisor' },
-  { label: 'Maintenance Technician', value: 'Maintenance Technician' },
-  { label: 'Warehouse Worker', value: 'Warehouse Worker' },
-  { label: 'Floor Manager', value: 'Floor Manager' },
-  { label: 'Safety Officer', value: 'Safety Officer' },
+  { label: 'Commercial Manager', value: 'Commercial Manager' },
+  { label: 'Manager', value: 'Manager' },
+  { label: 'Production Manager', value: 'Production Manager' },
+  { label: 'Corrugation Operator', value: 'Corrugation Operator' },
+  { label: 'Crease Operator', value: 'Crease Operator' },
+  { label: 'Pasting Operator', value: 'Pasting Operator' },
+  { label: 'Printing Master', value: 'Printing Master' },
+  { label: 'Stitching Operator', value: 'Stitching Operator' },
+  { label: 'Flexo Operator', value: 'Flexo Operator' },
+  { label: 'Cutting Man', value: 'Cutting Man' },
+  { label: 'Delivery Man', value: 'Delivery Man' },
+  { label: 'Helper', value: 'Helper' },
 ]
 
 const shifts: { label: string; value: Shift }[] = [
