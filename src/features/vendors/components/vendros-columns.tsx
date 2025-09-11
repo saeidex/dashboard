@@ -1,0 +1,125 @@
+import { type ColumnDef } from '@tanstack/react-table'
+import { cn } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
+import { DataTableColumnHeader } from '@/components/data-table'
+import { LongText } from '@/components/long-text'
+import { type Vendor } from '../data/schema'
+import { DataTableRowActions } from './data-table-row-actions'
+
+export const vendorsColumns: ColumnDef<Vendor>[] = [
+  {
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label='Select all'
+        className='translate-y-[2px]'
+      />
+    ),
+    meta: {
+      className: cn('sticky md:table-cell start-0 z-10 rounded-tl-[inherit]'),
+    },
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label='Select row'
+        className='translate-y-[2px]'
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: 'name',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Name' />
+    ),
+    cell: ({ row }) => (
+      <LongText className='max-w-24 ps-3 font-mono'>
+        {row.getValue('name')}
+      </LongText>
+    ),
+    meta: {
+      className: cn(
+        'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
+        'sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+      ),
+    },
+    enableHiding: false,
+  },
+  {
+    accessorKey: 'email',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Email' />
+    ),
+    cell: ({ row }) => (
+      <div className='w-fit text-nowrap'>{row.getValue('email') || '-'}</div>
+    ),
+  },
+  {
+    accessorKey: 'phone',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Phone Number' />
+    ),
+    cell: ({ row }) => <div>{row.getValue('phone') || '-'}</div>,
+    enableSorting: false,
+  },
+  {
+    accessorKey: 'address',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Address' />
+    ),
+    cell: ({ row }) => (
+      <div className='text-sm'>{row.getValue('address') || '-'}</div>
+    ),
+    enableSorting: false,
+  },
+  {
+    accessorKey: 'city',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='City' />
+    ),
+    cell: ({ row }) => (
+      <div className='text-sm'>{row.getValue('city') || '-'}</div>
+    ),
+  },
+  {
+    accessorKey: 'isActive',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Status' />
+    ),
+    cell: ({ row }) => {
+      const isActive = row.getValue('isActive') as boolean
+      return (
+        <Badge variant={isActive ? 'default' : 'secondary'}>
+          {isActive ? 'Active' : 'Inactive'}
+        </Badge>
+      )
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
+    enableHiding: false,
+    enableSorting: false,
+  },
+  {
+    accessorKey: 'createdAt',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Created Date' />
+    ),
+    cell: ({ row }) => {
+      const date = row.getValue('createdAt') as Date
+      return <div className='text-sm'>{date.toLocaleDateString()}</div>
+    },
+  },
+  {
+    id: 'actions',
+    cell: DataTableRowActions,
+  },
+]
