@@ -22,6 +22,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
+import { employeePositions } from '../data/data'
 import { type Employee } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { employeesColumns } from './employees-columns'
@@ -66,7 +67,6 @@ export function EmployeesTable({ data, search, navigate }: DataTableProps) {
     columnFilters: [
       // firstName per-column text filter
       { columnId: 'name', searchKey: 'name', type: 'string' },
-      { columnId: 'employeeId', searchKey: 'employeeId', type: 'string' },
       { columnId: 'position', searchKey: 'position', type: 'array' },
       { columnId: 'status', searchKey: 'status', type: 'array' },
       { columnId: 'shift', searchKey: 'shift', type: 'array' },
@@ -121,18 +121,12 @@ export function EmployeesTable({ data, search, navigate }: DataTableProps) {
           {
             columnId: 'position',
             title: 'Position',
-            options: [
-              { label: 'Machine Operator', value: 'Machine Operator' },
-              { label: 'Quality Inspector', value: 'Quality Inspector' },
-              { label: 'Supervisor', value: 'Supervisor' },
-              {
-                label: 'Maintenance Technician',
-                value: 'Maintenance Technician',
-              },
-              { label: 'Warehouse Worker', value: 'Warehouse Worker' },
-              { label: 'Floor Manager', value: 'Floor Manager' },
-              { label: 'Safety Officer', value: 'Safety Officer' },
-            ],
+            options: employeePositions.map((position) => {
+              return {
+                label: position,
+                value: position,
+              }
+            }),
           },
           {
             columnId: 'shift',

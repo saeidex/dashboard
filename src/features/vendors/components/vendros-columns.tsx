@@ -36,13 +36,13 @@ export const vendorsColumns: ColumnDef<Vendor>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'name',
+    accessorKey: 'vendorId',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Name' />
+      <DataTableColumnHeader column={column} title='Vendor ID' />
     ),
     cell: ({ row }) => (
       <LongText className='max-w-24 ps-3 font-mono'>
-        {row.getValue('name')}
+        {row.getValue('vendorId')}
       </LongText>
     ),
     meta: {
@@ -52,6 +52,15 @@ export const vendorsColumns: ColumnDef<Vendor>[] = [
       ),
     },
     enableHiding: false,
+  },
+  {
+    accessorKey: 'name',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Name' />
+    ),
+    cell: ({ row }) => (
+      <div className='font-medium'>{row.getValue('name')}</div>
+    ),
   },
   {
     accessorKey: 'email',
@@ -117,6 +126,12 @@ export const vendorsColumns: ColumnDef<Vendor>[] = [
       const date = row.getValue('createdAt') as Date
       return <div className='text-sm'>{date.toLocaleDateString()}</div>
     },
+  },
+  {
+    accessorKey: 'notes',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Notes' />
+    ),
   },
   {
     id: 'actions',

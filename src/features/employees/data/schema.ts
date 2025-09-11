@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const employeeStatusSchema = z.union([
+export const employeeStatusSchema = z.union([
   z.literal('active'),
   z.literal('inactive'),
   z.literal('on-leave'),
@@ -8,7 +8,7 @@ const employeeStatusSchema = z.union([
 ])
 export type EmployeeStatus = z.infer<typeof employeeStatusSchema>
 
-const positionSchema = z.union([
+export const positionSchema = z.union([
   z.literal('Commercial Manager'),
   z.literal('Manager'),
   z.literal('Production Manager'),
@@ -24,7 +24,7 @@ const positionSchema = z.union([
 ])
 export type Position = z.infer<typeof positionSchema>
 
-const shiftSchema = z.union([
+export const shiftSchema = z.union([
   z.literal('Day'),
   z.literal('Evening'),
   z.literal('Night'),

@@ -9,3 +9,18 @@ export const callTypes = new Map<EmployeeStatus, string>([
     'bg-destructive/10 dark:bg-destructive/50 text-destructive dark:text-primary border-destructive/10',
   ],
 ])
+
+export const employeePositions = [
+  'Commercial Manager',
+  'Manager',
+  'Production Manager',
+  'Corrugation Operator',
+  'Crease Operator',
+  'Pasting Operator',
+  'Printing Master',
+  'Stitching Operator',
+  'Flexo Operator',
+  'Cutting Man',
+  'Delivery Man',
+  'Helper',
+]

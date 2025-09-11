@@ -2,6 +2,7 @@ import z from 'zod'
 
 export const vendorSchema = z.object({
   id: z.uuid(),
+  vendorId: z.string().min(1, 'Vendor ID is required'),
   name: z.string().min(1, 'Vendor name is required'),
   email: z.email('Invalid email address'),
   phone: z.string().min(1, 'Phone number is required'),
@@ -14,9 +15,3 @@ export const vendorSchema = z.object({
 })
 
 export type Vendor = z.infer<typeof vendorSchema>
-
-export const vendorSearchSchema = z.object({
-  query: z.string().optional(),
-})
-
-export type VendorSearch = z.infer<typeof vendorSearchSchema>

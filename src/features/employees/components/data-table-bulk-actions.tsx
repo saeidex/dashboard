@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
-import { Mail, Trash2, UserCheck, UserX } from 'lucide-react'
+import { Trash2, UserCheck, UserX } from 'lucide-react'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -26,51 +26,19 @@ export function DataTableBulkActions<TData>({
   const handleBulkStatusChange = (status: 'active' | 'inactive') => {
     const Employees = selectedRows.map((row) => row.original as Employee)
     toast.promise(sleep(2000), {
-      loading: `${status === 'active' ? 'Activating' : 'Deactivating'} users...`,
+      loading: `${status === 'active' ? 'Activating' : 'Deactivating'} employees...`,
       success: () => {
         table.resetRowSelection()
-        return `${status === 'active' ? 'Activated' : 'Deactivated'} ${Employees.length} user${Employees.length > 1 ? 's' : ''}`
+        return `${status === 'active' ? 'Activated' : 'Deactivated'} ${Employees.length} employee${Employees.length > 1 ? 's' : ''}`
       },
-      error: `Error ${status === 'active' ? 'activating' : 'deactivating'} users`,
-    })
-    table.resetRowSelection()
-  }
-
-  const handleBulkInvite = () => {
-    const Employees = selectedRows.map((row) => row.original as Employee)
-    toast.promise(sleep(2000), {
-      loading: 'Inviting users...',
-      success: () => {
-        table.resetRowSelection()
-        return `Invited ${Employees.length} user${Employees.length > 1 ? 's' : ''}`
-      },
-      error: 'Error inviting users',
+      error: `Error ${status === 'active' ? 'activating' : 'deactivating'} employees`,
     })
     table.resetRowSelection()
   }
 
   return (
     <>
-      <BulkActionsToolbar table={table} entityName='user'>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant='outline'
-              size='icon'
-              onClick={handleBulkInvite}
-              className='size-8'
-              aria-label='Invite selected users'
-              title='Invite selected users'
-            >
-              <Mail />
-              <span className='sr-only'>Invite selected users</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Invite selected users</p>
-          </TooltipContent>
-        </Tooltip>
-
+      <BulkActionsToolbar table={table} entityName='employee'>
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -78,15 +46,15 @@ export function DataTableBulkActions<TData>({
               size='icon'
               onClick={() => handleBulkStatusChange('active')}
               className='size-8'
-              aria-label='Activate selected users'
-              title='Activate selected users'
+              aria-label='Activate selected employees'
+              title='Activate selected employees'
             >
               <UserCheck />
-              <span className='sr-only'>Activate selected users</span>
+              <span className='sr-only'>Activate selected employees</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Activate selected users</p>
+            <p>Activate selected employees</p>
           </TooltipContent>
         </Tooltip>
 
@@ -97,15 +65,15 @@ export function DataTableBulkActions<TData>({
               size='icon'
               onClick={() => handleBulkStatusChange('inactive')}
               className='size-8'
-              aria-label='Deactivate selected users'
-              title='Deactivate selected users'
+              aria-label='Deactivate selected employees'
+              title='Deactivate selected employees'
             >
               <UserX />
-              <span className='sr-only'>Deactivate selected users</span>
+              <span className='sr-only'>Deactivate selected employees</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Deactivate selected users</p>
+            <p>Deactivate selected employees</p>
           </TooltipContent>
         </Tooltip>
 
@@ -116,15 +84,15 @@ export function DataTableBulkActions<TData>({
               size='icon'
               onClick={() => setShowDeleteConfirm(true)}
               className='size-8'
-              aria-label='Delete selected users'
-              title='Delete selected users'
+              aria-label='Delete selected employees'
+              title='Delete selected employees'
             >
               <Trash2 />
-              <span className='sr-only'>Delete selected users</span>
+              <span className='sr-only'>Delete selected employees</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Delete selected users</p>
+            <p>Delete selected employees</p>
           </TooltipContent>
         </Tooltip>
       </BulkActionsToolbar>
