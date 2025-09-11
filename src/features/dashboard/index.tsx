@@ -7,13 +7,9 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { TopNav } from '@/components/layout/top-nav'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
-import { ThemeSwitch } from '@/components/theme-switch'
 import { Overview } from './components/overview'
 import { RecentSales } from './components/recent-sales'
 
@@ -21,14 +17,8 @@ export function Dashboard() {
   return (
     <>
       {/* ===== Top Heading ===== */}
-      <Header>
+      <Header fixed hideBreadcrumbs>
         <TopNav links={topNav} />
-        <div className='ms-auto flex items-center space-x-4'>
-          <Search className='' />
-          <ThemeSwitch />
-          <ConfigDrawer />
-          <ProfileDropdown />
-        </div>
       </Header>
 
       {/* ===== Main ===== */}
@@ -193,19 +183,19 @@ export function Dashboard() {
 const topNav = [
   {
     title: 'Overview',
-    href: 'dashboard/overview',
+    href: '/',
     isActive: true,
     disabled: false,
   },
   {
-    title: 'Customers',
-    href: 'dashboard/customers',
+    title: 'Products',
+    href: 'dashboard/products',
     isActive: false,
     disabled: true,
   },
   {
-    title: 'Products',
-    href: 'dashboard/products',
+    title: 'Customers',
+    href: 'dashboard/customers',
     isActive: false,
     disabled: true,
   },

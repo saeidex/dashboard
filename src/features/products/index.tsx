@@ -1,9 +1,5 @@
-import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
-import { ThemeSwitch } from '@/components/theme-switch'
 import { ProductsDialogs } from './components/products-dialogs'
 import { ProductsPrimaryButtons } from './components/products-primary-buttons'
 import { ProductsProvider } from './components/products-provider'
@@ -13,14 +9,7 @@ import { products } from './data/products'
 export function Products() {
   return (
     <ProductsProvider>
-      <Header fixed>
-        <Search />
-        <div className='ms-auto flex items-center space-x-4'>
-          <ThemeSwitch />
-          <ConfigDrawer />
-          <ProfileDropdown />
-        </div>
-      </Header>
+      <Header fixed hideBreadcrumbs/>
 
       <Main>
         <div className='mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4'>
