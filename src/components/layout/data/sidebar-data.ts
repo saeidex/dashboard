@@ -1,6 +1,5 @@
 import {
   AudioWaveform,
-  Bell,
   Bookmark,
   Bug,
   Command,
@@ -8,7 +7,6 @@ import {
   DollarSign,
   FileX,
   GalleryVerticalEnd,
-  HelpCircle,
   LayoutDashboard,
   Lock,
   Monitor,
@@ -17,9 +15,9 @@ import {
   ServerOff,
   Settings,
   ShieldCheck,
-  UserCog,
   UserSquare,
   UserX,
+  Users,
   UsersRound,
   Wallet,
 } from 'lucide-react'
@@ -93,11 +91,11 @@ export const sidebarData: SidebarData = {
           url: '/reports',
           icon: FileX,
         },
-        // {
-        //   title: 'Software Users',
-        //   url: '/users',
-        //   icon: Users,
-        // },
+        {
+          title: 'Software Users',
+          url: '/users',
+          icon: Users,
+        },
       ],
     },
     {
@@ -188,24 +186,9 @@ export const sidebarData: SidebarData = {
           icon: Settings,
           items: [
             {
-              title: 'Profile',
-              url: '/settings',
-              icon: UserCog,
-            },
-            {
-              title: 'Account',
-              url: '/settings/account',
-              icon: UserCog,
-            },
-            {
               title: 'Appearance',
               url: '/settings/appearance',
               icon: Palette,
-            },
-            {
-              title: 'Notifications',
-              url: '/settings/notifications',
-              icon: Bell,
             },
             {
               title: 'Display',
@@ -213,11 +196,6 @@ export const sidebarData: SidebarData = {
               icon: Monitor,
             },
           ],
-        },
-        {
-          title: 'Help Center',
-          url: '/help-center',
-          icon: HelpCircle,
         },
       ],
     },
