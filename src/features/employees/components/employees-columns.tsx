@@ -85,19 +85,6 @@ export const employeesColumns: ColumnDef<Employee>[] = [
     enableSorting: false,
   },
   {
-    accessorKey: 'department',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Department' />
-    ),
-    cell: ({ row }) => (
-      <div className='text-sm'>{row.getValue('department')}</div>
-    ),
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
-    },
-    enableSorting: false,
-  },
-  {
     accessorKey: 'position',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Position' />

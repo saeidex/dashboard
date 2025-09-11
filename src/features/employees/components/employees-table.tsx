@@ -67,7 +67,6 @@ export function EmployeesTable({ data, search, navigate }: DataTableProps) {
       // firstName per-column text filter
       { columnId: 'fullName', searchKey: 'fullName', type: 'string' },
       { columnId: 'employeeId', searchKey: 'employeeId', type: 'string' },
-      { columnId: 'department', searchKey: 'department', type: 'array' },
       { columnId: 'position', searchKey: 'position', type: 'array' },
       { columnId: 'status', searchKey: 'status', type: 'array' },
       { columnId: 'shift', searchKey: 'shift', type: 'array' },
@@ -117,18 +116,6 @@ export function EmployeesTable({ data, search, navigate }: DataTableProps) {
               { label: 'Inactive', value: 'inactive' },
               { label: 'On Leave', value: 'on-leave' },
               { label: 'Terminated', value: 'terminated' },
-            ],
-          },
-          {
-            columnId: 'department',
-            title: 'Department',
-            options: [
-              { label: 'Production', value: 'Production' },
-              { label: 'Quality Control', value: 'Quality Control' },
-              { label: 'Maintenance', value: 'Maintenance' },
-              { label: 'Shipping', value: 'Shipping' },
-              { label: 'Warehouse', value: 'Warehouse' },
-              { label: 'Administration', value: 'Administration' },
             ],
           },
           {

@@ -8,24 +8,19 @@ const employeeStatusSchema = z.union([
 ])
 export type EmployeeStatus = z.infer<typeof employeeStatusSchema>
 
-const departmentSchema = z.union([
-  z.literal('Production'),
-  z.literal('Quality Control'),
-  z.literal('Maintenance'),
-  z.literal('Shipping'),
-  z.literal('Warehouse'),
-  z.literal('Administration'),
-])
-export type Department = z.infer<typeof departmentSchema>
-
 const positionSchema = z.union([
-  z.literal('Machine Operator'),
-  z.literal('Quality Inspector'),
-  z.literal('Supervisor'),
-  z.literal('Maintenance Technician'),
-  z.literal('Warehouse Worker'),
-  z.literal('Floor Manager'),
-  z.literal('Safety Officer'),
+  z.literal('Commercial Manager'),
+  z.literal('Manager'),
+  z.literal('Production Manager'),
+  z.literal('Corrugation Operator'),
+  z.literal('Crease Operator'),
+  z.literal('Pasting Operator'),
+  z.literal('Printing Master'),
+  z.literal('Stitching Operator'),
+  z.literal('Flexo Operator'),
+  z.literal('Cutting Man'),
+  z.literal('Delivery Man'),
+  z.literal('Helper'),
 ])
 export type Position = z.infer<typeof positionSchema>
 
@@ -43,7 +38,6 @@ const employeeSchema = z.object({
   employeeId: z.string(),
   email: z.string(),
   phoneNumber: z.string(),
-  department: departmentSchema,
   position: positionSchema,
   shift: shiftSchema,
   salary: z.number(),

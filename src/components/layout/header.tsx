@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
+import { ConfigDrawer } from '@/components/config-drawer'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
+import { Breadcrumbs } from './breadcrumbs'
 
 // import { Separator } from '@/components/ui/separator'
 // import { SidebarTrigger } from '@/components/ui/sidebar'
@@ -7,9 +12,16 @@ import { cn } from '@/lib/utils'
 type HeaderProps = React.HTMLAttributes<HTMLElement> & {
   fixed?: boolean
   ref?: React.Ref<HTMLElement>
+  hideBreadcrumbs?: boolean
 }
 
-export function Header({ className, fixed, children, ...props }: HeaderProps) {
+export function Header({
+  className,
+  fixed,
+  children,
+  hideBreadcrumbs = false,
+  ...props
+}: HeaderProps) {
   const [offset, setOffset] = useState(0)
 
   useEffect(() => {
@@ -44,7 +56,15 @@ export function Header({ className, fixed, children, ...props }: HeaderProps) {
       >
         {/* <SidebarTrigger variant='outline' className='max-md:scale-125' /> */}
         {/* <Separator orientation='vertical' className='h-6' /> */}
+        {!hideBreadcrumbs && <Breadcrumbs />}
         {children}
+        {/* ===== Top Heading ===== */}
+        <div className='ms-auto flex items-center space-x-4'>
+          <Search />
+          <ThemeSwitch />
+          <ConfigDrawer />
+          <ProfileDropdown />
+        </div>
       </div>
     </header>
   )

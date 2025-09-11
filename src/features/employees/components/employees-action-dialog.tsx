@@ -24,7 +24,6 @@ import {
 import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
 import {
-  type Department,
   type Employee,
   type EmployeeStatus,
   type Position,
@@ -37,7 +36,6 @@ const formSchema = z.object({
   employeeId: z.string().min(1, 'Employee ID is required.'),
   email: z.string().email('Invalid email address.'),
   phoneNumber: z.string().min(1, 'Phone number is required.'),
-  department: z.string().min(1, 'Department is required.'),
   position: z.string().min(1, 'Position is required.'),
   shift: z.string().min(1, 'Shift is required.'),
   salary: z.number().min(0, 'Salary must be a positive number.'),
@@ -46,15 +44,6 @@ const formSchema = z.object({
 })
 
 type EmployeeForm = z.infer<typeof formSchema>
-
-const departments: { label: string; value: Department }[] = [
-  { label: 'Production', value: 'Production' },
-  { label: 'Quality Control', value: 'Quality Control' },
-  { label: 'Maintenance', value: 'Maintenance' },
-  { label: 'Shipping', value: 'Shipping' },
-  { label: 'Warehouse', value: 'Warehouse' },
-  { label: 'Administration', value: 'Administration' },
-]
 
 const positions: { label: string; value: Position }[] = [
   { label: 'Machine Operator', value: 'Machine Operator' },
@@ -100,7 +89,6 @@ export function EmployeesActionDialog({
           employeeId: currentRow.employeeId,
           email: currentRow.email,
           phoneNumber: currentRow.phoneNumber,
-          department: currentRow.department,
           position: currentRow.position,
           shift: currentRow.shift,
           salary: currentRow.salary,
@@ -113,7 +101,6 @@ export function EmployeesActionDialog({
           employeeId: '',
           email: '',
           phoneNumber: '',
-          department: '',
           position: '',
           shift: '',
           salary: 0,
@@ -246,25 +233,6 @@ export function EmployeesActionDialog({
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='department'
-                render={({ field }) => (
-                  <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>
-                      Department
-                    </FormLabel>
-                    <SelectDropdown
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                      placeholder='Select department'
-                      className='col-span-4'
-                      items={departments}
-                    />
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
                 )}
