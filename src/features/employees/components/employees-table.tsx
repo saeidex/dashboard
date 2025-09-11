@@ -65,7 +65,7 @@ export function EmployeesTable({ data, search, navigate }: DataTableProps) {
     globalFilter: { enabled: false },
     columnFilters: [
       // firstName per-column text filter
-      { columnId: 'fullName', searchKey: 'fullName', type: 'string' },
+      { columnId: 'name', searchKey: 'name', type: 'string' },
       { columnId: 'employeeId', searchKey: 'employeeId', type: 'string' },
       { columnId: 'position', searchKey: 'position', type: 'array' },
       { columnId: 'status', searchKey: 'status', type: 'array' },
@@ -106,7 +106,7 @@ export function EmployeesTable({ data, search, navigate }: DataTableProps) {
       <DataTableToolbar
         table={table}
         searchPlaceholder='Filter employees...'
-        searchKey='fullName'
+        searchKey='name'
         filters={[
           {
             columnId: 'status',

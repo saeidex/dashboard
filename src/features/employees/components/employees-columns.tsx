@@ -55,7 +55,7 @@ export const employeesColumns: ColumnDef<Employee>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'fullName',
+    accessorKey: 'name',
     accessorFn: (row) => `${row.firstName} ${row.lastName}`,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Name' />
