@@ -1,9 +1,11 @@
 import {
   AudioWaveform,
   Bell,
+  Bookmark,
   Bug,
   Command,
   Construction,
+  DollarSign,
   FileX,
   GalleryVerticalEnd,
   HelpCircle,
@@ -15,10 +17,11 @@ import {
   ServerOff,
   Settings,
   ShieldCheck,
-  ShoppingBag,
   UserCog,
+  UserSquare,
   UserX,
   Users,
+  UsersRound,
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
@@ -58,7 +61,7 @@ export const sidebarData: SidebarData = {
         {
           title: 'Orders',
           url: '/orders',
-          icon: ShoppingBag,
+          icon: DollarSign,
         },
         {
           title: 'Products',
@@ -68,17 +71,17 @@ export const sidebarData: SidebarData = {
         {
           title: 'Product Categories',
           url: '/categories',
-          icon: Package,
+          icon: Bookmark,
         },
         {
           title: 'Employees',
           url: '/employees',
-          icon: Users,
+          icon: UserSquare,
         },
         {
           title: 'Vendors',
           url: '/vendors',
-          icon: Users,
+          icon: UsersRound,
         },
         {
           title: 'Accounts',
