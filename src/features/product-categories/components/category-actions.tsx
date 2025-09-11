@@ -42,6 +42,7 @@ export function CategoryActions({ category }: CategoryActionsProps) {
             setCurrentRow(category)
             setOpen('delete')
           }}
+          className='text-red-500!'
         >
           Delete
           <DropdownMenuShortcut>

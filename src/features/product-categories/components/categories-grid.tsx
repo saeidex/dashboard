@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card'
-import { productCategories } from '../data/data'
+import { productCategories } from '../data/product-categories'
 import { CategoryActions } from './category-actions'
 
 export const CategoriesGrid = () => {
