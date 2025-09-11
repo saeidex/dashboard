@@ -1,5 +1,6 @@
+import { showSubmittedData } from '@/lib/show-submitted-data'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { EmployeesActionDialog } from './employees-action-dialog'
-import { EmployeesDeleteDialog } from './employees-delete-dialog'
 import { useEmployees } from './employees-provider'
 
 export function EmployeesDialogs() {
@@ -26,8 +27,9 @@ export function EmployeesDialogs() {
             currentRow={currentRow}
           />
 
-          <EmployeesDeleteDialog
-            key={`user-delete-${currentRow.id}`}
+          <ConfirmDialog
+            key='employee-delete'
+            destructive
             open={open === 'delete'}
             onOpenChange={() => {
               setOpen('delete')
@@ -35,7 +37,26 @@ export function EmployeesDialogs() {
                 setCurrentRow(null)
               }, 500)
             }}
-            currentRow={currentRow}
+            handleConfirm={() => {
+              setOpen(null)
+              setTimeout(() => {
+                setCurrentRow(null)
+              }, 500)
+              showSubmittedData(
+                currentRow,
+                'The following employee has been deleted:'
+              )
+            }}
+            className='max-w-md'
+            title={`Delete this employee: ${currentRow.id} ?`}
+            desc={
+              <>
+                You are about to delete a employee with the Employee ID{' '}
+                <strong>{currentRow.employeeId}</strong>. <br />
+                This action cannot be undone.
+              </>
+            }
+            confirmText='Delete'
           />
         </>
       )}
