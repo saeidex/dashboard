@@ -128,7 +128,7 @@ export const productsColumns: ColumnDef<Product>[] = [
       const pct = row.original.pricing?.discountPercentage ?? 0
       if (!amt) return <span className='text-muted-foreground'>—</span>
       return (
-        <span className='text-destructive font-mono text-xs'>
+        <span className='text-xs text-red-400'>
           -৳{amt.toFixed(2)} ({pct}%)
         </span>
       )
