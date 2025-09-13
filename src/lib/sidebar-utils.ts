@@ -17,6 +17,19 @@ export function extractSidebarItems(
             label: item.title,
           })
         }
+
+        if (item.items) {
+          item.items.forEach((child) => {
+            if (child.url) {
+              items.push({
+                id: `${item.title.toLowerCase().replace(/\s+/g, '-')}-${child.title
+                  .toLowerCase()
+                  .replace(/\s+/g, '-')}`,
+                label: `${item.title} / ${child.title}`,
+              })
+            }
+          })
+        }
       })
     }
   })
@@ -35,17 +48,30 @@ export function filterSidebarItems(
   navItems: NavItem[],
   visibleItemIds: string[]
 ): NavItem[] {
-  const visibleTitles = visibleItemIds.map((id) =>
-    id
-      .split('-')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
-  )
+  // Build a set of normalized IDs for quick lookup
+  const idSet = new Set(visibleItemIds)
 
-  return navItems.filter((item) => {
-    if (item.url && !item.items) {
-      return visibleTitles.includes(item.title)
-    }
-    return !!item.items
-  })
+  // Helper to build ID in the same way as extractSidebarItems
+  const toId = (title: string) => title.toLowerCase().replace(/\s+/g, '-')
+
+  return navItems
+    .map((item) => {
+      if (item.url && !item.items) {
+        // Simple link: keep only if its ID is selected
+        const id = toId(item.title)
+        return idSet.has(id) ? item : null
+      }
+      if (item.items) {
+        // Collapsible: filter its children
+        const parentId = toId(item.title)
+        const filteredChildren = item.items.filter((child) => {
+          const childId = `${parentId}-${toId(child.title)}`
+          return idSet.has(childId)
+        })
+        if (filteredChildren.length === 0) return null
+        return { ...item, items: filteredChildren }
+      }
+      return null
+    })
+    .filter((v): v is NavItem => v !== null)
 }
