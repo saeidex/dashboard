@@ -47,7 +47,7 @@ export function CategoriesDialogs() {
               )
             }}
             className='max-w-md'
-            title={`Delete this category: ${currentRow.id} ?`}
+            title={`Delete this category: ${currentRow.name} ?`}
             desc={
               <>
                 You are about to delete a category with the ID{' '}

@@ -19,7 +19,7 @@ export const CategoriesGrid = () => {
               <div className='absolute top-3 right-3 opacity-0 transition-colors duration-200 group-hover:opacity-100'>
                 <CategoryActions category={category} />
               </div>
-              <div className='absolute right-0 bottom-0 left-0 p-4'>
+              <div className='absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/70 to-transparent p-4'>
                 <h3 className='text-lg font-semibold text-white drop-shadow-lg'>
                   {category.name}
                 </h3>

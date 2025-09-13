@@ -32,12 +32,15 @@ export const productsColumns: ColumnDef<Product>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'id',
+    accessorKey: 'productId',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Product' />
+      <DataTableColumnHeader column={column} title='Product ID' />
     ),
-    cell: ({ row }) => <div className='w-[80px]'>{row.getValue('id')}</div>,
-    enableSorting: false,
+    cell: ({ row }) => (
+      <div className='w-[96px] font-mono text-xs'>
+        {row.getValue('productId')}
+      </div>
+    ),
     enableHiding: false,
   },
   {
@@ -46,8 +49,7 @@ export const productsColumns: ColumnDef<Product>[] = [
       <DataTableColumnHeader column={column} title='Title' />
     ),
     cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.label)
-
+      const label = labels.find((l) => l.value === row.original.label)
       return (
         <div className='flex space-x-2'>
           {label && <Badge variant='outline'>{label.label}</Badge>}
@@ -81,35 +83,80 @@ export const productsColumns: ColumnDef<Product>[] = [
         </div>
       )
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
-    },
+    filterFn: (row, id, value) => value.includes(row.getValue(id)),
   },
   {
-    accessorKey: 'category',
+    id: 'categoryId',
+    accessorFn: (row) => row.categoryId,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Category' />
     ),
     cell: ({ row }) => {
-      const category = categories.find(
-        (category) => category.value === row.getValue('category')
-      )
-
-      if (!category) {
-        return null
-      }
-
+      const name =
+        categories.find((c) => c.id === row.getValue('categoryId'))?.name || ''
+      return <span className='truncate'>{name}</span>
+    },
+    filterFn: (row, id, value) => value.includes(row.getValue(id)),
+  },
+  {
+    accessorKey: 'pricing.total',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Price' />
+    ),
+    cell: ({ row }) => {
+      const price = row.original.pricing?.total ?? 0
+      return <span>৳{price.toFixed(2)}</span>
+    },
+  },
+  {
+    accessorKey: 'pricing.base',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Base Price' />
+    ),
+    cell: ({ row }) => {
+      const base = row.original.pricing?.base ?? 0
+      return <span className='text-muted-foreground'>৳{base.toFixed(2)}</span>
+    },
+  },
+  {
+    accessorKey: 'pricing.discountAmount',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Discount' />
+    ),
+    cell: ({ row }) => {
+      const amt = row.original.pricing?.discountAmount ?? 0
+      const pct = row.original.pricing?.discountPercentage ?? 0
+      if (!amt) return <span className='text-muted-foreground'>—</span>
       return (
-        <div className='flex items-center gap-2'>
-          {category.icon && (
-            <category.icon className='text-muted-foreground size-4' />
-          )}
-          <span>{category.label}</span>
-        </div>
+        <span className='text-destructive font-mono text-xs'>
+          -৳{amt.toFixed(2)} ({pct}%)
+        </span>
       )
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
+  },
+  {
+    accessorKey: 'pricing.taxAmount',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Tax' />
+    ),
+    cell: ({ row }) => {
+      const taxAmount = row.original.pricing?.taxAmount ?? 0
+      const taxPct = row.original.pricing?.taxPercentage ?? 0
+      return (
+        <span className='font-mono text-xs'>
+          ৳{taxAmount.toFixed(2)} ({taxPct}%)
+        </span>
+      )
+    },
+  },
+  {
+    accessorKey: 'stock',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Stock' />
+    ),
+    cell: ({ row }) => {
+      const stock = row.getValue<number>('stock')
+      return <span>{stock}</span>
     },
   },
   {

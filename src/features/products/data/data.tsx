@@ -1,13 +1,5 @@
-import {
-  AlertCircle,
-  ArrowDown,
-  ArrowRight,
-  ArrowUp,
-  CheckCircle,
-  Circle,
-  CircleOff,
-  Timer,
-} from 'lucide-react'
+import { CheckCircle, Circle, CircleOff, Timer } from 'lucide-react'
+import { productCategories } from '@/features/product-categories/data/product-categories'
 
 export const labels = [
   {
@@ -15,10 +7,10 @@ export const labels = [
     label: 'New',
   },
   {
-    value: 'premium',
-    label: 'Premium',
+    value: 'popular',
+    label: 'Popular',
   },
-]
+] as const
 
 export const statuses = [
   {
@@ -41,27 +33,9 @@ export const statuses = [
     value: 'discontinued' as const,
     icon: Circle,
   },
-]
+] as const
 
-export const categories = [
-  {
-    label: 'Electronics',
-    value: 'electronics' as const,
-    icon: ArrowDown,
-  },
-  {
-    label: 'Clothing',
-    value: 'clothing' as const,
-    icon: ArrowRight,
-  },
-  {
-    label: 'Home & Garden',
-    value: 'home-garden' as const,
-    icon: ArrowUp,
-  },
-  {
-    label: 'Featured',
-    value: 'featured' as const,
-    icon: AlertCircle,
-  },
-]
+export const categories = productCategories.map(({ id, name }) => ({
+  id,
+  name,
+}))

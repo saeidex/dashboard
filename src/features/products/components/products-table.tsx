@@ -22,7 +22,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { categories, statuses } from '../data/data'
+import { productCategories } from '@/features/product-categories/data/product-categories'
+import { statuses } from '../data/data'
 import { type Product } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { productsColumns as columns } from './products-columns'
@@ -60,7 +61,7 @@ export function ProductsTable({ data }: DataTableProps) {
     globalFilter: { enabled: true, key: 'filter' },
     columnFilters: [
       { columnId: 'status', searchKey: 'status', type: 'array' },
-      { columnId: 'category', searchKey: 'category', type: 'array' },
+      { columnId: 'categoryId', searchKey: 'categoryId', type: 'array' },
     ],
   })
 
@@ -80,7 +81,7 @@ export function ProductsTable({ data }: DataTableProps) {
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
     globalFilterFn: (row, _columnId, filterValue) => {
-      const id = String(row.getValue('id')).toLowerCase()
+      const id = String((row.original as Product).id).toLowerCase()
       const title = String(row.getValue('title')).toLowerCase()
       const searchValue = String(filterValue).toLowerCase()
 
@@ -111,12 +112,15 @@ export function ProductsTable({ data }: DataTableProps) {
           {
             columnId: 'status',
             title: 'Status',
-            options: statuses,
+            options: statuses.map((s) => ({ label: s.label, value: s.value })),
           },
           {
-            columnId: 'category',
+            columnId: 'categoryId',
             title: 'Category',
-            options: categories,
+            options: productCategories.map((c) => ({
+              label: c.name,
+              value: c.id,
+            })),
           },
         ]}
       />

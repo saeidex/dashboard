@@ -18,7 +18,7 @@ import {
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
 import { categories, statuses } from '../data/data'
 import { type Product } from '../data/schema'
-import { TasksMultiDeleteDialog } from './tasks-multi-delete-dialog'
+import { ProductsMultiDeleteDialog } from './products-multi-delete-dialog'
 
 type DataTableBulkActionsProps<TData> = {
   table: Table<TData>
@@ -131,14 +131,11 @@ export function DataTableBulkActions<TData>({
           <DropdownMenuContent sideOffset={14}>
             {categories.map((category) => (
               <DropdownMenuItem
-                key={category.value}
-                defaultValue={category.value}
-                onClick={() => handleBulkCategoryChange(category.value)}
+                key={category.id}
+                defaultValue={category.id}
+                onClick={() => handleBulkCategoryChange(category.id)}
               >
-                {category.icon && (
-                  <category.icon className='text-muted-foreground size-4' />
-                )}
-                {category.label}
+                {category.name}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
@@ -183,7 +180,7 @@ export function DataTableBulkActions<TData>({
         </Tooltip>
       </BulkActionsToolbar>
 
-      <TasksMultiDeleteDialog
+      <ProductsMultiDeleteDialog
         open={showDeleteConfirm}
         onOpenChange={setShowDeleteConfirm}
         table={table}

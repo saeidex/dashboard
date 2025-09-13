@@ -55,11 +55,11 @@ export function ProductsDialogs() {
               )
             }}
             className='max-w-md'
-            title={`Delete this product: ${currentRow.id} ?`}
+            title={`Delete this product: ${currentRow.title} ?`}
             desc={
               <>
                 You are about to delete a product with the ID{' '}
-                <strong>{currentRow.id}</strong>. <br />
+                <strong>{currentRow.productId}</strong>. <br />
                 This action cannot be undone.
               </>
             }
