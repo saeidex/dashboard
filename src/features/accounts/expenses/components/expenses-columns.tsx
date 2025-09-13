@@ -40,7 +40,7 @@ export const expensesColumns: ColumnDef<Expense>[] = [
       <DataTableColumnHeader column={column} title='Expense Title' />
     ),
     cell: ({ row }) => (
-      <LongText className='max-w-24 ps-3 font-mono'>
+      <LongText className='max-w-48 ps-3 font-mono'>
         {row.getValue('title')}
       </LongText>
     ),

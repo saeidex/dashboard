@@ -39,6 +39,7 @@ const formSchema = expenseSchema
   })
   .required({
     category: true,
+    currency: true,
   })
 
 export type ExpenseUpsertInput = z.infer<typeof formSchema>
@@ -57,6 +58,7 @@ export function ExpensesActionDialog({
           title: '',
           category: 'other',
           amount: 0,
+          currency: 'BDT',
           referenceId: '',
           notes: '',
         },

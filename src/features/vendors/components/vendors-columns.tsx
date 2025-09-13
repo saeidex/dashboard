@@ -118,16 +118,6 @@ export const vendorsColumns: ColumnDef<Vendor>[] = [
     enableSorting: false,
   },
   {
-    accessorKey: 'createdAt',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Created Date' />
-    ),
-    cell: ({ row }) => {
-      const date = row.getValue('createdAt') as Date
-      return <div className='text-sm'>{date.toLocaleDateString()}</div>
-    },
-  },
-  {
     accessorKey: 'notes',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Notes' />

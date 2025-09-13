@@ -2,11 +2,13 @@ import {
   AudioWaveform,
   Bookmark,
   Bug,
+  Coins,
   Command,
   Construction,
   DollarSign,
   FileX,
   GalleryVerticalEnd,
+  IdCard,
   LayoutDashboard,
   Lock,
   Monitor,
@@ -15,89 +17,20 @@ import {
   ServerOff,
   Settings,
   ShieldCheck,
-  UserSquare,
   UserX,
   Users,
   UsersRound,
-  Wallet,
+  WalletCards,
+  WalletMinimal,
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
 
-export const sidebarData: SidebarData = {
-  user: {
-    name: 'Example',
-    email: 'example@mail.com',
-    avatar: '/avatars/example.jpg',
-  },
-  teams: [
-    {
-      name: 'Shadcn Admin',
-      logo: Command,
-      plan: 'Vite + ShadcnUI',
-    },
-    {
-      name: 'Acme Inc',
-      logo: GalleryVerticalEnd,
-      plan: 'Enterprise',
-    },
-    {
-      name: 'Acme Corp.',
-      logo: AudioWaveform,
-      plan: 'Startup',
-    },
-  ],
-  navGroups: [
-    {
-      title: 'General',
-      items: [
-        {
-          title: 'Dashboard',
-          url: '/',
-          icon: LayoutDashboard,
-        },
-        {
-          title: 'Orders',
-          url: '/orders',
-          icon: DollarSign,
-        },
-        {
-          title: 'Products',
-          url: '/products',
-          icon: Package,
-        },
-        {
-          title: 'Product Categories',
-          url: '/categories',
-          icon: Bookmark,
-        },
-        {
-          title: 'Employees',
-          url: '/employees',
-          icon: UserSquare,
-        },
-        {
-          title: 'Vendors',
-          url: '/vendors',
-          icon: UsersRound,
-        },
-        {
-          title: 'Expenses',
-          url: '/expenses',
-          icon: Wallet,
-        },
-        {
-          title: 'Reports',
-          url: '/reports',
-          icon: FileX,
-        },
-        {
-          title: 'Software Users',
-          url: '/users',
-          icon: Users,
-        },
-      ],
-    },
+const pages = () => {
+  if (process.env.NODE_ENV === 'production') {
+    return []
+  }
+  return [
     {
       title: 'Pages',
       items: [
@@ -178,6 +111,95 @@ export const sidebarData: SidebarData = {
         },
       ],
     },
+  ]
+}
+
+export const sidebarData: SidebarData = {
+  user: {
+    name: 'Example',
+    email: 'example@mail.com',
+    avatar: '/avatars/example.jpg',
+  },
+  teams: [
+    {
+      name: 'Shadcn Admin',
+      logo: Command,
+      plan: 'Vite + ShadcnUI',
+    },
+    {
+      name: 'Acme Inc',
+      logo: GalleryVerticalEnd,
+      plan: 'Enterprise',
+    },
+    {
+      name: 'Acme Corp.',
+      logo: AudioWaveform,
+      plan: 'Startup',
+    },
+  ],
+  navGroups: [
+    {
+      title: 'General',
+      items: [
+        {
+          title: 'Dashboard',
+          url: '/',
+          icon: LayoutDashboard,
+        },
+        {
+          title: 'Orders',
+          url: '/orders',
+          icon: DollarSign,
+        },
+        {
+          title: 'Products',
+          url: '/products',
+          icon: Package,
+        },
+        {
+          title: 'Product Categories',
+          url: '/categories',
+          icon: Bookmark,
+        },
+        {
+          title: 'Employees',
+          url: '/employees',
+          icon: IdCard,
+        },
+        {
+          title: 'Vendors',
+          url: '/vendors',
+          icon: UsersRound,
+        },
+        {
+          title: 'Accounts',
+          icon: WalletCards,
+          items: [
+            {
+              title: 'Expenses',
+              url: '/accounts/expenses',
+              icon: WalletMinimal,
+            },
+            {
+              title: 'Sales',
+              url: '/accounts/sales',
+              icon: Coins,
+            },
+          ],
+        },
+        {
+          title: 'Reports',
+          url: '/reports',
+          icon: FileX,
+        },
+        {
+          title: 'Software Users',
+          url: '/users',
+          icon: Users,
+        },
+      ],
+    },
+    ...pages(),
     {
       title: 'Other',
       items: [

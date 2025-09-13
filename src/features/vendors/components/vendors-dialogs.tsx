@@ -48,7 +48,7 @@ export function VendorsDialogs() {
               )
             }}
             className='max-w-md'
-            title={`Delete this vendor: ${currentRow.id} ?`}
+            title={`Delete this vendor: ${currentRow.vendorId} ?`}
             desc={
               <>
                 You are about to delete a vendor with the name{' '}

@@ -7,7 +7,7 @@ import { ExpensesProvider } from './components/expenses-provider'
 import { ExpensesTable } from './components/expenses-table'
 import { expenses } from './data/expenses'
 
-const route = getRouteApi('/_authenticated/expenses/')
+const route = getRouteApi('/_authenticated/accounts/expenses/')
 
 export const Expenses = () => {
   const navigate = route.useNavigate()

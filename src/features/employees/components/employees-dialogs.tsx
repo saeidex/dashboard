@@ -48,11 +48,12 @@ export function EmployeesDialogs() {
               )
             }}
             className='max-w-md'
-            title={`Delete this employee: ${currentRow.id} ?`}
+            title={`Delete this employee: ${currentRow.employeeId} ?`}
             desc={
               <>
-                You are about to delete a employee with the Employee ID{' '}
-                <strong>{currentRow.employeeId}</strong>. <br />
+                You are about to delete a employee with the Employee Name{' '}
+                <strong>{`${currentRow.firstName} ${currentRow.lastName}`}</strong>
+                . <br />
                 This action cannot be undone.
               </>
             }

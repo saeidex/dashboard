@@ -25,21 +25,21 @@ import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-p
 import { Route as ClerkAuthenticatedRouteRouteImport } from './routes/clerk/_authenticated/route'
 import { Route as ClerkauthRouteRouteImport } from './routes/clerk/(auth)/route'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
+import { Route as AuthenticatedVendorsIndexRouteImport } from './routes/_authenticated/vendors/index'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated/products/index'
-import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
-import { Route as AuthenticatedChatsIndexRouteImport } from './routes/_authenticated/chats/index'
-import { Route as AuthenticatedAppsIndexRouteImport } from './routes/_authenticated/apps/index'
+import { Route as AuthenticatedOrdersIndexRouteImport } from './routes/_authenticated/orders/index'
+import { Route as AuthenticatedEmployeesIndexRouteImport } from './routes/_authenticated/employees/index'
+import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated/categories/index'
 import { Route as ClerkAuthenticatedUserManagementRouteImport } from './routes/clerk/_authenticated/user-management'
 import { Route as ClerkauthSignUpRouteImport } from './routes/clerk/(auth)/sign-up'
 import { Route as ClerkauthSignInRouteImport } from './routes/clerk/(auth)/sign-in'
-import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
-import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
+import { Route as AuthenticatedAccountsExpensesIndexRouteImport } from './routes/_authenticated/accounts/expenses/index'
 
 const ClerkRouteRoute = ClerkRouteRouteImport.update({
   id: '/clerk',
@@ -119,6 +119,12 @@ const AuthenticatedSettingsRouteRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedVendorsIndexRoute =
+  AuthenticatedVendorsIndexRouteImport.update({
+    id: '/vendors/',
+    path: '/vendors/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
@@ -141,22 +147,24 @@ const AuthenticatedProductsIndexRoute =
     path: '/products/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedHelpCenterIndexRoute =
-  AuthenticatedHelpCenterIndexRouteImport.update({
-    id: '/help-center/',
-    path: '/help-center/',
+const AuthenticatedOrdersIndexRoute =
+  AuthenticatedOrdersIndexRouteImport.update({
+    id: '/orders/',
+    path: '/orders/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedChatsIndexRoute = AuthenticatedChatsIndexRouteImport.update({
-  id: '/chats/',
-  path: '/chats/',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAppsIndexRoute = AuthenticatedAppsIndexRouteImport.update({
-  id: '/apps/',
-  path: '/apps/',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
+const AuthenticatedEmployeesIndexRoute =
+  AuthenticatedEmployeesIndexRouteImport.update({
+    id: '/employees/',
+    path: '/employees/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCategoriesIndexRoute =
+  AuthenticatedCategoriesIndexRouteImport.update({
+    id: '/categories/',
+    path: '/categories/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ClerkAuthenticatedUserManagementRoute =
   ClerkAuthenticatedUserManagementRouteImport.update({
     id: '/user-management',
@@ -173,12 +181,6 @@ const ClerkauthSignInRoute = ClerkauthSignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => ClerkauthRouteRoute,
 } as any)
-const AuthenticatedSettingsNotificationsRoute =
-  AuthenticatedSettingsNotificationsRouteImport.update({
-    id: '/notifications',
-    path: '/notifications',
-    getParentRoute: () => AuthenticatedSettingsRouteRoute,
-  } as any)
 const AuthenticatedSettingsDisplayRoute =
   AuthenticatedSettingsDisplayRouteImport.update({
     id: '/display',
@@ -191,16 +193,16 @@ const AuthenticatedSettingsAppearanceRoute =
     path: '/appearance',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
-const AuthenticatedSettingsAccountRoute =
-  AuthenticatedSettingsAccountRouteImport.update({
-    id: '/account',
-    path: '/account',
-    getParentRoute: () => AuthenticatedSettingsRouteRoute,
-  } as any)
 const AuthenticatedErrorsErrorRoute =
   AuthenticatedErrorsErrorRouteImport.update({
     id: '/errors/$error',
     path: '/errors/$error',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAccountsExpensesIndexRoute =
+  AuthenticatedAccountsExpensesIndexRouteImport.update({
+    id: '/accounts/expenses/',
+    path: '/accounts/expenses/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
@@ -220,20 +222,20 @@ export interface FileRoutesByFullPath {
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
-  '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
-  '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/clerk/sign-in': typeof ClerkauthSignInRoute
   '/clerk/sign-up': typeof ClerkauthSignUpRoute
   '/clerk/user-management': typeof ClerkAuthenticatedUserManagementRoute
-  '/apps': typeof AuthenticatedAppsIndexRoute
-  '/chats': typeof AuthenticatedChatsIndexRoute
-  '/help-center': typeof AuthenticatedHelpCenterIndexRoute
+  '/categories': typeof AuthenticatedCategoriesIndexRoute
+  '/employees': typeof AuthenticatedEmployeesIndexRoute
+  '/orders': typeof AuthenticatedOrdersIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/vendors': typeof AuthenticatedVendorsIndexRoute
+  '/accounts/expenses': typeof AuthenticatedAccountsExpensesIndexRoute
 }
 export interface FileRoutesByTo {
   '/clerk': typeof ClerkAuthenticatedRouteRouteWithChildren
@@ -249,20 +251,20 @@ export interface FileRoutesByTo {
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
-  '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
-  '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/clerk/sign-in': typeof ClerkauthSignInRoute
   '/clerk/sign-up': typeof ClerkauthSignUpRoute
   '/clerk/user-management': typeof ClerkAuthenticatedUserManagementRoute
-  '/apps': typeof AuthenticatedAppsIndexRoute
-  '/chats': typeof AuthenticatedChatsIndexRoute
-  '/help-center': typeof AuthenticatedHelpCenterIndexRoute
+  '/categories': typeof AuthenticatedCategoriesIndexRoute
+  '/employees': typeof AuthenticatedEmployeesIndexRoute
+  '/orders': typeof AuthenticatedOrdersIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/vendors': typeof AuthenticatedVendorsIndexRoute
+  '/accounts/expenses': typeof AuthenticatedAccountsExpensesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -283,20 +285,20 @@ export interface FileRoutesById {
   '/(errors)/503': typeof errors503Route
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
-  '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
-  '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/clerk/(auth)/sign-in': typeof ClerkauthSignInRoute
   '/clerk/(auth)/sign-up': typeof ClerkauthSignUpRoute
   '/clerk/_authenticated/user-management': typeof ClerkAuthenticatedUserManagementRoute
-  '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
-  '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
-  '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
+  '/_authenticated/categories/': typeof AuthenticatedCategoriesIndexRoute
+  '/_authenticated/employees/': typeof AuthenticatedEmployeesIndexRoute
+  '/_authenticated/orders/': typeof AuthenticatedOrdersIndexRoute
   '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/vendors/': typeof AuthenticatedVendorsIndexRoute
+  '/_authenticated/accounts/expenses/': typeof AuthenticatedAccountsExpensesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -316,20 +318,20 @@ export interface FileRouteTypes {
     | '/503'
     | '/'
     | '/errors/$error'
-    | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
-    | '/settings/notifications'
     | '/clerk/sign-in'
     | '/clerk/sign-up'
     | '/clerk/user-management'
-    | '/apps'
-    | '/chats'
-    | '/help-center'
+    | '/categories'
+    | '/employees'
+    | '/orders'
     | '/products'
     | '/settings/'
     | '/tasks'
     | '/users'
+    | '/vendors'
+    | '/accounts/expenses'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/clerk'
@@ -345,20 +347,20 @@ export interface FileRouteTypes {
     | '/503'
     | '/'
     | '/errors/$error'
-    | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
-    | '/settings/notifications'
     | '/clerk/sign-in'
     | '/clerk/sign-up'
     | '/clerk/user-management'
-    | '/apps'
-    | '/chats'
-    | '/help-center'
+    | '/categories'
+    | '/employees'
+    | '/orders'
     | '/products'
     | '/settings'
     | '/tasks'
     | '/users'
+    | '/vendors'
+    | '/accounts/expenses'
   id:
     | '__root__'
     | '/_authenticated'
@@ -378,20 +380,20 @@ export interface FileRouteTypes {
     | '/(errors)/503'
     | '/_authenticated/'
     | '/_authenticated/errors/$error'
-    | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
-    | '/_authenticated/settings/notifications'
     | '/clerk/(auth)/sign-in'
     | '/clerk/(auth)/sign-up'
     | '/clerk/_authenticated/user-management'
-    | '/_authenticated/apps/'
-    | '/_authenticated/chats/'
-    | '/_authenticated/help-center/'
+    | '/_authenticated/categories/'
+    | '/_authenticated/employees/'
+    | '/_authenticated/orders/'
     | '/_authenticated/products/'
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
     | '/_authenticated/users/'
+    | '/_authenticated/vendors/'
+    | '/_authenticated/accounts/expenses/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -523,6 +525,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/vendors/': {
+      id: '/_authenticated/vendors/'
+      path: '/vendors'
+      fullPath: '/vendors'
+      preLoaderRoute: typeof AuthenticatedVendorsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/users/': {
       id: '/_authenticated/users/'
       path: '/users'
@@ -551,25 +560,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProductsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/help-center/': {
-      id: '/_authenticated/help-center/'
-      path: '/help-center'
-      fullPath: '/help-center'
-      preLoaderRoute: typeof AuthenticatedHelpCenterIndexRouteImport
+    '/_authenticated/orders/': {
+      id: '/_authenticated/orders/'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof AuthenticatedOrdersIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/chats/': {
-      id: '/_authenticated/chats/'
-      path: '/chats'
-      fullPath: '/chats'
-      preLoaderRoute: typeof AuthenticatedChatsIndexRouteImport
+    '/_authenticated/employees/': {
+      id: '/_authenticated/employees/'
+      path: '/employees'
+      fullPath: '/employees'
+      preLoaderRoute: typeof AuthenticatedEmployeesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/apps/': {
-      id: '/_authenticated/apps/'
-      path: '/apps'
-      fullPath: '/apps'
-      preLoaderRoute: typeof AuthenticatedAppsIndexRouteImport
+    '/_authenticated/categories/': {
+      id: '/_authenticated/categories/'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof AuthenticatedCategoriesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/clerk/_authenticated/user-management': {
@@ -593,13 +602,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClerkauthSignInRouteImport
       parentRoute: typeof ClerkauthRouteRoute
     }
-    '/_authenticated/settings/notifications': {
-      id: '/_authenticated/settings/notifications'
-      path: '/notifications'
-      fullPath: '/settings/notifications'
-      preLoaderRoute: typeof AuthenticatedSettingsNotificationsRouteImport
-      parentRoute: typeof AuthenticatedSettingsRouteRoute
-    }
     '/_authenticated/settings/display': {
       id: '/_authenticated/settings/display'
       path: '/display'
@@ -614,13 +616,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsAppearanceRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
-    '/_authenticated/settings/account': {
-      id: '/_authenticated/settings/account'
-      path: '/account'
-      fullPath: '/settings/account'
-      preLoaderRoute: typeof AuthenticatedSettingsAccountRouteImport
-      parentRoute: typeof AuthenticatedSettingsRouteRoute
-    }
     '/_authenticated/errors/$error': {
       id: '/_authenticated/errors/$error'
       path: '/errors/$error'
@@ -628,24 +623,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/accounts/expenses/': {
+      id: '/_authenticated/accounts/expenses/'
+      path: '/accounts/expenses'
+      fullPath: '/accounts/expenses'
+      preLoaderRoute: typeof AuthenticatedAccountsExpensesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedSettingsRouteRouteChildren {
-  AuthenticatedSettingsAccountRoute: typeof AuthenticatedSettingsAccountRoute
   AuthenticatedSettingsAppearanceRoute: typeof AuthenticatedSettingsAppearanceRoute
   AuthenticatedSettingsDisplayRoute: typeof AuthenticatedSettingsDisplayRoute
-  AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
   AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
 }
 
 const AuthenticatedSettingsRouteRouteChildren: AuthenticatedSettingsRouteRouteChildren =
   {
-    AuthenticatedSettingsAccountRoute: AuthenticatedSettingsAccountRoute,
     AuthenticatedSettingsAppearanceRoute: AuthenticatedSettingsAppearanceRoute,
     AuthenticatedSettingsDisplayRoute: AuthenticatedSettingsDisplayRoute,
-    AuthenticatedSettingsNotificationsRoute:
-      AuthenticatedSettingsNotificationsRoute,
     AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
   }
 
@@ -658,24 +655,29 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
-  AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
-  AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
-  AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
+  AuthenticatedCategoriesIndexRoute: typeof AuthenticatedCategoriesIndexRoute
+  AuthenticatedEmployeesIndexRoute: typeof AuthenticatedEmployeesIndexRoute
+  AuthenticatedOrdersIndexRoute: typeof AuthenticatedOrdersIndexRoute
   AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
+  AuthenticatedVendorsIndexRoute: typeof AuthenticatedVendorsIndexRoute
+  AuthenticatedAccountsExpensesIndexRoute: typeof AuthenticatedAccountsExpensesIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
-  AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
-  AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
-  AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
+  AuthenticatedCategoriesIndexRoute: AuthenticatedCategoriesIndexRoute,
+  AuthenticatedEmployeesIndexRoute: AuthenticatedEmployeesIndexRoute,
+  AuthenticatedOrdersIndexRoute: AuthenticatedOrdersIndexRoute,
   AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
+  AuthenticatedVendorsIndexRoute: AuthenticatedVendorsIndexRoute,
+  AuthenticatedAccountsExpensesIndexRoute:
+    AuthenticatedAccountsExpensesIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

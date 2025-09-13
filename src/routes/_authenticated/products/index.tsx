@@ -10,8 +10,8 @@ const productSearchSchema = z.object({
     .array(z.enum(statuses.map((status) => status.value)))
     .optional()
     .catch([]),
-  category: z
-    .array(z.enum(categories.map((category) => category.value)))
+  categoryId: z
+    .array(z.enum(categories.map((category) => category.id)))
     .optional()
     .catch([]),
   filter: z.string().optional().catch(''),

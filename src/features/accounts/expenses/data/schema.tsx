@@ -25,6 +25,7 @@ export const expenseSchema = z.object({
   title: z.string().min(1, 'Title is required').max(255, 'Title too long'),
   category: expenseCategorySchema.default('other'),
   amount: z.number().positive('Amount must be positive'),
+  currency: z.enum(['BDT']).default('BDT'),
   referenceId: z.string().max(100).optional(),
   notes: z.string().optional(),
   createdAt: z.date().default(() => new Date()),
