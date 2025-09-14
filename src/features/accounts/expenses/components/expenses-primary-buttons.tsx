@@ -1,4 +1,4 @@
-import { UserPlus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useExpenses } from './expenses-provider'
 
@@ -7,7 +7,7 @@ export function ExpensesPrimaryButtons() {
   return (
     <div className='flex gap-2'>
       <Button className='space-x-1' onClick={() => setOpen('add')}>
-        <span>Add User</span> <UserPlus size={18} />
+        <span>Add Expense</span> <Plus size={18} />
       </Button>
     </div>
   )
