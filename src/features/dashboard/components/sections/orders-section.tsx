@@ -83,7 +83,7 @@ export function OrdersSection() {
           <CardDescription>Last 10 orders snapshot.</CardDescription>
         </CardHeader>
         <CardContent>
-          <RecentOrders />
+          <RecentOrders limit={4} />
         </CardContent>
       </Card>
     </div>

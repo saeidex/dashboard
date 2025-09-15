@@ -2,7 +2,6 @@ import {
   AudioWaveform,
   Bookmark,
   Bug,
-  Coins,
   Command,
   Construction,
   DollarSign,
@@ -180,18 +179,18 @@ export const sidebarData: SidebarData = {
               url: '/accounts/expenses',
               icon: WalletMinimal,
             },
-            {
-              title: 'Sales',
-              url: '/accounts/sales',
-              icon: Coins,
-            },
+            // {
+            //   title: 'Sales',
+            //   url: '/accounts/sales',
+            //   icon: Coins,
+            // },
           ],
         },
-        {
-          title: 'Reports',
-          url: '/reports',
-          icon: FileX,
-        },
+        // {
+        //   title: 'Reports',
+        //   url: '/reports',
+        //   icon: FileX,
+        // },
         {
           title: 'Software Users',
           url: '/users',
