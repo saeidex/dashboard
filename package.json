@@ -48,6 +48,8 @@
     "react-day-picker": "9.8.1",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.62.0",
+    "html2canvas-pro": "^1.5.8",
+    "jspdf": "^2.5.2",
     "react-to-print": "^3.1.1",
     "react-top-loading-bar": "^3.0.2",
     "recharts": "^3.1.2",

@@ -1,6 +1,7 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
-import { Printer, Trash2, UserPen } from 'lucide-react'
+import { Download, Printer, Trash2, UserPen } from 'lucide-react'
+import { useOrderPrint } from '@/hooks/use-order-print'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -11,7 +12,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { type Order } from '../data/schema'
-import { useOrderPrint } from '../hooks/use-order-print'
 import { useOrders } from './orders-provider'
 
 type DataTableRowActionsProps = {
@@ -20,7 +20,7 @@ type DataTableRowActionsProps = {
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const { setOpen, setCurrentRow } = useOrders()
-  const { printOrder } = useOrderPrint()
+  const { printOrder, downloadOrderPdf } = useOrderPrint()
 
   return (
     <>
@@ -35,6 +35,18 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end' className='w-[160px]'>
+          <DropdownMenuItem
+            onClick={() => {
+              setCurrentRow(row.original)
+              downloadOrderPdf(row.original)
+            }}
+          >
+            Download
+            <DropdownMenuShortcut>
+              <Download size={16} />
+            </DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={() => {
               setCurrentRow(row.original)
