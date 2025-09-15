@@ -28,13 +28,17 @@ export function CommandMenu() {
     [setOpen]
   )
 
+  const sidebarItems = sidebarData.navGroups.filter((group) =>
+    ['General', 'Other'].includes(group.title)
+  )
+
   return (
     <CommandDialog modal open={open} onOpenChange={setOpen}>
       <CommandInput placeholder='Type a command or search...' />
       <CommandList>
         <ScrollArea type='hover' className='h-72 pe-1'>
           <CommandEmpty>No results found.</CommandEmpty>
-          {sidebarData.navGroups.map((group) => (
+          {sidebarItems.map((group) => (
             <CommandGroup key={group.title} heading={group.title}>
               {group.items.map((navItem, i) => {
                 if (navItem.url)

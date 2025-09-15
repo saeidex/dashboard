@@ -4,7 +4,7 @@ import { type Product } from './schema'
 
 faker.seed(12345)
 
-export const products: Product[] = Array.from({ length: 100 }, () => {
+export const products: Product[] = Array.from({ length: 20 }, () => {
   const base = parseFloat(faker.commerce.price({ min: 10, max: 500, dec: 2 }))
   const discountPercentage = faker.number.int({ min: 0, max: 40 }) // up to 40% discount
   const discountAmount = +(base * (discountPercentage / 100)).toFixed(2)
@@ -32,7 +32,7 @@ export const products: Product[] = Array.from({ length: 100 }, () => {
     pricing,
     price: pricing.total,
     sku: faker.string.alphanumeric({ length: 8 }).toUpperCase(),
-    stock: faker.number.int({ min: 0, max: 1000 }),
+    stock: faker.number.int({ min: 0, max: 10 }),
     createdAt: faker.date.past(),
     updatedAt: faker.date.recent(),
     brand: faker.company.name(),
