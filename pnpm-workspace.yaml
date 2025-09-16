@@ -1,6 +1,11 @@
+packages:
+  - '.'
+  - 'server'
+
 onlyBuiltDependencies:
   - '@clerk/shared'
   - '@swc/core'
   - '@tailwindcss/oxide'
   - core-js
   - esbuild
+
