@@ -105,7 +105,9 @@ export const productsColumns: ColumnDef<Product>[] = [
     ),
     cell: ({ row }) => {
       const price = row.original.pricing?.total ?? 0
-      return <span>৳{price.toFixed(2)}</span>
+      return (
+        <span className='font-mono font-semibold'>৳{price.toFixed(2)}</span>
+      )
     },
   },
   {

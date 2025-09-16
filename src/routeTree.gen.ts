@@ -27,7 +27,6 @@ import { Route as ClerkauthRouteRouteImport } from './routes/clerk/(auth)/route'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
 import { Route as AuthenticatedVendorsIndexRouteImport } from './routes/_authenticated/vendors/index'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
-import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated/products/index'
 import { Route as AuthenticatedOrdersIndexRouteImport } from './routes/_authenticated/orders/index'
@@ -129,11 +128,6 @@ const AuthenticatedVendorsIndexRoute =
 const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedTasksIndexRoute = AuthenticatedTasksIndexRouteImport.update({
-  id: '/tasks/',
-  path: '/tasks/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSettingsIndexRoute =
@@ -240,7 +234,6 @@ export interface FileRoutesByFullPath {
   '/orders': typeof AuthenticatedOrdersIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
-  '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/vendors': typeof AuthenticatedVendorsIndexRoute
   '/accounts/expenses': typeof AuthenticatedAccountsExpensesIndexRoute
@@ -270,7 +263,6 @@ export interface FileRoutesByTo {
   '/orders': typeof AuthenticatedOrdersIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
-  '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/vendors': typeof AuthenticatedVendorsIndexRoute
   '/accounts/expenses': typeof AuthenticatedAccountsExpensesIndexRoute
@@ -305,7 +297,6 @@ export interface FileRoutesById {
   '/_authenticated/orders/': typeof AuthenticatedOrdersIndexRoute
   '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
-  '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
   '/_authenticated/vendors/': typeof AuthenticatedVendorsIndexRoute
   '/_authenticated/accounts/expenses/': typeof AuthenticatedAccountsExpensesIndexRoute
@@ -339,7 +330,6 @@ export interface FileRouteTypes {
     | '/orders'
     | '/products'
     | '/settings/'
-    | '/tasks'
     | '/users'
     | '/vendors'
     | '/accounts/expenses'
@@ -369,7 +359,6 @@ export interface FileRouteTypes {
     | '/orders'
     | '/products'
     | '/settings'
-    | '/tasks'
     | '/users'
     | '/vendors'
     | '/accounts/expenses'
@@ -403,7 +392,6 @@ export interface FileRouteTypes {
     | '/_authenticated/orders/'
     | '/_authenticated/products/'
     | '/_authenticated/settings/'
-    | '/_authenticated/tasks/'
     | '/_authenticated/users/'
     | '/_authenticated/vendors/'
     | '/_authenticated/accounts/expenses/'
@@ -552,13 +540,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsersIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/tasks/': {
-      id: '/_authenticated/tasks/'
-      path: '/tasks'
-      fullPath: '/tasks'
-      preLoaderRoute: typeof AuthenticatedTasksIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/settings/': {
       id: '/_authenticated/settings/'
       path: '/'
@@ -680,7 +661,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedEmployeesIndexRoute: typeof AuthenticatedEmployeesIndexRoute
   AuthenticatedOrdersIndexRoute: typeof AuthenticatedOrdersIndexRoute
   AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
-  AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedVendorsIndexRoute: typeof AuthenticatedVendorsIndexRoute
   AuthenticatedAccountsExpensesIndexRoute: typeof AuthenticatedAccountsExpensesIndexRoute
@@ -695,7 +675,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedEmployeesIndexRoute: AuthenticatedEmployeesIndexRoute,
   AuthenticatedOrdersIndexRoute: AuthenticatedOrdersIndexRoute,
   AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
-  AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
   AuthenticatedVendorsIndexRoute: AuthenticatedVendorsIndexRoute,
   AuthenticatedAccountsExpensesIndexRoute:

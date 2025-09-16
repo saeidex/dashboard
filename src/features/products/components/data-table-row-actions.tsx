@@ -26,7 +26,7 @@ type DataTableRowActionsProps<TData> = {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const task = productSchema.parse(row.original)
+  const product = productSchema.parse(row.original)
 
   const { setOpen, setCurrentRow } = useProducts()
 
@@ -44,7 +44,7 @@ export function DataTableRowActions<TData>({
       <DropdownMenuContent align='end' className='w-[160px]'>
         <DropdownMenuItem
           onClick={() => {
-            setCurrentRow(task)
+            setCurrentRow(product)
             setOpen('update')
           }}
         >
@@ -56,7 +56,7 @@ export function DataTableRowActions<TData>({
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.label}>
+            <DropdownMenuRadioGroup value={product.label}>
               {labels.map((label) => (
                 <DropdownMenuRadioItem key={label.value} value={label.value}>
                   {label.label}
@@ -68,7 +68,7 @@ export function DataTableRowActions<TData>({
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
-            setCurrentRow(task)
+            setCurrentRow(product)
             setOpen('delete')
           }}
         >

@@ -67,7 +67,9 @@ export const expensesColumns: ColumnDef<Expense>[] = [
       <DataTableColumnHeader column={column} title='Amount' />
     ),
     cell: ({ row }) => (
-      <div className='w-fit text-nowrap'>{row.getValue('amount') || '-'}</div>
+      <div className='w-fit font-semibold text-nowrap'>
+        ৳{row.getValue('amount') || '-'}
+      </div>
     ),
   },
   {

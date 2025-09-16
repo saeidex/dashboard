@@ -1,6 +1,8 @@
 import { expenses } from '@/features/accounts/expenses/data/expenses'
 import { orders } from '@/features/orders/data/orders'
-import { products } from '@/features/products/data/products'
+import { fetchProducts } from '@/features/products/data/products'
+
+export const products = await fetchProducts()
 
 export type OrderStatus = (typeof orders)[number]['status']
 export type PaymentStatus = (typeof orders)[number]['paymentStatus']

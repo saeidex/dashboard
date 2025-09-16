@@ -29,7 +29,11 @@ export function Overview({ months = 12 }: { months?: number }) {
           tickFormatter={(value) => `৳${value}`}
         />
         <Tooltip
-          cursor={{ fill: 'rgba(0,0,0,0.04)' }}
+          contentStyle={{
+            color: 'var(--popover-foreground)',
+            backgroundColor: 'var(--popover)',
+          }}
+          cursor={{ className: 'fill-black/10' }}
           formatter={(value: unknown) => {
             const num = typeof value === 'number' ? value : Number(value)
             return [
