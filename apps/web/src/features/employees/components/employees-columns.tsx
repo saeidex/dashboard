@@ -1,5 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
+import { format } from "date-fns";
+
 import { DataTableColumnHeader } from "@/web/components/data-table";
 import { LongText } from "@/web/components/long-text";
 import { Badge } from "@/web/components/ui/badge";
@@ -37,6 +39,13 @@ export const employeesColumns: ColumnDef<Employee>[] = [
       />
     ),
     enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "id",
+    meta: {
+      className: "hidden",
+    },
     enableHiding: false,
   },
   {
@@ -123,13 +132,13 @@ export const employeesColumns: ColumnDef<Employee>[] = [
     cell: ({ row }) => {
       const salary = row.getValue("salary") as number;
       return (
-        <div className="text-right font-medium">
+        <span>
           ৳
-          {salary.toLocaleString()}
-        </div>
+          {salary}
+        </span>
       );
     },
-    meta: { className: "text-right" },
+    meta: { className: "font-medium" },
   },
   {
     accessorKey: "status",
@@ -160,7 +169,7 @@ export const employeesColumns: ColumnDef<Employee>[] = [
     ),
     cell: ({ row }) => {
       const date = row.getValue("hireDate") as Date;
-      return <div className="text-sm">{date.toLocaleDateString()}</div>;
+      return <div className="text-sm">{format(date, "MMMM dd, yyyy")}</div>;
     },
   },
   {

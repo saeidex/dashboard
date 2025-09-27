@@ -1,3 +1,3 @@
-import type { insertEmployeesSchema, selectEmployeesSchema } from "@crm/api/schema";
+import type { selectEmployeesSchema } from "@crm/api/schema";
 
-export type Employee = insertEmployeesSchema | selectEmployeesSchema;
+export type Employee = selectEmployeesSchema;

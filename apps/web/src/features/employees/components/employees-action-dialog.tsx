@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 import { SelectDropdown } from "@/web/components/select-dropdown";
 import { Button } from "@/web/components/ui/button";
@@ -21,7 +22,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -34,7 +34,13 @@ import { cn } from "@/web/lib/utils";
 import type { Employee } from "../data/schema";
 
 import { positions, shifts, statuses } from "../data/data";
-import { createEmployee, queryKeys } from "../data/queries";
+import { createEmployee, queryKeys, updateEmployee } from "../data/queries";
+
+const employeeFormSchema = insertEmployeesSchema.extend({
+  hireDate: z.date(),
+});
+
+type EmployeeFormValues = z.infer<typeof employeeFormSchema>;
 
 type EmployeeActionDialogProps = {
   currentRow?: Employee;
@@ -48,10 +54,12 @@ export function EmployeesActionDialog({
   onOpenChange,
 }: EmployeeActionDialogProps) {
   const isEdit = !!currentRow;
-  const form = useForm<insertEmployeesSchema>({
+  const form = useForm<EmployeeFormValues>({
+    resolver: zodResolver(employeeFormSchema),
     defaultValues: isEdit
       ? {
           ...currentRow,
+          hireDate: currentRow?.hireDate ? new Date(currentRow.hireDate) : new Date(),
         }
       : {
           firstName: "",
@@ -61,16 +69,38 @@ export function EmployeesActionDialog({
           phoneNumber: "",
           position: "Helper",
           shift: "Day",
-          salary: 0,
+          salary: 10000,
           status: "active",
+          hireDate: new Date(),
         },
-    resolver: zodResolver(insertEmployeesSchema),
   });
 
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
     mutationFn: createEmployee,
+    onSuccess: () => {
+      onOpenChange(false);
+      form.reset();
+      queryClient.invalidateQueries(queryKeys.LIST_EMPLOYEES);
+    },
+    onMutate(employee) {
+      const employeeId = employee.employeeId;
+
+      const existingEmployees = queryClient.getQueryData<Employee[]>(
+        queryKeys.LIST_EMPLOYEES.queryKey,
+      );
+
+      const existingEmployeeId = existingEmployees?.find(e => e.employeeId === employeeId);
+      if (existingEmployeeId) {
+        form.setError("employeeId", { type: "manual", message: "Employee ID must be unique" });
+        throw new Error("Employee ID must be unique");
+      }
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: updateEmployee,
     onSuccess: () => {
       onOpenChange(false);
       form.reset();
@@ -102,7 +132,15 @@ export function EmployeesActionDialog({
           <Form {...form}>
             <form
               id="employee-form"
-              onSubmit={form.handleSubmit(data => createMutation.mutate(data))}
+              onSubmit={form.handleSubmit((data) => {
+                if (isEdit && currentRow) {
+                  updateMutation.mutate({ id: currentRow.id, employee: data });
+                }
+                else {
+                  const hireDate = data.hireDate ?? new Date();
+                  createMutation.mutate({ ...data, hireDate });
+                }
+              })}
               className="space-y-4 px-0.5"
             >
               <FormField
@@ -148,6 +186,7 @@ export function EmployeesActionDialog({
               <FormField
                 control={form.control}
                 name="employeeId"
+                disabled={isEdit}
                 render={({ field }) => (
                   <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
                     <FormLabel className="col-span-2 text-end">
@@ -209,7 +248,7 @@ export function EmployeesActionDialog({
                       Position
                     </FormLabel>
                     <SelectDropdown
-                      defaultValue={field.value}
+                      defaultValue={field.value ?? ""}
                       onValueChange={field.onChange}
                       placeholder="Select position"
                       className="col-span-4"
@@ -226,7 +265,7 @@ export function EmployeesActionDialog({
                   <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
                     <FormLabel className="col-span-2 text-end">Shift</FormLabel>
                     <SelectDropdown
-                      defaultValue={field.value}
+                      defaultValue={field.value ?? ""}
                       onValueChange={field.onChange}
                       placeholder="Select shift"
                       className="col-span-4"
@@ -248,10 +287,10 @@ export function EmployeesActionDialog({
                       <Input
                         type="number"
                         placeholder="50000"
-                        className="col-span-4"
+                        step={100}
+                        min={0}
                         {...field}
-                        defaultValue={field.value}
-                        onChange={field.onChange}
+                        className="col-span-4"
                       />
                     </FormControl>
                     <FormMessage className="col-span-4 col-start-3" />
@@ -267,7 +306,7 @@ export function EmployeesActionDialog({
                       Status
                     </FormLabel>
                     <SelectDropdown
-                      defaultValue={field.value}
+                      defaultValue={field.value ?? ""}
                       onValueChange={field.onChange}
                       placeholder="Select status"
                       className="col-span-4"
@@ -281,8 +320,8 @@ export function EmployeesActionDialog({
                 control={form.control}
                 name="hireDate"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Date of birth</FormLabel>
+                  <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
+                    <FormLabel className="col-span-2 text-end">Hire Date</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -307,18 +346,15 @@ export function EmployeesActionDialog({
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={field.value ?? undefined}
-                          onSelect={field.onChange}
+                          selected={field.value}
+                          onSelect={date => date && field.onChange(date)}
                           disabled={date =>
                             date > new Date() || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                         />
                       </PopoverContent>
                     </Popover>
-                    <FormDescription>
-                      Employee hire date.
-                    </FormDescription>
-                    <FormMessage />
+                    <FormMessage className="col-span-4 col-start-3" />
                   </FormItem>
                 )}
               />
@@ -326,7 +362,14 @@ export function EmployeesActionDialog({
           </Form>
         </div>
         <DialogFooter>
-          <Button type="submit" form="employee-form">
+          <Button variant="outline" onClick={() => form.reset()}>
+            Reset
+          </Button>
+          <Button
+            type="submit"
+            form="employee-form"
+            disabled={createMutation.isPending}
+          >
             Save changes
           </Button>
         </DialogFooter>

@@ -1,11 +1,27 @@
-import { ConfirmDialog } from "@/web/components/confirm-dialog";
-import { showSubmittedData } from "@/web/lib/show-submitted-data";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
+import { ConfirmDialog } from "@/web/components/confirm-dialog";
+
+import { deleteEmployee, queryKeys } from "../data/queries";
 import { EmployeesActionDialog } from "./employees-action-dialog";
 import { useEmployees } from "./employees-provider";
 
 export function EmployeesDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useEmployees();
+
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteEmployee,
+    onSuccess: () => {
+      setCurrentRow(null);
+      setOpen(null);
+      queryClient.invalidateQueries(queryKeys.LIST_EMPLOYEES);
+      toast.success("Employee deleted successfully");
+    },
+  });
+
   return (
     <>
       <EmployeesActionDialog
@@ -38,16 +54,8 @@ export function EmployeesDialogs() {
                 setCurrentRow(null);
               }, 500);
             }}
-            handleConfirm={() => {
-              setOpen(null);
-              setTimeout(() => {
-                setCurrentRow(null);
-              }, 500);
-              showSubmittedData(
-                currentRow,
-                "The following employee has been deleted:",
-              );
-            }}
+            handleConfirm={() => deleteMutation.mutate(currentRow.id)}
+            disabled={deleteMutation.isPending}
             className="max-w-md"
             title={`Delete this employee: ${currentRow.employeeId} ?`}
             desc={(

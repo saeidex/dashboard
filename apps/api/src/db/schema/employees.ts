@@ -1,14 +1,14 @@
+import { z } from "@hono/zod-openapi"
 import { createId } from "@paralleldrive/cuid2"
-import { index, integer, real, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core"
-import { createInsertSchema, createSelectSchema } from "drizzle-zod"
-import z from "zod"
+import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core"
+import { createSchemaFactory } from "drizzle-zod"
 
 export const employeeStatusSchema = z.union([
   z.literal("active"),
   z.literal("inactive"),
   z.literal("on-leave"),
   z.literal("terminated"),
-])
+]).default("active")
 export type EmployeeStatus = z.infer<typeof employeeStatusSchema>
 
 export const positionSchema = z.union([
@@ -24,14 +24,14 @@ export const positionSchema = z.union([
   z.literal("Cutting Man"),
   z.literal("Delivery Man"),
   z.literal("Helper"),
-])
+]).default("Helper")
 export type Position = z.infer<typeof positionSchema>
 
 export const shiftSchema = z.union([
   z.literal("Day"),
   z.literal("Evening"),
   z.literal("Night"),
-])
+]).default("Day")
 export type Shift = z.infer<typeof shiftSchema>
 
 export const employees = sqliteTable("employees", {
@@ -41,11 +41,11 @@ export const employees = sqliteTable("employees", {
   employeeId: text().notNull(),
   email: text().notNull(),
   phoneNumber: text().notNull(),
-  position: text().$type<Position>().default("Helper"),
-  shift: text().$type<Shift>().default("Day"),
-  status: text().$type<EmployeeStatus>().default("active"),
-  salary: real().notNull(),
-  hireDate: integer({ mode: "timestamp" }).$defaultFn(() => new Date()),
+  position: text().$type<Position>().$default(() => "Helper"),
+  shift: text().$type<Shift>().$default(() => "Day"),
+  status: text().$type<EmployeeStatus>().$default(() => "active"),
+  salary: integer({ mode: "number" }).notNull(),
+  hireDate: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
   createdAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()),
   updatedAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()),
 }, table => [
@@ -53,17 +53,33 @@ export const employees = sqliteTable("employees", {
   index("idx_employees_email").on(table.email),
 ])
 
-export const selectEmployeesSchema = createSelectSchema(employees)
+const { createInsertSchema, createSelectSchema } = createSchemaFactory({
+  coerce: {
+    date: true,
+  },
+})
+
+export const selectEmployeesSchema = createSelectSchema(employees, {
+  position: positionSchema,
+  shift: shiftSchema,
+  status: employeeStatusSchema,
+})
 export type selectEmployeesSchema = z.infer<typeof selectEmployeesSchema>
 
-export const insertEmployeesSchema = createInsertSchema(employees).omit({
+export const insertEmployeesSchema = createInsertSchema(employees, {
+  status: employeeStatusSchema.nullable().optional(),
+  position: positionSchema.nullable().optional(),
+  shift: shiftSchema.nullable().optional(),
+  firstName: schema => schema.min(1, "First name is required").max(100, "First name must be at most 100 characters long"),
+  lastName: schema => schema.min(1, "Last name is required").max(100, "Last name must be at most 100 characters long"),
+  employeeId: schema => schema.min(1, "Employee ID is required").max(50, "Employee ID must be at most 50 characters long"),
+  email: schema => schema.email("Invalid email address").max(100, "Email must be at most 100 characters long"),
+  phoneNumber: schema => schema.min(1, "Phone number is required").max(20, "Phone number must be at most 20 characters long").refine(value => /^\+?[0-9\s\-()]+$/.test(value), "Invalid phone number format"),
+  salary: schema => schema.min(0, "Salary must be a non-negative number"),
+}).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
-}).extend({
-  status: employeeStatusSchema,
-  position: positionSchema,
-  shift: shiftSchema,
 })
 export type insertEmployeesSchema = z.infer<typeof insertEmployeesSchema>
 

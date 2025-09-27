@@ -1,5 +1,6 @@
 import type { Table } from "@tanstack/react-table";
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Trash2, UserCheck, UserX } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -11,8 +12,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/web/components/ui/tooltip";
-import { sleep } from "@/web/lib/utils";
 
+import { queryKeys, updateEmployee } from "../data/queries";
 import { EmployeesMultiDeleteDialog } from "./employees-multi-delete-dialog";
 
 type DataTableBulkActionsProps<TData> = {
@@ -25,13 +26,23 @@ export function DataTableBulkActions<TData>({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const selectedRows = table.getFilteredSelectedRowModel().rows;
 
+  const queryClient = useQueryClient();
+
+  const updateMutation = useMutation({
+    mutationFn: updateEmployee,
+  });
+
   const handleBulkStatusChange = (status: "active" | "inactive") => {
-    const Employees = selectedRows.map(row => row.original);
-    toast.promise(sleep(2000), {
+    toast.promise(async () => {
+      for (const employee of selectedRows) {
+        await updateMutation.mutateAsync({ id: employee.getValue("id"), employee: { status } });
+      }
+    }, {
       loading: `${status === "active" ? "Activating" : "Deactivating"} employees...`,
       success: () => {
         table.resetRowSelection();
-        return `${status === "active" ? "Activated" : "Deactivated"} ${Employees.length} employee${Employees.length > 1 ? "s" : ""}`;
+        queryClient.invalidateQueries(queryKeys.LIST_EMPLOYEES);
+        return `${status === "active" ? "Activated" : "Deactivated"} ${selectedRows.length} employee${selectedRows.length > 1 ? "s" : ""}`;
       },
       error: `Error ${status === "active" ? "activating" : "deactivating"} employees`,
     });

@@ -4,8 +4,6 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Header } from "@/web/components/layout/header";
 import { Main } from "@/web/components/layout/main";
 
-import type { Employee } from "./data/schema";
-
 import { EmployeesDialogs } from "./components/employees-dialogs";
 import { EmployeesPrimaryButtons } from "./components/employees-primary-buttons";
 import { EmployeesProvider } from "./components/employees-provider";
@@ -32,7 +30,8 @@ export function Employees() {
         </div>
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
           <EmployeesTable
-            data={employees as Employee[]}
+          // @ts-expect-error date parsed as string
+            data={employees}
             search={search}
             navigate={navigate}
           />

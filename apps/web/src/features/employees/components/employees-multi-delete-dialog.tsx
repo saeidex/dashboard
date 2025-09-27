@@ -30,6 +30,7 @@ export function EmployeesMultiDeleteDialog<TData>({
   const [value, setValue] = useState("");
 
   const selectedRows = table.getFilteredSelectedRowModel().rows;
+
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
@@ -45,9 +46,9 @@ export function EmployeesMultiDeleteDialog<TData>({
     onOpenChange(false);
 
     toast.promise(async () => {
-      selectedRows.map((row) => {
-        return deleteMutation.mutateAsync(row.id);
-      });
+      for (const employee of selectedRows) {
+        await deleteMutation.mutateAsync(employee.getValue("id"));
+      }
     }, {
       loading: "Deleting employees...",
       success: () => {
