@@ -1,0 +1,22 @@
+{
+  "name": "@crm/api-client",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "scripts": {
+    "clean": "git clean -xdf node_modules",
+    "dev": "tsc --watch",
+    "build": "rm -rf dist && tsc",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@crm/api": "workspace:^",
+    "@crm/eslint-config": "workspace:^",
+    "@types/node": "^24.5.2",
+    "hono": "^4.9.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}

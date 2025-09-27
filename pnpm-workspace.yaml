@@ -1,6 +1,6 @@
 packages:
-  - '.'
-  - 'server'
+  - apps/*
+  - packages/*
 
 onlyBuiltDependencies:
   - '@clerk/shared'
@@ -8,4 +8,4 @@ onlyBuiltDependencies:
   - '@tailwindcss/oxide'
   - core-js
   - esbuild
-
+  - oxc-resolver

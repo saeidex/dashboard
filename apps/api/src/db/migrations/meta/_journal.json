@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1728133964232,
+      "tag": "0000_same_squadron_sinister",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1758125659936,
+      "tag": "0001_sticky_enchantress",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1758125702087,
+      "tag": "0002_abnormal_the_order",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1758900551080,
+      "tag": "0003_skinny_vertigo",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1758904610607,
+      "tag": "0004_exotic_post",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1758960139335,
+      "tag": "0005_deep_malcolm_colcord",
+      "breakpoints": true
+    }
+  ]
+}
