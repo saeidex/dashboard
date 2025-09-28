@@ -2,15 +2,17 @@ import type { insertProductsSchema, patchProductsSchema } from "@crm/api/schema"
 
 import { queryOptions } from "@tanstack/react-query";
 
+import type { ProductSearch } from "@/web/routes/_authenticated/products";
+
 import apiClient from "@/web/lib/api-client";
 import formatApiError from "@/web/lib/format-api-error";
 
 export const queryKeys = {
-  LIST_PRODUCTS: (query: any) => ({ queryKey: ["list-products", query] }),
+  LIST_PRODUCTS: (query: ProductSearch) => ({ queryKey: ["list-products", query] }),
   LIST_PRODUCT: (id: string) => ({ queryKey: [`list-product-${id}`] }),
 };
 
-export const productsQueryOptions = (query: any) => queryOptions({
+export const createProductsQueryOptions = (query: ProductSearch) => queryOptions({
   ...queryKeys.LIST_PRODUCTS(query),
   queryFn: async () => {
     const response = await apiClient.api.products.$get({

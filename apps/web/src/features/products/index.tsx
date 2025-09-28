@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 
 import { Header } from "@/web/components/layout/header";
@@ -10,13 +10,13 @@ import { ProductsDialogs } from "./components/products-dialogs";
 import { ProductsPrimaryButtons } from "./components/products-primary-buttons";
 import { ProductsProvider } from "./components/products-provider";
 import { ProductsTable } from "./components/products-table";
-import { productsQueryOptions } from "./data/queries";
+import { createProductsQueryOptions } from "./data/queries";
 
 const route = getRouteApi("/_authenticated/products/");
 
 export function Products() {
   const search = route.useSearch();
-  const { data: products = [] } = useQuery(productsQueryOptions(search));
+  const { data: products } = useSuspenseQuery(createProductsQueryOptions(search));
 
   return (
     <ProductsProvider>

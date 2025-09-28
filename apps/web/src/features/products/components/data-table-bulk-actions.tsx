@@ -1,7 +1,7 @@
 import type { Table } from "@tanstack/react-table";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSearch } from "@tanstack/react-router";
+import { getRouteApi } from "@tanstack/react-router";
 import { ArrowUpDown, CircleArrowUp, Download, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -23,13 +23,16 @@ import { sleep } from "@/web/lib/utils";
 
 import type { Product } from "../data/schema.ts";
 
-import { categories, statuses } from "../data/data";
+import { statuses } from "../data/data";
 import { queryKeys, updateProduct } from "../data/queries.ts";
 import { ProductsMultiDeleteDialog } from "./products-multi-delete-dialog";
 
 type DataTableBulkActionsProps<TData> = {
   table: Table<TData>;
 };
+
+const route = getRouteApi("/_authenticated/products/");
+const categories = getRouteApi("/_authenticated/categories/").useLoaderData();
 
 export function DataTableBulkActions<TData>({
   table,
@@ -38,7 +41,7 @@ export function DataTableBulkActions<TData>({
   const selectedRows = table.getFilteredSelectedRowModel().rows;
 
   const queryClient = useQueryClient();
-  const search = useSearch({ from: "/_authenticated/products" });
+  const search = route.useSearch();
 
   const updateMutation = useMutation({
     mutationFn: updateProduct,

@@ -1,7 +1,7 @@
 import { insertProductsSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSearch } from "@tanstack/react-router";
+import { getRouteApi } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
@@ -26,7 +26,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/web/components/ui/sheet";
-import { productCategories } from "@/web/features/product-categories/data/product-categories";
 
 import type { Product } from "../data/schema";
 
@@ -38,6 +37,9 @@ type ProductMutateDrawerProps = {
   onOpenChange: (open: boolean) => void;
   currentRow?: Product;
 };
+
+const route = getRouteApi("/_authenticated/products/");
+const categories = getRouteApi("/_authenticated/categories/").useLoaderData();
 
 export function ProductsMutateDrawer({
   open,
@@ -140,7 +142,7 @@ export function ProductsMutateDrawer({
   }, [basePrice, discountPercentage, discountAmount, taxPercentage, form]);
 
   const queryClient = useQueryClient();
-  const search = useSearch({ from: "/_authenticated/products" });
+  const search = route.useSearch();
 
   const createMutation = useMutation({
     mutationFn: createProduct,
@@ -283,7 +285,7 @@ export function ProductsMutateDrawer({
                         defaultValue={field.value?.toString() || ""}
                         onValueChange={field.onChange}
                         placeholder="Select category"
-                        items={productCategories.map(c => ({
+                        items={categories.map(c => ({
                           value: c.id.toString(),
                           label: c.name,
                         }))}

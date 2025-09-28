@@ -1,8 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, getRouteApi } from "@tanstack/react-router";
 import z from "zod";
 
 import { Products } from "@/web/features/products";
-import { categories, statuses } from "@/web/features/products/data/data";
+import { statuses } from "@/web/features/products/data/data";
+import { createProductsQueryOptions } from "@/web/features/products/data/queries";
+
+const categories = getRouteApi("/_authenticated/categories/").useLoaderData();
 
 const productSearchSchema = z.object({
   page: z.number().optional().catch(1),
@@ -18,7 +21,11 @@ const productSearchSchema = z.object({
   filter: z.string().optional().catch(""),
 });
 
+export type ProductSearch = z.infer<typeof productSearchSchema>;
+
 export const Route = createFileRoute("/_authenticated/products/")({
   validateSearch: productSearchSchema,
+  loaderDeps: ({ search }) => ({ search }),
+  loader: ({ context, deps: { search } }) => context.queryClient.ensureQueryData(createProductsQueryOptions(search)),
   component: Products,
 });

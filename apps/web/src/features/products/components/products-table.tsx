@@ -9,9 +9,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-
   useReactTable,
-
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 
@@ -24,7 +22,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/web/components/ui/table";
-import { productCategories } from "@/web/features/product-categories/data/product-categories";
 import { useTableUrlState } from "@/web/hooks/use-table-url-state";
 
 import type { Product } from "../data/schema.ts";
@@ -33,11 +30,12 @@ import { statuses } from "../data/data";
 import { DataTableBulkActions } from "./data-table-bulk-actions";
 import { productsColumns as columns } from "./products-columns";
 
-const route = getRouteApi("/_authenticated/products/");
-
 type DataTableProps = {
   data: Product[];
 };
+
+const route = getRouteApi("/_authenticated/products/");
+const categories = getRouteApi("/_authenticated/categories/").useLoaderData();
 
 export function ProductsTable({ data }: DataTableProps) {
   // Local UI-only states
@@ -122,7 +120,7 @@ export function ProductsTable({ data }: DataTableProps) {
           {
             columnId: "categoryId",
             title: "Category",
-            options: productCategories.map(c => ({
+            options: categories.map(c => ({
               label: c.name,
               value: c.id.toString(),
             })),
