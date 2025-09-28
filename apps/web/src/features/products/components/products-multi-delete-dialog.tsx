@@ -3,8 +3,8 @@
 import type { Table } from "@tanstack/react-table";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSearch } from "@tanstack/react-router";
 import { AlertTriangle } from "lucide-react";
-import { useSearch } from "node_modules/@tanstack/react-router/dist/esm/useSearch";
 import { useState } from "react";
 import { toast } from "sonner";
 

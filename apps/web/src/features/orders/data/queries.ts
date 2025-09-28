@@ -40,9 +40,9 @@ export function createOrderQueryOptions(id: string) {
   });
 }
 
-export async function createEmployee(employee: insertOrdersSchema) patchOrdersSchema
+export async function createEmployee(order: insertOrdersSchema) {
   const response = await apiClient.api.employees.$post({
-    json: employee,
+    json: order,
   });
   const json = await response.json();
   if ("success" in json) {
@@ -68,12 +68,12 @@ export async function deleteEmployee(id: string) {
   }
 }
 
-export async function updateEmployee({ id, employee }: { id: string; employee: patchEmployeesSchema }) {
+export async function updateEmployee({ id, order }: { id: string; order: patchOrdersSchema }) {
   const response = await apiClient.api.employees[":id"].$patch({
     param: {
       id,
     },
-    json: employee,
+    json: order,
   });
   if (response.status !== 200) {
     const json = await response.json();

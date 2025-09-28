@@ -1,5 +1,3 @@
-import type { insertEmployeesSchema } from "@crm/api/schema";
-
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 

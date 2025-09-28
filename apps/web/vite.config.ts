@@ -1,24 +1,45 @@
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react-swc";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
+import dts from "vite-plugin-dts";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // https://vite.dev/config/
 export default defineConfig({
-  root: ".",
+  root: __dirname,
+  cacheDir: "../../node_modules/.vite/apps/web",
   plugins: [
+    dts({
+      entryRoot: "src",
+      tsconfigPath: path.join(__dirname, "tsconfig.json"),
+    }),
+    react(),
     tanstackRouter({
       target: "react",
       autoCodeSplitting: true,
     }),
-    react(),
     tailwindcss(),
-    tsconfigPaths(),
   ],
+  resolve: {
+    alias: {
+      "@/web": path.resolve(__dirname, "./src"),
+    },
+  },
   server: {
     proxy: {
       "/api": "http://localhost:9999",
+    },
+  },
+  build: {
+    outDir: path.join(__dirname, "./dist"),
+    emptyOutDir: true,
+    commonjsOptions: {
+      transformMixedEsModules: true,
     },
   },
 });

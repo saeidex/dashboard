@@ -1,7 +1,7 @@
 import { insertProductsSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSearch } from "node_modules/@tanstack/react-router/dist/esm/useSearch";
+import { useSearch } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";

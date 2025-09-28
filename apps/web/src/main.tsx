@@ -25,6 +25,7 @@ const queryClient = new QueryClient({
     queries: {
       retry: (failureCount, error) => {
         if (import.meta.env.DEV)
+          // eslint-disable-next-line no-console
           console.log({ failureCount, error });
 
         if (failureCount >= 0 && import.meta.env.DEV)
@@ -82,10 +83,10 @@ const router = createRouter({
 });
 
 declare module "@tanstack/react-router" {
-  // @ts-expect-error Register the router instance for type safety
-  type Register = {
+  // eslint-disable-next-line ts/consistent-type-definitions
+  interface Register {
     router: typeof router;
-  };
+  }
 }
 
 // Render the app

@@ -43,7 +43,7 @@ export function createCategoryQueryOptions(id: number) {
 export async function createCategory(category: insertProductCategoriesSchema) {
   const response = await apiClient.api.categories.$post({
     json: category,
-  });   
+  });
   const json = await response.json();
   if ("success" in json) {
     const message = formatApiError(json);

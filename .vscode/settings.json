@@ -49,6 +49,5 @@
   "cSpell.words": [
     "Hono",
     "openapi"
-],
-"sqltools.useNodeRuntime": true
+  ]
 }

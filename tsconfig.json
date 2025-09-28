@@ -1,23 +1,13 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "jsx": "react-jsx",
     "lib": [
       "ESNext"
     ],
     "moduleDetection": "force",
     "useDefineForClassFields": true,
-    "baseUrl": ".",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "paths": {
-      "@/api/*": [
-        "apps/api/src/*"
-      ],
-      "@/web/*": [
-        "apps/web/src/*"
-      ]
-    },
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
