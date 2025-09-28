@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 
 import { Header } from "@/web/components/layout/header";
@@ -7,13 +8,15 @@ import { VendorsDialogs } from "./components/vendors-dialogs";
 import { VendorsPrimaryButtons } from "./components/vendors-primary-buttons";
 import { VendorsProvider } from "./components/vendors-provider";
 import { VendorsTable } from "./components/vendors-table";
-import { vendors } from "./data/vendors";
+import { vendorsQueryOptions } from "./data/queries";
 
 const route = getRouteApi("/_authenticated/vendors/");
 
 export const Vendors = () => {
   const search = route.useSearch();
   const navigate = route.useNavigate();
+
+  const { data } = useSuspenseQuery(vendorsQueryOptions);
 
   return (
     <VendorsProvider>
@@ -27,7 +30,8 @@ export const Vendors = () => {
           <VendorsPrimaryButtons />
         </div>
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
-          <VendorsTable data={vendors} search={search} navigate={navigate} />
+          {/* @ts-expect-error Date parsed as string */}
+          <VendorsTable data={data} search={search} navigate={navigate} />
         </div>
       </Main>
       <VendorsDialogs />

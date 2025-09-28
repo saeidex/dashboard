@@ -1,11 +1,25 @@
-import { ConfirmDialog } from "@/web/components/confirm-dialog";
-import { showSubmittedData } from "@/web/lib/show-submitted-data";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
+import { ConfirmDialog } from "@/web/components/confirm-dialog";
+
+import { deleteVendor, queryKeys } from "../data/queries";
 import { VendorsActionDialog } from "./vendors-action-dialog";
 import { useVendors } from "./vendors-provider";
 
 export function VendorsDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useVendors();
+
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteVendor,
+    onSuccess: () => {
+      queryClient.invalidateQueries(queryKeys.LIST_VENDORS);
+      toast.success("Vendor deleted successfully");
+    },
+  });
+
   return (
     <>
       <VendorsActionDialog
@@ -43,10 +57,7 @@ export function VendorsDialogs() {
               setTimeout(() => {
                 setCurrentRow(null);
               }, 500);
-              showSubmittedData(
-                currentRow,
-                "The following vendor has been deleted:",
-              );
+              deleteMutation.mutate(currentRow.id);
             }}
             className="max-w-md"
             title={`Delete this vendor: ${currentRow.vendorId} ?`}

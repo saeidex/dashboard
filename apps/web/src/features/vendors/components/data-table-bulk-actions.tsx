@@ -1,5 +1,6 @@
 import type { Table } from "@tanstack/react-table";
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Trash2, UserCheck, UserX } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -11,10 +12,10 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/web/components/ui/tooltip";
-import { sleep } from "@/web/lib/utils";
 
 import type { Vendor } from "../data/schema";
 
+import { queryKeys, updateVendor } from "../data/queries";
 import { VendorsMultiDeleteDialog } from "./vendors-multi-delete-dialog";
 
 type DataTableBulkActionsProps<TData> = {
@@ -26,14 +27,26 @@ export function DataTableBulkActions<TData>({
 }: DataTableBulkActionsProps<TData>) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const selectedRows = table.getFilteredSelectedRowModel().rows;
+  const vendors = selectedRows.map(row => row.original as Vendor);
+
+  const queryClient = useQueryClient();
+
+  const updateMutation = useMutation({
+    mutationFn: updateVendor,
+  });
 
   const handleBulkIsActiveChange = (isActive: boolean) => {
-    const Vendors = selectedRows.map(row => row.original as Vendor);
-    toast.promise(sleep(2000), {
+    toast.promise(async () => {
+      for (const row of vendors) {
+        await updateMutation.mutateAsync({ id: row.id, vendor: { isActive } });
+      }
+    }, {
       loading: `${isActive ? "Activating" : "Deactivating"} vendors...`,
       success: () => {
         table.resetRowSelection();
-        return `${isActive ? "Activated" : "Deactivated"} ${Vendors.length} user${Vendors.length > 1 ? "s" : ""}`;
+        queryClient.invalidateQueries(queryKeys.LIST_VENDORS);
+
+        return `${isActive ? "Activated" : "Deactivated"} ${selectedRows.length} user${selectedRows.length > 1 ? "s" : ""}`;
       },
       error: `Error ${isActive ? "activating" : "deactivating"} vendors`,
     });
@@ -46,6 +59,7 @@ export function DataTableBulkActions<TData>({
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
+              disabled={updateMutation.isPending}
               variant="outline"
               size="icon"
               onClick={() => handleBulkIsActiveChange(true)}
@@ -65,6 +79,7 @@ export function DataTableBulkActions<TData>({
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
+              disabled={updateMutation.isPending}
               variant="outline"
               size="icon"
               onClick={() => handleBulkIsActiveChange(false)}

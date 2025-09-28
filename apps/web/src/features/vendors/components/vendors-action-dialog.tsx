@@ -1,8 +1,10 @@
 "use client";
 
+import { insertVendorsSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { toast } from "sonner";
 
 import { SelectDropdown } from "@/web/components/select-dropdown";
 import { Button } from "@/web/components/ui/button";
@@ -23,19 +25,10 @@ import {
   FormMessage,
 } from "@/web/components/ui/form";
 import { Input } from "@/web/components/ui/input";
-import { showSubmittedData } from "@/web/lib/show-submitted-data";
 
 import type { Vendor } from "../data/schema";
 
-import { vendorSchema } from "../data/schema";
-
-const formSchema = vendorSchema.omit({ createdAt: true }).or(
-  z.object({
-    id: z.string().optional(),
-  }),
-);
-
-type VendorForm = z.infer<typeof formSchema>;
+import { createVendor, queryKeys, updateVendor } from "../data/queries";
 
 type VendorActionDialogProps = {
   currentRow?: Vendor;
@@ -54,11 +47,12 @@ export function VendorsActionDialog({
   onOpenChange,
 }: VendorActionDialogProps) {
   const isEdit = !!currentRow;
-  const form = useForm<VendorForm>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<insertVendorsSchema>({
+    resolver: zodResolver(insertVendorsSchema),
     defaultValues: isEdit
       ? currentRow
       : {
+          vendorId: `VND-${Math.floor(10000 + Math.random() * 90000)}`,
           name: "",
           email: "",
           phone: "",
@@ -69,9 +63,34 @@ export function VendorsActionDialog({
         },
   });
 
-  const onSubmit = (values: VendorForm) => {
+  const queryClient = useQueryClient();
+
+  const createMutation = useMutation({
+    mutationFn: createVendor,
+    onSuccess: () => {
+      queryClient.invalidateQueries(queryKeys.LIST_VENDORS);
+      toast.success("Vendor created successfully");
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: updateVendor,
+    onSuccess: () => {
+      queryClient.invalidateQueries(queryKeys.LIST_VENDORS);
+      toast.success("Vendor updated successfully");
+    },
+  });
+
+  const onSubmit = (values: insertVendorsSchema) => {
     form.reset();
-    showSubmittedData(values);
+
+    if (isEdit && currentRow) {
+      updateMutation.mutate({ id: currentRow.id, vendor: values });
+    }
+    else {
+      createMutation.mutate(values);
+    }
+
     onOpenChange(false);
   };
 
@@ -98,6 +117,25 @@ export function VendorsActionDialog({
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-4 px-0.5"
             >
+              <FormField
+                control={form.control}
+                name="vendorId"
+                disabled={isEdit}
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
+                    <FormLabel className="col-span-2 text-end">Vendor ID</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Vendor ID"
+                        className="col-span-4"
+                        autoComplete="off"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="col-span-4 col-start-3" />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="name"
@@ -164,6 +202,7 @@ export function VendorsActionDialog({
                         placeholder="Street Address"
                         className="col-span-4"
                         {...field}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormMessage className="col-span-4 col-start-3" />
@@ -181,6 +220,7 @@ export function VendorsActionDialog({
                         placeholder="City"
                         className="col-span-4"
                         {...field}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormMessage className="col-span-4 col-start-3" />
@@ -198,6 +238,7 @@ export function VendorsActionDialog({
                         placeholder="Additional notes..."
                         className="col-span-4"
                         {...field}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormMessage className="col-span-4 col-start-3" />
@@ -228,7 +269,17 @@ export function VendorsActionDialog({
           </Form>
         </div>
         <DialogFooter>
-          <Button type="submit" form="vendor-form">
+          <Button
+            variant="outline"
+            onClick={() => form.reset()}
+          >
+            Reset
+          </Button>
+          <Button
+            type="submit"
+            form="vendor-form"
+            disabled={createMutation.isPending || updateMutation.isPending}
+          >
             Save changes
           </Button>
         </DialogFooter>
