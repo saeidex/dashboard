@@ -3,26 +3,26 @@ import { toast } from "sonner";
 
 import { ConfirmDialog } from "@/web/components/confirm-dialog";
 
-import { deleteVendor, queryKeys } from "../data/queries";
-import { VendorsActionDialog } from "./vendors-action-dialog";
-import { useVendors } from "./vendors-provider";
+import { deleteCustomer, queryKeys } from "../data/queries";
+import { CustomersActionDialog } from "./customers-action-dialog";
+import { useCustomers } from "./customers-provider";
 
-export function VendorsDialogs() {
-  const { open, setOpen, currentRow, setCurrentRow } = useVendors();
+export function CustomersDialogs() {
+  const { open, setOpen, currentRow, setCurrentRow } = useCustomers();
 
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
-    mutationFn: deleteVendor,
+    mutationFn: deleteCustomer,
     onSuccess: () => {
       queryClient.invalidateQueries(queryKeys.LIST_VENDORS);
-      toast.success("Vendor deleted successfully");
+      toast.success("Customer deleted successfully");
     },
   });
 
   return (
     <>
-      <VendorsActionDialog
+      <CustomersActionDialog
         key="user-add"
         open={open === "add"}
         onOpenChange={() => setOpen("add")}
@@ -30,7 +30,7 @@ export function VendorsDialogs() {
 
       {currentRow && (
         <>
-          <VendorsActionDialog
+          <CustomersActionDialog
             key={`user-edit-${currentRow.id}`}
             open={open === "edit"}
             onOpenChange={() => {
@@ -43,7 +43,7 @@ export function VendorsDialogs() {
           />
 
           <ConfirmDialog
-            key="vendor-delete"
+            key="customer-delete"
             destructive
             open={open === "delete"}
             onOpenChange={() => {
@@ -60,10 +60,10 @@ export function VendorsDialogs() {
               deleteMutation.mutate(currentRow.id);
             }}
             className="max-w-md"
-            title={`Delete this vendor: ${currentRow.vendorId} ?`}
+            title={`Delete this customer: ${currentRow.customerId} ?`}
             desc={(
               <>
-                You are about to delete a vendor with the name
+                You are about to delete a customer with the name
                 {" "}
                 <strong>{currentRow.name}</strong>
                 .

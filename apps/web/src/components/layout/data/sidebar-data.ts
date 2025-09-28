@@ -168,8 +168,8 @@ export const sidebarData: SidebarData = {
           icon: IdCard,
         },
         {
-          title: "Vendors",
-          url: "/vendors",
+          title: "Customers",
+          url: "/customers",
           icon: UsersRound,
         },
         {

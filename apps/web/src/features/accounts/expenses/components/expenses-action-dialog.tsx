@@ -89,7 +89,7 @@ export function ExpensesActionDialog({
             {isEdit ? "Edit Expense" : "Add New Expense"}
           </DialogTitle>
           <DialogDescription>
-            {isEdit ? "Update the vendor here. " : "Create new vendor here. "}
+            {isEdit ? "Update the customer here. " : "Create new customer here. "}
             Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
@@ -205,7 +205,7 @@ export function ExpensesActionDialog({
           </Form>
         </div>
         <DialogFooter>
-          <Button type="submit" form="vendor-form">
+          <Button type="submit" form="customer-form">
             Save changes
           </Button>
         </DialogFooter>

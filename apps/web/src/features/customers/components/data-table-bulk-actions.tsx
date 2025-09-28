@@ -13,10 +13,10 @@ import {
   TooltipTrigger,
 } from "@/web/components/ui/tooltip";
 
-import type { Vendor } from "../data/schema";
+import type { Customer } from "../data/schema";
 
-import { queryKeys, updateVendor } from "../data/queries";
-import { VendorsMultiDeleteDialog } from "./vendors-multi-delete-dialog";
+import { queryKeys, updateCustomer } from "../data/queries";
+import { CustomersMultiDeleteDialog } from "./customers-multi-delete-dialog";
 
 type DataTableBulkActionsProps<TData> = {
   table: Table<TData>;
@@ -27,35 +27,35 @@ export function DataTableBulkActions<TData>({
 }: DataTableBulkActionsProps<TData>) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const selectedRows = table.getFilteredSelectedRowModel().rows;
-  const vendors = selectedRows.map(row => row.original as Vendor);
+  const customers = selectedRows.map(row => row.original as Customer);
 
   const queryClient = useQueryClient();
 
   const updateMutation = useMutation({
-    mutationFn: updateVendor,
+    mutationFn: updateCustomer,
   });
 
   const handleBulkIsActiveChange = (isActive: boolean) => {
     toast.promise(async () => {
-      for (const row of vendors) {
-        await updateMutation.mutateAsync({ id: row.id, vendor: { isActive } });
+      for (const row of customers) {
+        await updateMutation.mutateAsync({ id: row.id, customer: { isActive } });
       }
     }, {
-      loading: `${isActive ? "Activating" : "Deactivating"} vendors...`,
+      loading: `${isActive ? "Activating" : "Deactivating"} customers...`,
       success: () => {
         table.resetRowSelection();
         queryClient.invalidateQueries(queryKeys.LIST_VENDORS);
 
         return `${isActive ? "Activated" : "Deactivated"} ${selectedRows.length} user${selectedRows.length > 1 ? "s" : ""}`;
       },
-      error: `Error ${isActive ? "activating" : "deactivating"} vendors`,
+      error: `Error ${isActive ? "activating" : "deactivating"} customers`,
     });
     table.resetRowSelection();
   };
 
   return (
     <>
-      <BulkActionsToolbar table={table} entityName="vendor">
+      <BulkActionsToolbar table={table} entityName="customer">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -64,15 +64,15 @@ export function DataTableBulkActions<TData>({
               size="icon"
               onClick={() => handleBulkIsActiveChange(true)}
               className="size-8"
-              aria-label="Activate selected vendors"
-              title="Activate selected vendors"
+              aria-label="Activate selected customers"
+              title="Activate selected customers"
             >
               <UserCheck />
-              <span className="sr-only">Activate selected vendors</span>
+              <span className="sr-only">Activate selected customers</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Activate selected vendors</p>
+            <p>Activate selected customers</p>
           </TooltipContent>
         </Tooltip>
 
@@ -84,15 +84,15 @@ export function DataTableBulkActions<TData>({
               size="icon"
               onClick={() => handleBulkIsActiveChange(false)}
               className="size-8"
-              aria-label="Deactivate selected vendors"
-              title="Deactivate selected vendors"
+              aria-label="Deactivate selected customers"
+              title="Deactivate selected customers"
             >
               <UserX />
-              <span className="sr-only">Deactivate selected vendors</span>
+              <span className="sr-only">Deactivate selected customers</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Deactivate selected vendors</p>
+            <p>Deactivate selected customers</p>
           </TooltipContent>
         </Tooltip>
 
@@ -103,20 +103,20 @@ export function DataTableBulkActions<TData>({
               size="icon"
               onClick={() => setShowDeleteConfirm(true)}
               className="size-8"
-              aria-label="Delete selected vendors"
-              title="Delete selected vendors"
+              aria-label="Delete selected customers"
+              title="Delete selected customers"
             >
               <Trash2 />
-              <span className="sr-only">Delete selected vendors</span>
+              <span className="sr-only">Delete selected customers</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Delete selected vendors</p>
+            <p>Delete selected customers</p>
           </TooltipContent>
         </Tooltip>
       </BulkActionsToolbar>
 
-      <VendorsMultiDeleteDialog
+      <CustomersMultiDeleteDialog
         table={table}
         open={showDeleteConfirm}
         onOpenChange={setShowDeleteConfirm}

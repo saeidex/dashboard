@@ -13,16 +13,16 @@ import {
   DropdownMenuTrigger,
 } from "@/web/components/ui/dropdown-menu";
 
-import type { Vendor } from "../data/schema";
+import type { Customer } from "../data/schema";
 
-import { useVendors } from "./vendors-provider";
+import { useCustomers } from "./customers-provider";
 
 type DataTableRowActionsProps = {
-  row: Row<Vendor>;
+  row: Row<Customer>;
 };
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-  const { setOpen, setCurrentRow } = useVendors();
+  const { setOpen, setCurrentRow } = useCustomers();
   return (
     <>
       <DropdownMenu modal={false}>

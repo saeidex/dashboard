@@ -1,6 +1,6 @@
 "use client";
 
-import { insertVendorsSchema } from "@crm/api/schema";
+import { insertCustomersSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -26,12 +26,12 @@ import {
 } from "@/web/components/ui/form";
 import { Input } from "@/web/components/ui/input";
 
-import type { Vendor } from "../data/schema";
+import type { Customer } from "../data/schema";
 
-import { createVendor, queryKeys, updateVendor } from "../data/queries";
+import { createCustomer, queryKeys, updateCustomer } from "../data/queries";
 
-type VendorActionDialogProps = {
-  currentRow?: Vendor;
+type CustomerActionDialogProps = {
+  currentRow?: Customer;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
@@ -41,18 +41,18 @@ const activeStatuses = [
   { label: "Inactive", value: "false" },
 ];
 
-export function VendorsActionDialog({
+export function CustomersActionDialog({
   currentRow,
   open,
   onOpenChange,
-}: VendorActionDialogProps) {
+}: CustomerActionDialogProps) {
   const isEdit = !!currentRow;
-  const form = useForm<insertVendorsSchema>({
-    resolver: zodResolver(insertVendorsSchema),
+  const form = useForm<insertCustomersSchema>({
+    resolver: zodResolver(insertCustomersSchema),
     defaultValues: isEdit
       ? currentRow
       : {
-          vendorId: `VND-${Math.floor(10000 + Math.random() * 90000)}`,
+          customerId: `VND-${Math.floor(10000 + Math.random() * 90000)}`,
           name: "",
           email: "",
           phone: "",
@@ -66,26 +66,26 @@ export function VendorsActionDialog({
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
-    mutationFn: createVendor,
+    mutationFn: createCustomer,
     onSuccess: () => {
       queryClient.invalidateQueries(queryKeys.LIST_VENDORS);
-      toast.success("Vendor created successfully");
+      toast.success("Customer created successfully");
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: updateVendor,
+    mutationFn: updateCustomer,
     onSuccess: () => {
       queryClient.invalidateQueries(queryKeys.LIST_VENDORS);
-      toast.success("Vendor updated successfully");
+      toast.success("Customer updated successfully");
     },
   });
 
-  const onSubmit = (values: insertVendorsSchema) => {
+  const onSubmit = (values: insertCustomersSchema) => {
     form.reset();
 
     if (isEdit && currentRow) {
-      updateMutation.mutate({ id: currentRow.id, vendor: values });
+      updateMutation.mutate({ id: currentRow.id, customer: values });
     }
     else {
       createMutation.mutate(values);
@@ -104,29 +104,29 @@ export function VendorsActionDialog({
     >
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="text-start">
-          <DialogTitle>{isEdit ? "Edit Vendor" : "Add New Vendor"}</DialogTitle>
+          <DialogTitle>{isEdit ? "Edit Customer" : "Add New Customer"}</DialogTitle>
           <DialogDescription>
-            {isEdit ? "Update the vendor here. " : "Create new vendor here. "}
+            {isEdit ? "Update the customer here. " : "Create new customer here. "}
             Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <div className="h-auto w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3">
           <Form {...form}>
             <form
-              id="vendor-form"
+              id="customer-form"
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-4 px-0.5"
             >
               <FormField
                 control={form.control}
-                name="vendorId"
+                name="customerId"
                 disabled={isEdit}
                 render={({ field }) => (
                   <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                    <FormLabel className="col-span-2 text-end">Vendor ID</FormLabel>
+                    <FormLabel className="col-span-2 text-end">Customer ID</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Vendor ID"
+                        placeholder="Customer ID"
                         className="col-span-4"
                         autoComplete="off"
                         {...field}
@@ -144,7 +144,7 @@ export function VendorsActionDialog({
                     <FormLabel className="col-span-2 text-end">Name</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Vendor Name"
+                        placeholder="Customer Name"
                         className="col-span-4"
                         autoComplete="off"
                         {...field}
@@ -163,7 +163,7 @@ export function VendorsActionDialog({
                     <FormControl>
                       <Input
                         type="email"
-                        placeholder="vendor@company.com"
+                        placeholder="customer@company.com"
                         className="col-span-4"
                         {...field}
                       />
@@ -277,7 +277,7 @@ export function VendorsActionDialog({
           </Button>
           <Button
             type="submit"
-            form="vendor-form"
+            form="customer-form"
             disabled={createMutation.isPending || updateMutation.isPending}
           >
             Save changes

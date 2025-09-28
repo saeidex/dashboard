@@ -5,81 +5,81 @@ import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers"
 import { createErrorSchema } from "stoker/openapi/schemas"
 
 import {
-  insertVendorsSchema,
-  patchVendorsSchema,
-  selectVendorsSchema,
+  insertCustomersSchema,
+  patchCustomersSchema,
+  selectCustomersSchema,
 } from "@/api/db/schema"
 import { notFoundSchema } from "@/api/lib/constants"
 
-const tags = ["Vendors"]
+const tags = ["Customers"]
 
-const VendorIdParamsSchema = z.object({
+const CustomerIdParamsSchema = z.object({
   id: z.string().min(1).openapi({ example: createId() }),
 })
 
 export const list = createRoute({
-  path: "/vendors",
+  path: "/customers",
   method: "get",
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      z.array(selectVendorsSchema),
-      "List of vendors",
+      z.array(selectCustomersSchema),
+      "List of customers",
     ),
   },
 })
 
 export const create = createRoute({
-  path: "/vendors",
+  path: "/customers",
   method: "post",
   request: {
-    body: jsonContentRequired(insertVendorsSchema, "Vendor to create"),
+    body: jsonContentRequired(insertCustomersSchema, "Customer to create"),
   },
   tags,
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(selectVendorsSchema, "Created vendor"),
+    [HttpStatusCodes.OK]: jsonContent(selectCustomersSchema, "Created customer"),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(insertVendorsSchema),
+      createErrorSchema(insertCustomersSchema),
       "Validation error(s)",
     ),
   },
 })
 
 export const getOne = createRoute({
-  path: "/vendors/{id}",
+  path: "/customers/{id}",
   method: "get",
-  request: { params: VendorIdParamsSchema },
+  request: { params: CustomerIdParamsSchema },
   tags,
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(selectVendorsSchema, "Requested vendor"),
+    [HttpStatusCodes.OK]: jsonContent(selectCustomersSchema, "Requested customer"),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       notFoundSchema,
-      "Vendor not found",
+      "Customer not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(VendorIdParamsSchema),
+      createErrorSchema(CustomerIdParamsSchema),
       "Invalid id error",
     ),
   },
 })
 
 export const patch = createRoute({
-  path: "/vendors/{id}",
+  path: "/customers/{id}",
   method: "patch",
   request: {
-    params: VendorIdParamsSchema,
-    body: jsonContentRequired(patchVendorsSchema, "Vendor updates"),
+    params: CustomerIdParamsSchema,
+    body: jsonContentRequired(patchCustomersSchema, "Customer updates"),
   },
   tags,
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(selectVendorsSchema, "Updated vendor"),
+    [HttpStatusCodes.OK]: jsonContent(selectCustomersSchema, "Updated customer"),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       notFoundSchema,
-      "Vendor not found",
+      "Customer not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(patchVendorsSchema).or(
-        createErrorSchema(VendorIdParamsSchema),
+      createErrorSchema(patchCustomersSchema).or(
+        createErrorSchema(CustomerIdParamsSchema),
       ),
       "Validation error(s)",
     ),
@@ -87,18 +87,18 @@ export const patch = createRoute({
 })
 
 export const remove = createRoute({
-  path: "/vendors/{id}",
+  path: "/customers/{id}",
   method: "delete",
-  request: { params: VendorIdParamsSchema },
+  request: { params: CustomerIdParamsSchema },
   tags,
   responses: {
-    [HttpStatusCodes.NO_CONTENT]: { description: "Vendor deleted" },
+    [HttpStatusCodes.NO_CONTENT]: { description: "Customer deleted" },
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       notFoundSchema,
-      "Vendor not found",
+      "Customer not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(VendorIdParamsSchema),
+      createErrorSchema(CustomerIdParamsSchema),
       "Invalid id error",
     ),
   },

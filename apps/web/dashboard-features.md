@@ -4,7 +4,7 @@
    Categories: name, image.
    Employees: position, shift, salary, status, hireDate.
    Users (internal): role, createdAt.
-   Vendors: isActive, city, createdAt.
+   Customers: isActive, city, createdAt.
    Tasks: status, label, priority.
    Expenses: category, amount, currency, createdAt.
    Temporal fields: createdAt / updatedAt on most entities; hireDate for employees.
@@ -20,7 +20,7 @@ Products & Inventory
 Orders Pipeline / Fulfillment
 Expenses & Profitability
 Categories Performance
-Vendors & Supply Health
+Customers & Supply Health
 Employees & Workforce
 Tasks & Operational Flow
 System / Administrative (users, roles activity) – optional or separate admin tab. 3. Executive Overview (Hero Section)
@@ -106,16 +106,16 @@ Donut: Category distribution.
 KPI: Net Profit (Revenue - Expenses).
 KPI: Operating Margin (Net Profit / Revenue). Data Needs:
 Group expenses by date(createdAt), by category.
-Align time granularity to orders (daily). 9. Vendors & Supply
+Align time granularity to orders (daily). 9. Customers & Supply
 Metrics:
 
-Active Vendors count (isActive).
-New Vendors (last 30 days).
-Vendor Contribution (if later you link purchases; currently no linkage—so limited). Visuals:
-Table: Vendors (name, city, isActive, createdAt).
-Bar (future): Spend per Vendor (once purchase order or expense referenceId linked). Potential Derived:
-Vendor Activation Trend (line). Gap:
-No schema linking vendors to products or expenses—flag as future enhancement. 10. Employees & Workforce
+Active Customers count (isActive).
+New Customers (last 30 days).
+Customer Contribution (if later you link purchases; currently no linkage—so limited). Visuals:
+Table: Customers (name, city, isActive, createdAt).
+Bar (future): Spend per Customer (once purchase order or expense referenceId linked). Potential Derived:
+Customer Activation Trend (line). Gap:
+No schema linking customers to products or expenses—flag as future enhancement. 10. Employees & Workforce
 Metrics:
 
 Headcount by Status.
@@ -153,8 +153,8 @@ Products: add cost (costBase, costCurrency) for gross margin.
 Orders: add deliveredAt, cancelledAt to allow fulfillment time & cancellation rate.
 Employees: add terminatedAt (optional), department.
 Tasks: add createdAt, updatedAt, dueDate, completedAt.
-Vendors: link expenses (expense referenceId referencing vendorId) or introduce purchase orders.
-Expenses: add vendorId (optional foreign key).
+Customers: link expenses (expense referenceId referencing customerId) or introduce purchase orders.
+Expenses: add customerId (optional foreign key).
 Inventory Movements: separate table (productId, delta, reason, createdAt) to compute turnover. 15. Visualization Mapping Table (Summary)
 KPI Cards:
 
@@ -224,7 +224,7 @@ products: categoryId, status, stock.
 expenses: createdAt, category.
 employees: status, position, hireDate.
 tasks: status, priority.
-vendors: isActive, createdAt.
+customers: isActive, createdAt.
 Pre-Aggregation Strategy:
 
 Materialize daily aggregates to avoid scanning raw orders for charts.
@@ -241,7 +241,7 @@ Sections as modular cards with a shared DashboardContext:
 Each card uses SWR/React Query keyed by (entity, dateRange, filters).
 Skeleton states for fast perceived performance.
 Combine small KPIs into a single batched endpoint (/dashboard/summary). 21. API Endpoint Sketch (If building backend later)
-GET /dashboard/summary?from=&to= GET /dashboard/revenue/trend?interval=daily GET /dashboard/orders/status GET /dashboard/orders/recent?limit=10 GET /dashboard/products/top?metric=revenue&limit=10 GET /dashboard/products/low-stock?threshold=10 GET /dashboard/categories/performance GET /dashboard/expenses/trend GET /dashboard/expenses/categories GET /dashboard/employees/composition GET /dashboard/tasks/status GET /dashboard/vendors/active (Optionally GraphQL with typed resolvers.)
+GET /dashboard/summary?from=&to= GET /dashboard/revenue/trend?interval=daily GET /dashboard/orders/status GET /dashboard/orders/recent?limit=10 GET /dashboard/products/top?metric=revenue&limit=10 GET /dashboard/products/low-stock?threshold=10 GET /dashboard/categories/performance GET /dashboard/expenses/trend GET /dashboard/expenses/categories GET /dashboard/employees/composition GET /dashboard/tasks/status GET /dashboard/customers/active (Optionally GraphQL with typed resolvers.)
 
 22. Prioritized Implementation Roadmap
     Phase 1 (MVP):
@@ -263,7 +263,7 @@ Phase 3:
 Pareto, Calendar Heatmap, Funnel, Scatter, Advanced profitability metrics, Drill-down modals.
 Phase 4:
 
-Introduce missing schema fields (cost, timestamps), inventory movements, vendor spend integration. 23. Data Quality & Validation Notes
+Introduce missing schema fields (cost, timestamps), inventory movements, customer spend integration. 23. Data Quality & Validation Notes
 Leverage existing superRefine validations for pricing integrity. Add server guards to prevent inconsistent aggregates by recalculating totals server-side before persist.
 
 24. Risk & Gaps Summary
@@ -271,7 +271,7 @@ Leverage existing superRefine validations for pricing integrity. Add server guar
     No order delivery lifecycle timestamps → limited fulfillment analytics; add deliveredAt.
     No inventory movement history → approximated turnover only; add movement events.
     Tasks lack temporal fields → limited flow metrics; extend schema.
-    Vendor linkage absent → supply analytics limited; add foreign keys in expenses or new purchase orders.
+    Customer linkage absent → supply analytics limited; add foreign keys in expenses or new purchase orders.
 25. Sample KPI Calculation Pseudocode
     AOV = revenue / ordersCount NetProfit = revenue - expensesTotal InventoryValue = sum(products.map(p => p.pricing.total \* p.stock)) DiscountRate = discountTotal / (itemsTotal + discountTotal) CategoryShare = categoryRevenue / totalRevenue
 

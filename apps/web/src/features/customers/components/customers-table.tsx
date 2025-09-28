@@ -28,30 +28,30 @@ import {
 import { useTableUrlState } from "@/web/hooks/use-table-url-state";
 import { cn } from "@/web/lib/utils";
 
-import type { Vendor } from "../data/schema";
+import type { Customer } from "../data/schema";
 
+import { customersColumns } from "./customers-columns";
 import { DataTableBulkActions } from "./data-table-bulk-actions";
-import { vendorsColumns } from "./vendors-columns";
 
 type DataTableProps = {
-  data: Vendor[];
+  data: Customer[];
   search: Record<string, unknown>;
   navigate: NavigateFn;
 };
 
-export function VendorsTable({ data, search, navigate }: DataTableProps) {
+export function CustomersTable({ data, search, navigate }: DataTableProps) {
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columns = vendorsColumns;
+  const columns = customersColumns;
 
   // Local state management for table (uncomment to use local-only state, not synced with URL)
   // const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>([])
   // const [pagination, onPaginationChange] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 })
 
-  // Synced with URL states (keys/defaults mirror vendors route search schema)
+  // Synced with URL states (keys/defaults mirror customers route search schema)
   const {
     columnFilters,
     onColumnFiltersChange,
@@ -102,7 +102,7 @@ export function VendorsTable({ data, search, navigate }: DataTableProps) {
     <div className='space-y-4 max-sm:has-[div[role="toolbar"]]:mb-16'>
       <DataTableToolbar
         table={table}
-        searchPlaceholder="Filter vendors..."
+        searchPlaceholder="Filter customers..."
         searchKey="name"
       />
       <div className="overflow-hidden rounded-md border">

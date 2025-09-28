@@ -4,9 +4,9 @@ import { createId } from "@paralleldrive/cuid2"
 import { integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 
-export const vendors = sqliteTable("vendors", {
+export const customers = sqliteTable("customers", {
   id: text().primaryKey().$defaultFn(createId),
-  vendorId: text().notNull(),
+  customerId: text().notNull(),
   name: text().notNull(),
   email: text().notNull(),
   phone: text().notNull(),
@@ -17,14 +17,14 @@ export const vendors = sqliteTable("vendors", {
   createdAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()),
   updatedAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()),
 }, table => [
-  uniqueIndex("uq_vendors_vendor_id").on(table.vendorId),
+  uniqueIndex("uq_customers_customer_id").on(table.customerId),
 ])
 
-export const selectVendorsSchema = createSelectSchema(vendors)
-export type selectVendorsSchema = z.infer<typeof selectVendorsSchema>
+export const selectCustomersSchema = createSelectSchema(customers)
+export type selectCustomersSchema = z.infer<typeof selectCustomersSchema>
 
-export const insertVendorsSchema = createInsertSchema(vendors, {
-  vendorId: schema => schema.min(1, "Vendor ID is required"),
+export const insertCustomersSchema = createInsertSchema(customers, {
+  customerId: schema => schema.min(1, "Customer ID is required"),
   name: schema => schema.min(1, "Name is required"),
   email: schema => schema.email("Invalid email address"),
   phone: schema => schema.min(1, "Phone is required"),
@@ -37,7 +37,7 @@ export const insertVendorsSchema = createInsertSchema(vendors, {
   createdAt: true,
   updatedAt: true,
 })
-export type insertVendorsSchema = z.infer<typeof insertVendorsSchema>
+export type insertCustomersSchema = z.infer<typeof insertCustomersSchema>
 
-export const patchVendorsSchema = insertVendorsSchema.partial()
-export type patchVendorsSchema = z.infer<typeof patchVendorsSchema>
+export const patchCustomersSchema = insertCustomersSchema.partial()
+export type patchCustomersSchema = z.infer<typeof patchCustomersSchema>

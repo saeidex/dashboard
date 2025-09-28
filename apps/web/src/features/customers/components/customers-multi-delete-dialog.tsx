@@ -12,9 +12,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/web/components/ui/alert";
 import { Input } from "@/web/components/ui/input";
 import { Label } from "@/web/components/ui/label";
 
-import { deleteVendor, queryKeys } from "../data/queries";
+import { deleteCustomer, queryKeys } from "../data/queries";
 
-type VendorsMultiDeleteDialogProps<TData> = {
+type CustomersMultiDeleteDialogProps<TData> = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   table: Table<TData>;
@@ -22,11 +22,11 @@ type VendorsMultiDeleteDialogProps<TData> = {
 
 const CONFIRM_WORD = "DELETE";
 
-export function VendorsMultiDeleteDialog<TData>({
+export function CustomersMultiDeleteDialog<TData>({
   open,
   onOpenChange,
   table,
-}: VendorsMultiDeleteDialogProps<TData>) {
+}: CustomersMultiDeleteDialogProps<TData>) {
   const [value, setValue] = useState("");
 
   const selectedRows = table.getFilteredSelectedRowModel().rows;
@@ -34,7 +34,7 @@ export function VendorsMultiDeleteDialog<TData>({
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
-    mutationFn: deleteVendor,
+    mutationFn: deleteCustomer,
   });
 
   const handleDelete = () => {
@@ -50,13 +50,13 @@ export function VendorsMultiDeleteDialog<TData>({
         await deleteMutation.mutateAsync(row.getValue("id"));
       }
     }, {
-      loading: "Deleting vendors...",
+      loading: "Deleting customers...",
       success: () => {
         table.resetRowSelection();
         queryClient.invalidateQueries(queryKeys.LIST_VENDORS);
 
         return `Deleted ${selectedRows.length} ${
-          selectedRows.length > 1 ? "vendors" : "vendor"
+          selectedRows.length > 1 ? "customers" : "customer"
         }`;
       },
       error: "Error",
@@ -80,13 +80,13 @@ export function VendorsMultiDeleteDialog<TData>({
           {" "}
           {selectedRows.length}
           {" "}
-          {selectedRows.length > 1 ? "vendors" : "vendor"}
+          {selectedRows.length > 1 ? "customers" : "customer"}
         </span>
       )}
       desc={(
         <div className="space-y-4">
           <p className="mb-2">
-            Are you sure you want to delete the selected vendors?
+            Are you sure you want to delete the selected customers?
             {" "}
             <br />
             This action cannot be undone.

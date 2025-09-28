@@ -5,7 +5,7 @@ import * as HttpStatusPhrases from "stoker/http-status-phrases"
 import type { AppRouteHandler } from "@/api/lib/types"
 
 import db from "@/api/db"
-import { vendors } from "@/api/db/schema"
+import { customers } from "@/api/db/schema"
 import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "@/api/lib/constants"
 
 import type {
@@ -14,35 +14,35 @@ import type {
   ListRoute,
   PatchRoute,
   RemoveRoute,
-} from "./vendors.routes"
+} from "./customers.routes"
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
-  const data = await db.query.vendors.findMany()
+  const data = await db.query.customers.findMany()
   return c.json(data)
 }
 
 export const create: AppRouteHandler<CreateRoute> = async (c) => {
   const payload = c.req.valid("json")
-  const [inserted] = await db.insert(vendors).values(payload).returning()
+  const [inserted] = await db.insert(customers).values(payload).returning()
   return c.json(inserted, HttpStatusCodes.OK)
 }
 
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const { id } = c.req.valid("param")
-  const vendor = await db.query.vendors.findFirst({
+  const customer = await db.query.customers.findFirst({
     where(fields, { eq }) {
       return eq(fields.id, id)
     },
   })
 
-  if (!vendor) {
+  if (!customer) {
     return c.json(
       { message: HttpStatusPhrases.NOT_FOUND },
       HttpStatusCodes.NOT_FOUND,
     )
   }
 
-  return c.json(vendor, HttpStatusCodes.OK)
+  return c.json(customer, HttpStatusCodes.OK)
 }
 
 export const patch: AppRouteHandler<PatchRoute> = async (c) => {
@@ -69,9 +69,9 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
   }
 
   const [updated] = await db
-    .update(vendors)
+    .update(customers)
     .set(updates)
-    .where(eq(vendors.id, id))
+    .where(eq(customers.id, id))
     .returning()
 
   if (!updated) {
@@ -86,7 +86,7 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
 
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
   const { id } = c.req.valid("param")
-  const result = await db.delete(vendors).where(eq(vendors.id, id))
+  const result = await db.delete(customers).where(eq(customers.id, id))
 
   if (result.rowsAffected === 0) {
     return c.json(

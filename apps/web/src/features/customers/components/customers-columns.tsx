@@ -6,11 +6,11 @@ import { Badge } from "@/web/components/ui/badge";
 import { Checkbox } from "@/web/components/ui/checkbox";
 import { cn } from "@/web/lib/utils";
 
-import type { Vendor } from "../data/schema";
+import type { Customer } from "../data/schema";
 
 import { DataTableRowActions } from "./data-table-row-actions";
 
-export const vendorsColumns: ColumnDef<Vendor>[] = [
+export const customersColumns: ColumnDef<Customer>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -39,13 +39,13 @@ export const vendorsColumns: ColumnDef<Vendor>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "vendorId",
+    accessorKey: "customerId",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Vendor ID" />
+      <DataTableColumnHeader column={column} title="Customer ID" />
     ),
     cell: ({ row }) => (
       <LongText className="max-w-24 ps-3 font-mono">
-        {row.getValue("vendorId")}
+        {row.getValue("customerId")}
       </LongText>
     ),
     meta: {

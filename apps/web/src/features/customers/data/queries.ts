@@ -1,4 +1,4 @@
-import type { insertVendorsSchema, patchVendorsSchema } from "@crm/api/schema";
+import type { insertCustomersSchema, patchCustomersSchema } from "@crm/api/schema";
 
 import { queryOptions } from "@tanstack/react-query";
 
@@ -6,23 +6,23 @@ import apiClient from "@/web/lib/api-client";
 import formatApiError from "@/web/lib/format-api-error";
 
 export const queryKeys = {
-  LIST_VENDORS: { queryKey: ["list-vendors"] },
-  LIST_VENDOR: (id: string) => ({ queryKey: [`list-vendor-${id}`] }),
+  LIST_VENDORS: { queryKey: ["list-customers"] },
+  LIST_VENDOR: (id: string) => ({ queryKey: [`list-customer-${id}`] }),
 };
 
-export const vendorsQueryOptions = queryOptions({
+export const customersQueryOptions = queryOptions({
   ...queryKeys.LIST_VENDORS,
   queryFn: async () => {
-    const response = await apiClient.api.vendors.$get();
+    const response = await apiClient.api.customers.$get();
     return response.json();
   },
 });
 
-export function createVendorQueryOptions(id: string) {
+export function createCustomerQueryOptions(id: string) {
   return queryOptions({
     ...queryKeys.LIST_VENDOR(id),
     queryFn: async () => {
-      const response = await apiClient.api.vendors[":id"].$get({
+      const response = await apiClient.api.customers[":id"].$get({
         param: {
           id,
         },
@@ -40,9 +40,9 @@ export function createVendorQueryOptions(id: string) {
   });
 }
 
-export async function createVendor(vendor: insertVendorsSchema) {
-  const response = await apiClient.api.vendors.$post({
-    json: vendor,
+export async function createCustomer(customer: insertCustomersSchema) {
+  const response = await apiClient.api.customers.$post({
+    json: customer,
   });
   const json = await response.json();
   if ("success" in json) {
@@ -52,8 +52,8 @@ export async function createVendor(vendor: insertVendorsSchema) {
   return json;
 }
 
-export async function deleteVendor(id: string) {
-  const response = await apiClient.api.vendors[":id"].$delete({
+export async function deleteCustomer(id: string) {
+  const response = await apiClient.api.customers[":id"].$delete({
     param: {
       id,
     },
@@ -68,12 +68,12 @@ export async function deleteVendor(id: string) {
   }
 }
 
-export async function updateVendor({ id, vendor }: { id: string; vendor: patchVendorsSchema }) {
-  const response = await apiClient.api.vendors[":id"].$patch({
+export async function updateCustomer({ id, customer }: { id: string; customer: patchCustomersSchema }) {
+  const response = await apiClient.api.customers[":id"].$patch({
     param: {
       id,
     },
-    json: vendor,
+    json: customer,
   });
   if (response.status !== 200) {
     const json = await response.json();

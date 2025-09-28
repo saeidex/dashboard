@@ -1,7 +1,7 @@
 import createRouter from "@/api/lib/create-router"
 
-import * as handlers from "./vendors.handlers"
-import * as routes from "./vendors.routes"
+import * as handlers from "./customers.handlers"
+import * as routes from "./customers.routes"
 
 const router = createRouter()
   .openapi(routes.list, handlers.list)
