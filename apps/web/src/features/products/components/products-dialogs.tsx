@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSearch } from "@tanstack/react-router";
+import { getRouteApi } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 import { ConfirmDialog } from "@/web/components/confirm-dialog";
@@ -9,11 +9,13 @@ import { ProductsImportDialog } from "./products-import-dialog";
 import { ProductsMutateDrawer } from "./products-mutate-drawer";
 import { useProducts } from "./products-provider";
 
+const route = getRouteApi("/_authenticated/products/");
+
 export function ProductsDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useProducts();
 
   const queryClient = useQueryClient();
-  const search = useSearch({ from: "/_authenticated/products" });
+  const search = route.useSearch();
 
   const deleteMutation = useMutation({
     mutationFn: deleteProduct,

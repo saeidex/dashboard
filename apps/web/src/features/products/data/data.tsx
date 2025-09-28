@@ -1,7 +1,5 @@
 import { CheckCircle, Circle, CircleOff, Timer } from "lucide-react";
 
-import { productCategories } from "@/web/features/product-categories/data/product-categories";
-
 export const labels = [
   {
     value: "new",
@@ -35,8 +33,3 @@ export const statuses = [
     icon: Circle,
   },
 ] as const;
-
-export const categories = productCategories.map(({ id, name }) => ({
-  id,
-  name,
-}));

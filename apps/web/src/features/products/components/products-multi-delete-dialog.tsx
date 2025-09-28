@@ -3,7 +3,7 @@
 import type { Table } from "@tanstack/react-table";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSearch } from "@tanstack/react-router";
+import { getRouteApi } from "@tanstack/react-router";
 import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -21,7 +21,8 @@ type ProductMultiDeleteDialogProps<TData> = {
   table: Table<TData>;
 };
 
-const CONFIRM_WORD = "DELETE";
+const CONFIRM_WORD = "DELETE" as const;
+const route = getRouteApi("/_authenticated/products/");
 
 export function ProductsMultiDeleteDialog<TData>({
   open,
@@ -32,7 +33,7 @@ export function ProductsMultiDeleteDialog<TData>({
 
   const selectedRows = table.getFilteredSelectedRowModel().rows;
   const queryClient = useQueryClient();
-  const search = useSearch({ from: "/_authenticated/products" });
+  const search = route.useSearch();
 
   const deleteMutation = useMutation({
     mutationFn: deleteProduct,

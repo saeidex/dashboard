@@ -1,13 +1,17 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
+import { getRouteApi } from "@tanstack/react-router";
+
 import { DataTableColumnHeader } from "@/web/components/data-table";
 import { Badge } from "@/web/components/ui/badge";
 import { Checkbox } from "@/web/components/ui/checkbox";
 
 import type { Product } from "../data/schema.ts";
 
-import { categories, labels, statuses } from "../data/data";
+import { labels, statuses } from "../data/data";
 import { DataTableRowActions } from "./data-table-row-actions";
+
+const categories = getRouteApi("/_authenticated/categories/").useLoaderData();
 
 export const productsColumns: ColumnDef<Product>[] = [
   {
