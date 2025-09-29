@@ -1,5 +1,7 @@
 import type { SortingState, VisibilityState } from "@tanstack/react-table";
 
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
 import {
   flexRender,
   getCoreRowModel,
@@ -11,8 +13,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
-
-import type { NavigateFn } from "@/web/hooks/use-table-url-state";
 
 import { DataTablePagination, DataTableToolbar } from "@/web/components/data-table";
 import {
@@ -26,25 +26,23 @@ import {
 import { useTableUrlState } from "@/web/hooks/use-table-url-state";
 import { cn } from "@/web/lib/utils";
 
-import type { Employee } from "../data/schema";
-
 import { positions, shifts, statuses } from "../data/data";
+import { employeesQueryOptions } from "../data/queries";
 import { DataTableBulkActions } from "./data-table-bulk-actions";
-import { employeesColumns } from "./employees-columns";
+import { employeesColumns as columns } from "./employees-columns";
 
-type DataTableProps = {
-  data: Employee[];
-  search: Record<string, unknown>;
-  navigate: NavigateFn;
-};
+const route = getRouteApi("/_authenticated/employees/");
 
-export function EmployeesTable({ data, search, navigate }: DataTableProps) {
+export function EmployeesTable() {
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columns = employeesColumns;
+  const search = route.useSearch();
+  const navigate = route.useNavigate();
+
+  const { data } = useSuspenseQuery(employeesQueryOptions);
 
   // Local state management for table (uncomment to use local-only state, not synced with URL)
   // const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>([])
