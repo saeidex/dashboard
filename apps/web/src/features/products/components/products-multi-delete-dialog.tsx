@@ -49,7 +49,8 @@ export function ProductsMultiDeleteDialog<TData>({
 
     toast.promise(async () => {
       for (const row of selectedRows) {
-        deleteMutation.mutateAsync(row.id);
+        const product = row.original as { id: string };
+        await deleteMutation.mutateAsync(product.id);
       }
     }, {
       loading: "Deleting products...",

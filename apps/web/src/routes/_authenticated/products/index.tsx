@@ -1,11 +1,9 @@
-import { createFileRoute, getRouteApi } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import z from "zod";
 
 import { Products } from "@/web/features/products";
 import { statuses } from "@/web/features/products/data/data";
 import { createProductsQueryOptions } from "@/web/features/products/data/queries";
-
-const categories = getRouteApi("/_authenticated/categories/").useLoaderData();
 
 const productSearchSchema = z.object({
   page: z.number().optional().catch(1),
@@ -15,7 +13,7 @@ const productSearchSchema = z.object({
     .optional()
     .catch([]),
   categoryId: z
-    .array(z.enum(categories.map(category => category.id.toString())))
+    .array(z.string())
     .optional()
     .catch([]),
   filter: z.string().optional().catch(""),

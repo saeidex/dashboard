@@ -18,4 +18,11 @@ export default createConfig({
       ignore: ["README.md", "~__root.tsx"],
     }],
   },
-}, ...pluginRouter.configs["flat/recommended"]);
+}, ...pluginRouter.configs["flat/recommended"], {
+  files: ["**/features/**/data/*.{ts,tsx}"],
+  rules: {
+    "style/key-spacing": ["error", {
+      align: "colon",
+    }],
+  },
+});

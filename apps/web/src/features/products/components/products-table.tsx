@@ -1,5 +1,6 @@
 import type { SortingState, VisibilityState } from "@tanstack/react-table";
 
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import {
   flexRender,
@@ -26,18 +27,19 @@ import { useTableUrlState } from "@/web/hooks/use-table-url-state";
 
 import type { Product } from "../data/schema.ts";
 
+import { categoriesQueryOptions } from "../../product-categories/data/queries.ts";
 import { statuses } from "../data/data";
+import { createProductsQueryOptions } from "../data/queries.ts";
 import { DataTableBulkActions } from "./data-table-bulk-actions";
 import { productsColumns as columns } from "./products-columns";
 
-type DataTableProps = {
-  data: Product[];
-};
-
 const route = getRouteApi("/_authenticated/products/");
-const categories = getRouteApi("/_authenticated/categories/").useLoaderData();
 
-export function ProductsTable({ data }: DataTableProps) {
+export function ProductsTable() {
+  const { data: categories } = useSuspenseQuery(categoriesQueryOptions);
+  // TODO: sync pagination state
+  const { data } = useSuspenseQuery(createProductsQueryOptions(route.useSearch()));
+
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);

@@ -1,6 +1,8 @@
+"use client";
+
 import { insertProductsSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -17,6 +19,7 @@ import {
   FormMessage,
 } from "@/web/components/ui/form";
 import { Input } from "@/web/components/ui/input";
+import { Label } from "@/web/components/ui/label";
 import {
   Sheet,
   SheetClose,
@@ -29,8 +32,9 @@ import {
 
 import type { Product } from "../data/schema";
 
+import { categoriesQueryOptions } from "../../product-categories/data/queries";
 import { labels, statuses } from "../data/data";
-import { createProduct, queryKeys } from "../data/queries";
+import { createProduct, queryKeys, updateProduct } from "../data/queries";
 
 type ProductMutateDrawerProps = {
   open: boolean;
@@ -39,7 +43,6 @@ type ProductMutateDrawerProps = {
 };
 
 const route = getRouteApi("/_authenticated/products/");
-const categories = getRouteApi("/_authenticated/categories/").useLoaderData();
 
 export function ProductsMutateDrawer({
   open,
@@ -47,13 +50,13 @@ export function ProductsMutateDrawer({
   currentRow,
 }: ProductMutateDrawerProps) {
   const isUpdate = !!currentRow;
+  const { data: categories } = useSuspenseQuery(categoriesQueryOptions);
 
   const form = useForm<insertProductsSchema>({
     resolver: zodResolver(insertProductsSchema),
     defaultValues: isUpdate
       ? currentRow
       : {
-          productId: "",
           title: "",
           status: "available",
           basePrice: 0,
@@ -63,7 +66,6 @@ export function ProductsMutateDrawer({
           taxAmount: 0,
           total: 0,
           currency: "BDT",
-          sku: "",
           stock: 0,
         },
   });
@@ -150,7 +152,17 @@ export function ProductsMutateDrawer({
       onOpenChange(false);
       form.reset();
       queryClient.invalidateQueries(queryKeys.LIST_PRODUCTS(search));
-      toast.success(`Product ${isUpdate ? "updated" : "created"} successfully`);
+      toast.success(`Product created successfully`);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: updateProduct,
+    onSuccess: () => {
+      onOpenChange(false);
+      form.reset();
+      queryClient.invalidateQueries(queryKeys.LIST_PRODUCTS(search));
+      toast.success(`Product updated successfully`);
     },
   });
 
@@ -179,37 +191,26 @@ export function ProductsMutateDrawer({
         <Form {...form}>
           <form
             id="products-form"
-            onSubmit={form.handleSubmit(data => createMutation.mutate(data))}
+            onSubmit={form.handleSubmit((data) => {
+              isUpdate ? updateMutation.mutate({ id: currentRow.id, product: data }) : createMutation.mutate(data);
+            })}
             className="flex-1 space-y-6 overflow-y-auto px-4"
           >
-            <div className="grid gap-6 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="productId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Product ID</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="PROD-1234" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="sku"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>SKU</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="SKU1234" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            {isUpdate
+              && (
+                <FormField
+                  name="id"
+                  render={() => (
+                    <FormItem className="flex gap-2">
+                      <FormLabel>ID: </FormLabel>
+                      <FormControl>
+                        <Label className="font-medium">{currentRow.id}</Label>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
             <FormField
               control={form.control}
               name="title"

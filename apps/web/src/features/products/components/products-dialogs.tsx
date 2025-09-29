@@ -72,7 +72,7 @@ export function ProductsDialogs() {
               <>
                 You are about to delete a product with the ID
                 {" "}
-                <strong>{currentRow.productId}</strong>
+                <strong>{currentRow.id}</strong>
                 .
                 <br />
                 This action cannot be undone.

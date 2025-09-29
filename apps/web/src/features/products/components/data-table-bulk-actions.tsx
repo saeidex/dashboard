@@ -1,6 +1,6 @@
 import type { Table } from "@tanstack/react-table";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { ArrowUpDown, CircleArrowUp, Download, Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -23,6 +23,7 @@ import { sleep } from "@/web/lib/utils";
 
 import type { Product } from "../data/schema.ts";
 
+import { categoriesQueryOptions } from "../../product-categories/data/queries.ts";
 import { statuses } from "../data/data";
 import { queryKeys, updateProduct } from "../data/queries.ts";
 import { ProductsMultiDeleteDialog } from "./products-multi-delete-dialog";
@@ -32,7 +33,6 @@ type DataTableBulkActionsProps<TData> = {
 };
 
 const route = getRouteApi("/_authenticated/products/");
-const categories = getRouteApi("/_authenticated/categories/").useLoaderData();
 
 export function DataTableBulkActions<TData>({
   table,
@@ -42,15 +42,15 @@ export function DataTableBulkActions<TData>({
 
   const queryClient = useQueryClient();
   const search = route.useSearch();
+  const { data: categories } = useSuspenseQuery(categoriesQueryOptions);
 
   const updateMutation = useMutation({
     mutationFn: updateProduct,
   });
 
   const handleBulkStatusChange = (status: string) => {
-    const selectedProducts = selectedRows.map(row => row.original as Product);
     toast.promise(async () => {
-      for (const product of selectedProducts) {
+      for (const product of selectedRows) {
         await updateMutation.mutateAsync({ id: product.id, product: { status } });
       }
     }, {
@@ -58,7 +58,7 @@ export function DataTableBulkActions<TData>({
       success: () => {
         table.resetRowSelection();
         queryClient.invalidateQueries(queryKeys.LIST_PRODUCTS(search));
-        return `Status updated to "${status}" for ${selectedProducts.length} task${selectedProducts.length > 1 ? "s" : ""}.`;
+        return `Status updated to "${status}" for ${selectedRows.length} task${selectedRows.length > 1 ? "s" : ""}.`;
       },
       error: "Error",
     });

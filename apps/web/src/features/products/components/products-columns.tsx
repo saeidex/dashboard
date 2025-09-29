@@ -1,7 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
-import { getRouteApi } from "@tanstack/react-router";
-
 import { DataTableColumnHeader } from "@/web/components/data-table";
 import { Badge } from "@/web/components/ui/badge";
 import { Checkbox } from "@/web/components/ui/checkbox";
@@ -10,8 +8,7 @@ import type { Product } from "../data/schema.ts";
 
 import { labels, statuses } from "../data/data";
 import { DataTableRowActions } from "./data-table-row-actions";
-
-const categories = getRouteApi("/_authenticated/categories/").useLoaderData();
+import { ProductCategoryName } from "./product-category-name.tsx";
 
 export const productsColumns: ColumnDef<Product>[] = [
   {
@@ -39,29 +36,17 @@ export const productsColumns: ColumnDef<Product>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "productId",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Product ID" />
-    ),
-    cell: ({ row }) => (
-      <div className="w-[96px] font-mono text-xs">
-        {row.getValue("productId")}
-      </div>
-    ),
-    enableHiding: false,
-  },
-  {
     accessorKey: "title",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Title" />
     ),
-    cell: ({ row }) => {
-      const label = labels.find(l => l.value === row.original.label);
+    cell: ({ cell }) => {
+      const label = labels.find(l => l.value === cell.getValue<Product["label"]>());
       return (
         <div className="flex space-x-2">
           {label && <Badge variant="outline">{label.label}</Badge>}
           <span className="max-w-32 truncate font-medium sm:max-w-72 md:max-w-[31rem]">
-            {row.getValue("title")}
+            {cell.getValue<Product["label"]>()}
           </span>
         </div>
       );
@@ -72,9 +57,9 @@ export const productsColumns: ColumnDef<Product>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Status" />
     ),
-    cell: ({ row }) => {
+    cell: ({ cell }) => {
       const status = statuses.find(
-        status => status.value === row.getValue("status"),
+        status => status.value === cell.getValue<Product["status"]>(),
       );
 
       if (!status) {
@@ -98,11 +83,7 @@ export const productsColumns: ColumnDef<Product>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Category" />
     ),
-    cell: ({ row }) => {
-      const name
-        = categories.find(c => c.id === row.getValue("categoryId"))?.name || "";
-      return <span className="truncate">{name}</span>;
-    },
+    cell: ProductCategoryName,
     filterFn: (row, id, value) => value.includes(row.getValue(id)),
   },
   {
@@ -110,8 +91,8 @@ export const productsColumns: ColumnDef<Product>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Price" />
     ),
-    cell: ({ row }) => {
-      const price = row.original.total ?? 0;
+    cell: ({ cell }) => {
+      const price = cell.getValue<Product["total"]>();
       return (
         <span className="font-mono font-semibold">
           ৳
@@ -125,8 +106,8 @@ export const productsColumns: ColumnDef<Product>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Base Price" />
     ),
-    cell: ({ row }) => {
-      const base = row.original.basePrice ?? 0;
+    cell: ({ cell }) => {
+      const base = cell.getValue<Product["basePrice"]>();
       return (
         <span className="text-muted-foreground">
           ৳
@@ -140,9 +121,9 @@ export const productsColumns: ColumnDef<Product>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Discount" />
     ),
-    cell: ({ row }) => {
-      const amt = row.original.discountAmount ?? 0;
-      const pct = row.original.discountPercentage ?? 0;
+    cell: ({ cell }) => {
+      const amt = cell.getValue<Product["discountAmount"]>();
+      const pct = cell.getValue<Product["discountPercentage"]>();
       if (!amt)
         return <span className="text-muted-foreground">—</span>;
       return (
@@ -162,9 +143,9 @@ export const productsColumns: ColumnDef<Product>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Tax" />
     ),
-    cell: ({ row }) => {
-      const taxAmount = row.original.taxAmount ?? 0;
-      const taxPct = row.original.taxPercentage ?? 0;
+    cell: ({ cell }) => {
+      const taxAmount = cell.getValue<Product["taxAmount"]>();
+      const taxPct = cell.getValue<Product["taxPercentage"]>();
       return (
         <span className="font-mono text-xs">
           ৳
@@ -182,13 +163,13 @@ export const productsColumns: ColumnDef<Product>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Stock" />
     ),
-    cell: ({ row }) => {
-      const stock = row.getValue<number>("stock");
+    cell: ({ cell }) => {
+      const stock = cell.getValue<Product["stock"]>();
       return <span>{stock}</span>;
     },
   },
   {
     id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
+    cell: DataTableRowActions,
   },
 ];

@@ -1,8 +1,10 @@
 import type { Row } from "@tanstack/react-table";
 
-import { selectProductsSchema } from "@crm/api/schema";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
 import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/web/components/ui/button";
 import {
@@ -19,19 +21,40 @@ import {
   DropdownMenuTrigger,
 } from "@/web/components/ui/dropdown-menu";
 
+import type { Product } from "../data/schema";
+
 import { labels } from "../data/data";
+import { createProduct, queryKeys, updateProduct } from "../data/queries";
 import { useProducts } from "./products-provider";
 
 type DataTableRowActionsProps<TData> = {
-  row: Row<TData>;
+  row: Row<TData & Product>;
 };
+
+const route = getRouteApi("/_authenticated/products/");
 
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const product = selectProductsSchema.parse(row.original);
-
   const { setOpen, setCurrentRow } = useProducts();
+  const queryClient = useQueryClient();
+  const search = route.useSearch();
+
+  const createMutation = useMutation({
+    mutationFn: createProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries(queryKeys.LIST_PRODUCTS(search));
+      toast.success("Product coppied successfully");
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: updateProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries(queryKeys.LIST_PRODUCTS(search));
+      toast.success("Product updated successfully");
+    },
+  });
 
   return (
     <DropdownMenu modal={false}>
@@ -47,19 +70,27 @@ export function DataTableRowActions<TData>({
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuItem
           onClick={() => {
-            setCurrentRow(product);
+            setCurrentRow(row.original);
             setOpen("update");
           }}
         >
           Edit
         </DropdownMenuItem>
-        <DropdownMenuItem disabled>Make a copy</DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => createMutation.mutate(row.original)}
+        >
+          Make a copy
+        </DropdownMenuItem>
         <DropdownMenuItem disabled>Favorite</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={product.label ?? undefined}>
+            <DropdownMenuRadioGroup
+              onValueChange={value =>
+                updateMutation.mutate({ id: row.original.id, product: { label: value } })}
+              value={row.original.label ?? undefined}
+            >
               {labels.map(label => (
                 <DropdownMenuRadioItem key={label.value} value={label.value}>
                   {label.label}
@@ -71,7 +102,7 @@ export function DataTableRowActions<TData>({
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
-            setCurrentRow(product);
+            setCurrentRow(row.original);
             setOpen("delete");
           }}
         >
