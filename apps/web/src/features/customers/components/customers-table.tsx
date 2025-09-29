@@ -1,5 +1,7 @@
 import type { SortingState, VisibilityState } from "@tanstack/react-table";
 
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
 import {
   flexRender,
   getCoreRowModel,
@@ -28,24 +30,22 @@ import {
 import { useTableUrlState } from "@/web/hooks/use-table-url-state";
 import { cn } from "@/web/lib/utils";
 
-import type { Customer } from "../data/schema";
-
-import { customersColumns } from "./customers-columns";
+import { customersQueryOptions } from "../data/queries";
+import { customersColumns as columns } from "./customers-columns";
 import { DataTableBulkActions } from "./data-table-bulk-actions";
 
-type DataTableProps = {
-  data: Customer[];
-  search: Record<string, unknown>;
-  navigate: NavigateFn;
-};
+const route = getRouteApi("/_authenticated/customers/");
 
-export function CustomersTable({ data, search, navigate }: DataTableProps) {
+export function CustomersTable() {
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columns = customersColumns;
+  const search = route.useSearch();
+  const navigate = route.useNavigate();
+
+  const { data } = useSuspenseQuery(customersQueryOptions);
 
   // Local state management for table (uncomment to use local-only state, not synced with URL)
   // const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>([])

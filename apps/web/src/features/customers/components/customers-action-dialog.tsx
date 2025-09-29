@@ -52,7 +52,6 @@ export function CustomersActionDialog({
     defaultValues: isEdit
       ? currentRow
       : {
-          customerId: `VND-${Math.floor(10000 + Math.random() * 90000)}`,
           name: "",
           email: "",
           phone: "",
@@ -68,7 +67,7 @@ export function CustomersActionDialog({
   const createMutation = useMutation({
     mutationFn: createCustomer,
     onSuccess: () => {
-      queryClient.invalidateQueries(queryKeys.LIST_VENDORS);
+      queryClient.invalidateQueries(queryKeys.LIST_CUSTOMERS);
       toast.success("Customer created successfully");
     },
   });
@@ -76,7 +75,7 @@ export function CustomersActionDialog({
   const updateMutation = useMutation({
     mutationFn: updateCustomer,
     onSuccess: () => {
-      queryClient.invalidateQueries(queryKeys.LIST_VENDORS);
+      queryClient.invalidateQueries(queryKeys.LIST_CUSTOMERS);
       toast.success("Customer updated successfully");
     },
   });
@@ -117,25 +116,23 @@ export function CustomersActionDialog({
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-4 px-0.5"
             >
-              <FormField
-                control={form.control}
-                name="customerId"
-                disabled={isEdit}
-                render={({ field }) => (
-                  <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                    <FormLabel className="col-span-2 text-end">Customer ID</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Customer ID"
-                        className="col-span-4"
-                        autoComplete="off"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="col-span-4 col-start-3" />
-                  </FormItem>
+              {isEdit
+                && (
+                  <FormField
+                    name="id"
+                    render={({ field }) => (
+                      <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
+                        <FormLabel className="col-span-2 text-end">Customer ID</FormLabel>
+                        <FormControl>
+                          <span className="col-span-4 select-all rounded-md border border-input bg-muted/50 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                            {field.value}
+                          </span>
+                        </FormControl>
+                        <FormMessage className="col-span-4 col-start-3" />
+                      </FormItem>
+                    )}
+                  />
                 )}
-              />
               <FormField
                 control={form.control}
                 name="name"

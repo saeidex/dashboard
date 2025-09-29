@@ -120,10 +120,8 @@ const selectOrderItemsSchema = createSelectSchema(orderItems, {
   currency: currencySchema,
 })
 
-const insertOrderItemsSchema = createInsertSchema(orderItems, {
-  id                : schema => schema.nonoptional(),
+export const insertOrderItemsSchema = createInsertSchema(orderItems, {
   currency          : currencySchema.optional(),
-  orderId           : schema => schema.optional(),
   productId         : schema => schema.min(1, "Product ID is required"),
   productTitle      : schema => schema.min(1, "Product title is required").max(200, "Product title must be at most 200 characters long"),
   unitPrice         : schema => schema.min(0, "Unit price must be a non-negative number"),
@@ -135,12 +133,24 @@ const insertOrderItemsSchema = createInsertSchema(orderItems, {
   subTotal          : schema => schema.min(0, "Sub total must be a non-negative number"),
   total             : schema => schema.min(0, "Total must be a non-negative number"),
 }).omit({
+  id       : true,
+  orderId  : true,
   createdAt: true,
   updatedAt: true,
 })
+export type insertOrderItemsSchema = z.infer<typeof insertOrderItemsSchema>
+
+export const patchOrderItemsSchema = insertOrderItemsSchema.partial().extend({
+  id: z.string().min(1, "Item ID is required"),
+})
+export type patchOrderItemsSchema = z.infer<typeof patchOrderItemsSchema>
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/*                             Combined Schemas                               */
 
 export const selectOrderWithItemsAndCustomerSchema = selectOrdersSchema.extend({
-  items   : z.array(selectOrderItemsSchema),
+  items   : z.array(selectOrderItemsSchema).min(1, "Items are required!"),
   customer: selectCustomersSchema,
 })
 
@@ -153,7 +163,7 @@ export const insertOrderWithItemsSchema = insertOrdersSchema.extend({
 })
 
 export const patchOrderWithItemsSchema = patchOrdersSchema.extend({
-  items: z.array(insertOrderItemsSchema).optional(),
+  items: z.array(patchOrderItemsSchema).optional(),
 })
 
 export type selectOrderWithItemsAndCustomerSchema = z.infer<typeof selectOrderWithItemsAndCustomerSchema>

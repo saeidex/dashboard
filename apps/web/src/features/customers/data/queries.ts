@@ -6,12 +6,12 @@ import apiClient from "@/web/lib/api-client";
 import formatApiError from "@/web/lib/format-api-error";
 
 export const queryKeys = {
-  LIST_VENDORS: { queryKey: ["list-customers"] },
-  LIST_VENDOR: (id: string) => ({ queryKey: [`list-customer-${id}`] }),
+  LIST_CUSTOMERS: { queryKey: ["list-customers"] },
+  LIST_CUSTOMER : (id: string) => ({ queryKey: [`list-customer-${id}`] }),
 };
 
 export const customersQueryOptions = queryOptions({
-  ...queryKeys.LIST_VENDORS,
+  ...queryKeys.LIST_CUSTOMERS,
   queryFn: async () => {
     const response = await apiClient.api.customers.$get();
     return response.json();
@@ -20,7 +20,7 @@ export const customersQueryOptions = queryOptions({
 
 export function createCustomerQueryOptions(id: string) {
   return queryOptions({
-    ...queryKeys.LIST_VENDOR(id),
+    ...queryKeys.LIST_CUSTOMER(id),
     queryFn: async () => {
       const response = await apiClient.api.customers[":id"].$get({
         param: {

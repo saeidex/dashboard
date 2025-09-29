@@ -39,13 +39,13 @@ export const customersColumns: ColumnDef<Customer>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "customerId",
+    accessorKey: "id",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Customer ID" />
     ),
     cell: ({ row }) => (
       <LongText className="max-w-24 ps-3 font-mono">
-        {row.getValue("customerId")}
+        {row.getValue("id")}
       </LongText>
     ),
     meta: {

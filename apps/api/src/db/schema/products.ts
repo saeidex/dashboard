@@ -1,7 +1,7 @@
+import { z } from "@hono/zod-openapi"
 import { createId } from "@paralleldrive/cuid2"
 import { index, integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
-import z from "zod"
 
 import { productCategories } from "./product-categories"
 

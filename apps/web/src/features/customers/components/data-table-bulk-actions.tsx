@@ -44,7 +44,7 @@ export function DataTableBulkActions<TData>({
       loading: `${isActive ? "Activating" : "Deactivating"} customers...`,
       success: () => {
         table.resetRowSelection();
-        queryClient.invalidateQueries(queryKeys.LIST_VENDORS);
+        queryClient.invalidateQueries(queryKeys.LIST_CUSTOMERS);
 
         return `${isActive ? "Activated" : "Deactivated"} ${selectedRows.length} user${selectedRows.length > 1 ? "s" : ""}`;
       },

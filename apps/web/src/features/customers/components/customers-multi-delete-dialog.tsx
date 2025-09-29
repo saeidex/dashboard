@@ -53,7 +53,7 @@ export function CustomersMultiDeleteDialog<TData>({
       loading: "Deleting customers...",
       success: () => {
         table.resetRowSelection();
-        queryClient.invalidateQueries(queryKeys.LIST_VENDORS);
+        queryClient.invalidateQueries(queryKeys.LIST_CUSTOMERS);
 
         return `Deleted ${selectedRows.length} ${
           selectedRows.length > 1 ? "customers" : "customer"

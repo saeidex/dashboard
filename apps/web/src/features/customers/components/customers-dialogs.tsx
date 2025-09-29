@@ -15,7 +15,7 @@ export function CustomersDialogs() {
   const deleteMutation = useMutation({
     mutationFn: deleteCustomer,
     onSuccess: () => {
-      queryClient.invalidateQueries(queryKeys.LIST_VENDORS);
+      queryClient.invalidateQueries(queryKeys.LIST_CUSTOMERS);
       toast.success("Customer deleted successfully");
     },
   });
@@ -60,7 +60,7 @@ export function CustomersDialogs() {
               deleteMutation.mutate(currentRow.id);
             }}
             className="max-w-md"
-            title={`Delete this customer: ${currentRow.customerId} ?`}
+            title={`Delete this customer: ${currentRow.id} ?`}
             desc={(
               <>
                 You are about to delete a customer with the name

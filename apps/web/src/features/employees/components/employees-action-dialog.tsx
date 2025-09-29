@@ -6,7 +6,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { SelectDropdown } from "@/web/components/select-dropdown";
 import { Button } from "@/web/components/ui/button";
@@ -36,12 +35,6 @@ import type { Employee } from "../data/schema";
 import { positions, shifts, statuses } from "../data/data";
 import { createEmployee, queryKeys, updateEmployee } from "../data/queries";
 
-const employeeFormSchema = insertEmployeesSchema.extend({
-  hireDate: z.date(),
-});
-
-type EmployeeFormValues = z.infer<typeof employeeFormSchema>;
-
 type EmployeeActionDialogProps = {
   currentRow?: Employee;
   open: boolean;
@@ -54,8 +47,8 @@ export function EmployeesActionDialog({
   onOpenChange,
 }: EmployeeActionDialogProps) {
   const isEdit = !!currentRow;
-  const form = useForm<EmployeeFormValues>({
-    resolver: zodResolver(employeeFormSchema),
+  const form = useForm<insertEmployeesSchema>({
+    resolver: zodResolver(insertEmployeesSchema),
     defaultValues: isEdit
       ? {
           ...currentRow,

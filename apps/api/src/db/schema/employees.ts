@@ -1,7 +1,7 @@
 import { z } from "@hono/zod-openapi"
 import { createId } from "@paralleldrive/cuid2"
 import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core"
-import { createSchemaFactory } from "drizzle-zod"
+import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 
 export const employeeStatusSchema = z.union([
   z.literal("active"),
@@ -53,16 +53,13 @@ export const employees = sqliteTable("employees", {
   index("idx_employees_email").on(table.email),
 ])
 
-const { createInsertSchema, createSelectSchema } = createSchemaFactory({
-  coerce: {
-    date: true,
-  },
-})
-
 export const selectEmployeesSchema = createSelectSchema(employees, {
-  position: positionSchema,
-  shift   : shiftSchema,
-  status  : employeeStatusSchema,
+  position : positionSchema,
+  shift    : shiftSchema,
+  status   : employeeStatusSchema,
+  hireDate : z.iso.date().or(z.string().transform(str => new Date(str))),
+  createdAt: z.iso.date().or(z.string().transform(str => new Date(str))),
+  updatedAt: z.iso.date().or(z.string().transform(str => new Date(str))),
 })
 export type selectEmployeesSchema = z.infer<typeof selectEmployeesSchema>
 
