@@ -71,6 +71,13 @@
       "when": 1759168789567,
       "tag": "0009_sticky_yellow_claw",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1759174243927,
+      "tag": "0010_blue_leper_queen",
+      "breakpoints": true
     }
   ]
 }

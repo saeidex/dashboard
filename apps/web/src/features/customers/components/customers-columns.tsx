@@ -39,7 +39,7 @@ export const customersColumns: ColumnDef<Customer>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "id",
+    accessorKey: "customerId",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Customer ID" />
     ),

@@ -1,11 +1,13 @@
+import type { PaymentStatus } from "@crm/api/schema";
+
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
 import { paymentStatusValues } from "@/web/features/orders/data/data";
-import { orders } from "@/web/features/orders/data/orders";
-import { vendors } from "@/web/features/vendors/data/vendors";
 
-import type { PaymentStatus } from "../data/data";
+import { customersQueryOptions } from "../../customers/data/queries";
+import { ordersQueryOptions } from "../../orders/data/queries";
 
 type RecentOrdersProps = {
   limit?: number;
@@ -13,9 +15,12 @@ type RecentOrdersProps = {
 };
 
 export function RecentOrders({ limit = 6, type }: RecentOrdersProps) {
+  const { data: orders } = useSuspenseQuery(ordersQueryOptions);
+  const { data: customers } = useSuspenseQuery(customersQueryOptions);
+
   const recent = useMemo(() => {
     let recentOrders = [...orders].sort(
-      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+      (a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime(),
     );
 
     if (type === "sales") {
@@ -33,15 +38,15 @@ export function RecentOrders({ limit = 6, type }: RecentOrdersProps) {
     }
 
     return recentOrders.slice(0, limit).map((o) => {
-      const vendor = vendors.find(v => v.id === o.customerId);
+      const customer = customers.find(v => v.id === o.customerId);
       return {
         id: o.id,
-        name: vendor?.name ?? "Unknown Vendor",
-        email: vendor?.email ?? "unknown@example.com",
-        total: o.totals.grandTotal,
+        name: customer?.name ?? "Unknown Customer",
+        email: customer?.email ?? "unknown@example.com",
+        total: o.grandTotal,
       };
     });
-  }, [limit, type]);
+  }, [limit, type, customers, orders]);
 
   return (
     <div className="space-y-6">

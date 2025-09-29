@@ -1,5 +1,8 @@
 import type { SortingState, VisibilityState } from "@tanstack/react-table";
 
+import { EXPENSE_CATEGORIES } from "@crm/api/schema";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
 import {
   flexRender,
   getCoreRowModel,
@@ -14,8 +17,6 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 
-import type { NavigateFn } from "@/web/hooks/use-table-url-state";
-
 import { DataTablePagination, DataTableToolbar } from "@/web/components/data-table";
 import {
   Table,
@@ -28,32 +29,22 @@ import {
 import { useTableUrlState } from "@/web/hooks/use-table-url-state";
 import { cn } from "@/web/lib/utils";
 
-import type { Expense } from "../data/schema";
-
-import { EXPENSE_CATEGORIES } from "../data/schema";
+import { expensesQueryOptions } from "../data/queries";
 import { DataTableBulkActions } from "./data-table-bulk-actions";
-import { expensesColumns } from "./expenses-columns";
+import { expensesColumns as columns } from "./expenses-columns";
 
-declare module "@tanstack/react-table" {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  type ColumnMeta<TData, TValue> = {
-    className: string;
-  };
-}
+const route = getRouteApi("/_authenticated/accounts/expenses/");
 
-type DataTableProps = {
-  data: Expense[];
-  search: Record<string, unknown>;
-  navigate: NavigateFn;
-};
-
-export function ExpensesTable({ data, search, navigate }: DataTableProps) {
+export function ExpensesTable() {
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columns = expensesColumns;
+  const navigate = route.useNavigate();
+  const search = route.useSearch();
+
+  const { data } = useSuspenseQuery(expensesQueryOptions);
 
   // Local state management for table (uncomment to use local-only state, not synced with URL)
   // const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>([])
@@ -137,6 +128,7 @@ export function ExpensesTable({ data, search, navigate }: DataTableProps) {
                       colSpan={header.colSpan}
                       className={cn(
                         "bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted",
+                        // @ts-expect-error className exists
                         header.column.columnDef.meta?.className ?? "",
                       )}
                     >
@@ -166,6 +158,7 @@ export function ExpensesTable({ data, search, navigate }: DataTableProps) {
                           key={cell.id}
                           className={cn(
                             "bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted",
+                            // @ts-expect-error className exists
                             cell.column.columnDef.meta?.className ?? "",
                           )}
                         >

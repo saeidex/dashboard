@@ -1,5 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
+import { format } from "date-fns/format";
+
 import { DataTableColumnHeader } from "@/web/components/data-table";
 import { LongText } from "@/web/components/long-text";
 import { Checkbox } from "@/web/components/ui/checkbox";
@@ -83,19 +85,8 @@ export const expensesColumns: ColumnDef<Expense>[] = [
     ),
     cell: ({ row }) => {
       const date = row.getValue("createdAt") as Date;
-      return <div className="text-sm">{date.toLocaleDateString()}</div>;
+      return <div className="text-sm">{format(date, "MMMM dd, yyyy")}</div>;
     },
-  },
-  {
-    accessorKey: "referenceId",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Reference ID" />
-    ),
-    cell: ({ row }) => (
-      <div className="w-fit text-nowrap">
-        {row.getValue("referenceId") || "-"}
-      </div>
-    ),
   },
   {
     accessorKey: "notes",

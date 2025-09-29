@@ -1,9 +1,10 @@
 "use client";
 
-import type z from "zod";
-
+import { EXPENSE_CATEGORIES, insertExpensesSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { SelectDropdown } from "@/web/components/select-dropdown";
 import { Button } from "@/web/components/ui/button";
@@ -24,11 +25,10 @@ import {
   FormMessage,
 } from "@/web/components/ui/form";
 import { Input } from "@/web/components/ui/input";
-import { showSubmittedData } from "@/web/lib/show-submitted-data";
 
 import type { Expense } from "../data/schema";
 
-import { EXPENSE_CATEGORIES, expenseSchema } from "../data/schema";
+import { createExpense, queryKeys, updateExpense } from "../data/queries";
 
 type ExpenseActionDialogProps = {
   currentRow?: Expense;
@@ -36,27 +36,14 @@ type ExpenseActionDialogProps = {
   onOpenChange: (open: boolean) => void;
 };
 
-const formSchema = expenseSchema
-  .partial({
-    id: true,
-    createdAt: true,
-    updatedAt: true,
-  })
-  .required({
-    category: true,
-    currency: true,
-  });
-
-export type ExpenseUpsertInput = z.infer<typeof formSchema>;
-
 export function ExpensesActionDialog({
   currentRow,
   open,
   onOpenChange,
 }: ExpenseActionDialogProps) {
   const isEdit = !!currentRow;
-  const form = useForm<ExpenseUpsertInput>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<insertExpensesSchema>({
+    resolver: zodResolver(insertExpensesSchema),
     defaultValues: isEdit
       ? currentRow
       : {
@@ -64,15 +51,39 @@ export function ExpensesActionDialog({
           category: "other",
           amount: 0,
           currency: "BDT",
-          referenceId: "",
           notes: "",
         },
   });
 
-  const onSubmit = (values: ExpenseUpsertInput) => {
-    form.reset();
-    showSubmittedData(values);
-    onOpenChange(false);
+  const queryClient = useQueryClient();
+
+  const createMutation = useMutation({
+    mutationFn: createExpense,
+    onSuccess: () => {
+      form.reset();
+      queryClient.invalidateQueries(queryKeys.LIST_EXPENSES);
+      toast.success("Expense created successfully");
+      onOpenChange(false);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: updateExpense,
+    onSuccess: () => {
+      form.reset();
+      queryClient.invalidateQueries(queryKeys.LIST_EXPENSES);
+      toast.success("Expense updated successfully");
+      onOpenChange(false);
+    },
+  });
+
+  const onSubmit = (values: insertExpensesSchema) => {
+    if (isEdit) {
+      updateMutation.mutate({ id: currentRow.id, expense: values });
+    }
+    else {
+      createMutation.mutate(values);
+    }
   };
 
   return (
@@ -89,14 +100,14 @@ export function ExpensesActionDialog({
             {isEdit ? "Edit Expense" : "Add New Expense"}
           </DialogTitle>
           <DialogDescription>
-            {isEdit ? "Update the customer here. " : "Create new customer here. "}
+            {isEdit ? "Update the expenses here. " : "Create new expenses here. "}
             Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <div className="h-auto w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3">
           <Form {...form}>
             <form
-              id="expense-form"
+              id="expenses-form"
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-4 px-0.5"
             >
@@ -167,25 +178,6 @@ export function ExpensesActionDialog({
               />
               <FormField
                 control={form.control}
-                name="referenceId"
-                render={({ field }) => (
-                  <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                    <FormLabel className="col-span-2 text-end">
-                      Reference ID
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Reference ID"
-                        className="col-span-4"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="col-span-4 col-start-3" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
                 name="notes"
                 render={({ field }) => (
                   <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
@@ -195,6 +187,7 @@ export function ExpensesActionDialog({
                         placeholder="Additional notes..."
                         className="col-span-4"
                         {...field}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormMessage className="col-span-4 col-start-3" />
@@ -205,7 +198,11 @@ export function ExpensesActionDialog({
           </Form>
         </div>
         <DialogFooter>
-          <Button type="submit" form="customer-form">
+          <Button
+            type="submit"
+            form="expenses-form"
+            disabled={createMutation.isPending || updateMutation.isPending}
+          >
             Save changes
           </Button>
         </DialogFooter>

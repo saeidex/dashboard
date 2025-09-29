@@ -1,93 +1,50 @@
-import { expenses } from "@/web/features/accounts/expenses/data/expenses";
-import { orders } from "@/web/features/orders/data/orders";
-import { products } from "@/web/features/products/data/products";
-
-export type OrderStatus = (typeof orders)[number]["status"];
-export type PaymentStatus = (typeof orders)[number]["paymentStatus"];
+import type { OrderStatus, PaymentStatus } from "@crm/api/schema";
 
 type ProjectedOrderItem = {
   productId: string;
   quantity: number;
   unitPrice: number;
   discount: number;
-  tax: number;
+  tax : number;
 };
 
 type ProjectedOrderTotals = {
-  itemsTotal: number;
+  itemsTotal : number;
   discountTotal: number;
   itemsTaxTotal: number;
-  shipping: number;
-  grandTotal: number;
+  shipping : number;
+  grandTotal : number;
 };
 
 type ProjectedOrder = {
-  id: string;
-  createdAt: Date;
-  status: OrderStatus;
+  id : string;
+  createdAt : Date;
+  status : OrderStatus;
   paymentStatus: PaymentStatus;
   paymentMethod: string;
-  totals: ProjectedOrderTotals;
-  items: ProjectedOrderItem[];
+  totals : ProjectedOrderTotals;
+  items : ProjectedOrderItem[];
 };
 
 type ProjectedProduct = {
-  id: string;
-  name: string;
+  id : string;
+  name : string;
   pricingTotal: number;
-  stock: number;
-  status: "available" | "archived";
-  createdAt: Date;
+  stock : number;
+  status : "available" | "archived";
+  createdAt : Date;
 };
 
 type ProjectedExpense = {
-  id: string;
+  id : string;
   category: string;
-  amount: number;
+  amount : number;
   createdAt: Date;
 };
 
-export const projectedProducts: ProjectedProduct[] = products.map(p => ({
-  id: p.id,
-  name: p.title,
-  pricingTotal: p.pricing.total,
-  stock: p.stock,
-  status: p.status === "available" ? "available" : "archived",
-  createdAt: p.createdAt,
-}));
-
-export const projectedOrders: ProjectedOrder[] = orders.map((o) => {
-  const items: ProjectedOrderItem[] = o.items.map(it => ({
-    productId: it.productId,
-    quantity: it.pricing.quantity,
-    unitPrice: it.pricing.unitPrice,
-    discount: it.pricing.discountAmount,
-    tax: it.pricing.taxAmount,
-  }));
-  return {
-    id: o.id,
-    createdAt: o.createdAt,
-    status: o.status,
-    paymentStatus: o.paymentStatus,
-    paymentMethod: o.paymentMethod ?? "unknown",
-    totals: {
-      itemsTotal: o.totals.itemsTotal,
-      discountTotal: o.totals.discountTotal,
-      itemsTaxTotal: o.totals.itemsTaxTotal,
-      shipping: o.totals.shipping,
-      grandTotal: o.totals.grandTotal,
-    },
-    items,
-  };
-});
-
-export const projectedExpenses: ProjectedExpense[] = expenses.map(e => ({
-  id: e.id,
-  category: e.category,
-  amount: e.amount,
-  createdAt: e.createdAt,
-}));
-
+export const projectedProducts: ProjectedProduct[] = [];
+export const projectedOrders: ProjectedOrder[] = [];
+export const projectedExpenses: ProjectedExpense[] = [];
 export const sum = (vals: number[]) => vals.reduce((a, b) => a + b, 0);
 
 function monthKey(d: Date) {
@@ -138,10 +95,10 @@ export function computeKpis() {
   const prevAov = prevOrders ? prevSales / prevOrders : 0;
 
   const trends = {
-    salesTotal: pctChange(latestSales, prevSales),
-    expensesTotal: pctChange(latestExpenses, prevExpenses),
-    ordersCount: pctChange(latestOrders, prevOrders),
-    avgOrderValue: pctChange(latestAov, prevAov),
+    salesTotal    : pctChange(latestSales, prevSales),
+    expensesTotal : pctChange(latestExpenses, prevExpenses),
+    ordersCount   : pctChange(latestOrders, prevOrders),
+    avgOrderValue : pctChange(latestAov, prevAov),
     inventoryValue: 0,
   };
 
@@ -168,7 +125,7 @@ export function getMonthlySalesSeries(limitMonths = 12) {
   return sliced.map(([k, total]) => {
     const date = new Date(`${k}-01`);
     return {
-      key: k,
+      key       : k,
       monthLabel: date.toLocaleString(undefined, { month: "short" }),
       total,
     };
@@ -201,9 +158,9 @@ export function getMonthlyExpensesSeries(limitMonths = 12) {
   return months.map((k) => {
     const date = new Date(`${k}-01`);
     return {
-      key: k,
+      key       : k,
       monthLabel: date.toLocaleString(undefined, { month: "short" }),
-      total: grouped[k] ?? 0,
+      total     : grouped[k] ?? 0,
     };
   });
 }

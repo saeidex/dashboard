@@ -23,13 +23,9 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
 
 export const create: AppRouteHandler<CreateRoute> = async (c) => {
   const payload = c.req.valid("json")
-  const id
-    = (payload as any).id
-      ?? crypto.randomUUID?.()
-      ?? `${Date.now()}-${Math.random()}`
   const [inserted] = await db
     .insert(expenses)
-    .values({ id, ...payload })
+    .values(payload)
     .returning()
   return c.json(inserted, HttpStatusCodes.OK)
 }
@@ -37,9 +33,7 @@ export const create: AppRouteHandler<CreateRoute> = async (c) => {
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const { id } = c.req.valid("param")
   const expense = await db.query.expenses.findFirst({
-    where(fields, { eq }) {
-      return eq(fields.id, id)
-    },
+    where: (fields, { eq }) => eq(fields.id, id),
   })
 
   if (!expense) {

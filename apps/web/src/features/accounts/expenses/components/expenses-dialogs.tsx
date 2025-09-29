@@ -1,11 +1,25 @@
-import { ConfirmDialog } from "@/web/components/confirm-dialog";
-import { showSubmittedData } from "@/web/lib/show-submitted-data";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
+import { ConfirmDialog } from "@/web/components/confirm-dialog";
+
+import { deleteExpense, queryKeys } from "../data/queries";
 import { ExpensesActionDialog } from "./expenses-action-dialog";
 import { useExpenses } from "./expenses-provider";
 
 export function ExpensesDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useExpenses();
+
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteExpense,
+    onSuccess: () => {
+      toast.success("Expense deleted successfully");
+      queryClient.invalidateQueries(queryKeys.LIST_EXPENSES);
+    },
+  });
+
   return (
     <>
       <ExpensesActionDialog
@@ -43,10 +57,7 @@ export function ExpensesDialogs() {
               setTimeout(() => {
                 setCurrentRow(null);
               }, 500);
-              showSubmittedData(
-                currentRow,
-                "The following expense has been deleted:",
-              );
+              deleteMutation.mutate(currentRow.id);
             }}
             className="max-w-md"
             title={`Delete this expense: ${currentRow.id} ?`}
