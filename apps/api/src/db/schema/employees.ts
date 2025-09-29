@@ -35,19 +35,19 @@ export const shiftSchema = z.union([
 export type Shift = z.infer<typeof shiftSchema>
 
 export const employees = sqliteTable("employees", {
-  id: text().primaryKey().$defaultFn(createId),
-  firstName: text().notNull(),
-  lastName: text().notNull(),
-  employeeId: text().notNull(),
-  email: text().notNull(),
+  id         : text().primaryKey().$defaultFn(createId),
+  firstName  : text().notNull(),
+  lastName   : text().notNull(),
+  employeeId : text().notNull(),
+  email      : text().notNull(),
   phoneNumber: text().notNull(),
-  position: text().$type<Position>().$default(() => "Helper"),
-  shift: text().$type<Shift>().$default(() => "Day"),
-  status: text().$type<EmployeeStatus>().$default(() => "active"),
-  salary: integer({ mode: "number" }).notNull(),
-  hireDate: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
-  createdAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()),
-  updatedAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()),
+  position   : text().$type<Position>().$default(() => "Helper"),
+  shift      : text().$type<Shift>().$default(() => "Day"),
+  status     : text().$type<EmployeeStatus>().$default(() => "active"),
+  salary     : integer({ mode: "number" }).notNull(),
+  hireDate   : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  createdAt  : integer({ mode: "timestamp" }).$defaultFn(() => new Date()),
+  updatedAt  : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()),
 }, table => [
   uniqueIndex("uq_employees_employee_id").on(table.employeeId),
   index("idx_employees_email").on(table.email),
@@ -61,23 +61,23 @@ const { createInsertSchema, createSelectSchema } = createSchemaFactory({
 
 export const selectEmployeesSchema = createSelectSchema(employees, {
   position: positionSchema,
-  shift: shiftSchema,
-  status: employeeStatusSchema,
+  shift   : shiftSchema,
+  status  : employeeStatusSchema,
 })
 export type selectEmployeesSchema = z.infer<typeof selectEmployeesSchema>
 
 export const insertEmployeesSchema = createInsertSchema(employees, {
-  status: employeeStatusSchema.nullable().optional(),
-  position: positionSchema.nullable().optional(),
-  shift: shiftSchema.nullable().optional(),
-  firstName: schema => schema.min(1, "First name is required").max(100, "First name must be at most 100 characters long"),
-  lastName: schema => schema.min(1, "Last name is required").max(100, "Last name must be at most 100 characters long"),
-  employeeId: schema => schema.min(1, "Employee ID is required").max(50, "Employee ID must be at most 50 characters long"),
-  email: schema => schema.email("Invalid email address").max(100, "Email must be at most 100 characters long"),
+  status     : employeeStatusSchema.nullable().optional(),
+  position   : positionSchema.nullable().optional(),
+  shift      : shiftSchema.nullable().optional(),
+  firstName  : schema => schema.min(1, "First name is required").max(100, "First name must be at most 100 characters long"),
+  lastName   : schema => schema.min(1, "Last name is required").max(100, "Last name must be at most 100 characters long"),
+  employeeId : schema => schema.min(1, "Employee ID is required").max(50, "Employee ID must be at most 50 characters long"),
+  email      : schema => schema.email("Invalid email address").max(100, "Email must be at most 100 characters long"),
   phoneNumber: schema => schema.min(1, "Phone number is required").max(20, "Phone number must be at most 20 characters long").refine(value => /^\+?[0-9\s\-()]+$/.test(value), "Invalid phone number format"),
-  salary: schema => schema.min(0, "Salary must be a non-negative number"),
+  salary     : schema => schema.min(0, "Salary must be a non-negative number"),
 }).omit({
-  id: true,
+  id       : true,
   createdAt: true,
   updatedAt: true,
 })

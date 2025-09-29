@@ -24,4 +24,11 @@ export default antfu({
     }],
     "ts/no-redeclare": "off",
   },
+}, {
+  files: ["./src/db/schema/*.ts"],
+  rules: {
+    "style/key-spacing": ["error", {
+      align: "colon",
+    }],
+  },
 })

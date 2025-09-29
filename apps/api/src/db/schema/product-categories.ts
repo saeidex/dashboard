@@ -3,18 +3,17 @@ import { blob, integer, sqliteTable, text } from "drizzle-orm/sqlite-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 
 export const productCategories = sqliteTable("categories", {
-  id: integer().primaryKey({ autoIncrement: true }),
-  name: text().notNull(),
+  id         : integer().primaryKey({ autoIncrement: true }),
+  name       : text().notNull(),
   description: text(),
-  image: blob({ mode: "buffer" }).notNull(),
+  image      : blob({ mode: "buffer" }).notNull(),
 })
 
 const imageOpenApi = {
-  type: "string" as const,
-  format: "byte" as const,
-  description:
-    "Image data for the product category encoded as a base64 data URL.",
-  example: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
+  type       : "string" as const,
+  format     : "byte" as const,
+  description: "Image data for the product category encoded as a base64 data URL.",
+  example    : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
 }
 
 const dataUrlRegex = /^data:image\/(?:png|jpe?g);base64,/i
@@ -33,8 +32,8 @@ export const selectProductCategoriesSchema = createSelectSchema(productCategorie
 export type selectProductCategoriesSchema = z.infer<typeof selectProductCategoriesSchema>
 
 const insertProductCategoriesSchemaBase = createInsertSchema(productCategories, {
-  image: imageDataUrlSchema,
-  name: schema => schema.min(1, "Name is required").max(100, "Name must be at most 100 characters long"),
+  image      : imageDataUrlSchema,
+  name       : schema => schema.min(1, "Name is required").max(100, "Name must be at most 100 characters long"),
   description: schema => schema.max(500, "Description must be at most 500 characters long"),
 }).omit({ id: true })
 
