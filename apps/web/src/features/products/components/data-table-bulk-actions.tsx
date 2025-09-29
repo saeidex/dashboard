@@ -49,8 +49,9 @@ export function DataTableBulkActions<TData>({
   });
 
   const handleBulkStatusChange = (status: string) => {
+    const selectedProducts = selectedRows.map(row => row.original as Product);
     toast.promise(async () => {
-      for (const product of selectedRows) {
+      for (const product of selectedProducts) {
         await updateMutation.mutateAsync({ id: product.id, product: { status } });
       }
     }, {
@@ -58,7 +59,7 @@ export function DataTableBulkActions<TData>({
       success: () => {
         table.resetRowSelection();
         queryClient.invalidateQueries(queryKeys.LIST_PRODUCTS(search));
-        return `Status updated to "${status}" for ${selectedRows.length} task${selectedRows.length > 1 ? "s" : ""}.`;
+        return `Status updated to "${status}" for ${selectedProducts.length} task${selectedProducts.length > 1 ? "s" : ""}.`;
       },
       error: "Error",
     });
