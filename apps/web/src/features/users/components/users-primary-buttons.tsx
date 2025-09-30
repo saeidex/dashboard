@@ -9,6 +9,7 @@ export function UsersPrimaryButtons() {
   return (
     <div className="flex gap-2">
       <Button
+        disabled
         variant="outline"
         className="space-x-1"
         onClick={() => setOpen("invite")}

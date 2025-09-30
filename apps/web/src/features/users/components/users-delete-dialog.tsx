@@ -1,15 +1,18 @@
 "use client";
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { ConfirmDialog } from "@/web/components/confirm-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/web/components/ui/alert";
 import { Input } from "@/web/components/ui/input";
 import { Label } from "@/web/components/ui/label";
-import { showSubmittedData } from "@/web/lib/show-submitted-data";
 
 import type { User } from "../data/schema";
+
+import { deleteUser, queryKeys } from "../data/queries";
 
 type UserDeleteDialogProps = {
   open: boolean;
@@ -24,12 +27,23 @@ export function UsersDeleteDialog({
 }: UserDeleteDialogProps) {
   const [value, setValue] = useState("");
 
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries(queryKeys.LIST_USERS);
+      toast.success("User deleted successfully.");
+    },
+  });
+
   const handleDelete = () => {
     if (value.trim() !== currentRow.userId)
       return;
 
+    deleteMutation.mutate(currentRow.id);
+
     onOpenChange(false);
-    showSubmittedData(currentRow, "The following user has been deleted:");
   };
 
   return (

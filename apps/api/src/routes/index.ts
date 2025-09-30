@@ -10,6 +10,7 @@ import index from "./index.route"
 import orders from "./orders/orders.index"
 import productCategories from "./product-categories/product-categories.index"
 import products from "./products/products.index"
+import users from "./users/users.index"
 
 export function registerRoutes(app: AppOpenAPI) {
   return app
@@ -20,6 +21,7 @@ export function registerRoutes(app: AppOpenAPI) {
     .route("/", employees)
     .route("/", customers)
     .route("/", expenses)
+    .route("/", users)
 }
 
 // stand alone router type used for api client

@@ -1,5 +1,7 @@
 import type { SortingState, VisibilityState } from "@tanstack/react-table";
 
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
 import {
   flexRender,
   getCoreRowModel,
@@ -14,8 +16,6 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 
-import type { NavigateFn } from "@/web/hooks/use-table-url-state";
-
 import { DataTablePagination, DataTableToolbar } from "@/web/components/data-table";
 import {
   Table,
@@ -28,30 +28,23 @@ import {
 import { useTableUrlState } from "@/web/hooks/use-table-url-state";
 import { cn } from "@/web/lib/utils";
 
-import type { User } from "../data/schema";
-
 import { roles } from "../data/data";
+import { usersQueryOptions } from "../data/queries";
 import { DataTableBulkActions } from "./data-table-bulk-actions";
 import { usersColumns as columns } from "./users-columns";
 
-declare module "@tanstack/react-table" {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  type ColumnMeta<TData, TValue> = {
-    className: string;
-  };
-}
+const route = getRouteApi("/_authenticated/users/");
 
-type DataTableProps = {
-  data: User[];
-  search: Record<string, unknown>;
-  navigate: NavigateFn;
-};
-
-export function UsersTable({ data, search, navigate }: DataTableProps) {
+export function UsersTable() {
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [sorting, setSorting] = useState<SortingState>([]);
+
+  const navigate = route.useNavigate();
+  const search = route.useSearch();
+
+  const { data } = useSuspenseQuery(usersQueryOptions);
 
   // Local state management for table (uncomment to use local-only state, not synced with URL)
   // const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>([])
@@ -130,6 +123,7 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
                       colSpan={header.colSpan}
                       className={cn(
                         "bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted",
+                        // @ts-expect-error className exists
                         header.column.columnDef.meta?.className ?? "",
                       )}
                     >
@@ -159,6 +153,7 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
                           key={cell.id}
                           className={cn(
                             "bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted",
+                            // @ts-expect-error className exists
                             cell.column.columnDef.meta?.className ?? "",
                           )}
                         >

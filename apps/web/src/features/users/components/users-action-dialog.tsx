@@ -1,7 +1,10 @@
 "use client";
 
+import { userRoleSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { PasswordInput } from "@/web/components/password-input";
@@ -24,11 +27,11 @@ import {
   FormMessage,
 } from "@/web/components/ui/form";
 import { Input } from "@/web/components/ui/input";
-import { showSubmittedData } from "@/web/lib/show-submitted-data";
 
 import type { User } from "../data/schema";
 
 import { roles } from "../data/data";
+import { createUser, queryKeys, updateUser } from "../data/queries";
 
 const formSchema = z
   .object({
@@ -40,7 +43,9 @@ const formSchema = z
       error: iss => (iss.input === "" ? "Email is required." : undefined),
     }),
     password: z.string().transform(pwd => pwd.trim()),
-    role: z.string().min(1, "Role is required."),
+    role: userRoleSchema.nonoptional().refine(role => roles.some(r => r.value === role), {
+      message: `Role is required. Role must be one of the following: ${roles.map(r => r.label).join(", ")}`,
+    }),
     confirmPassword: z.string().transform(pwd => pwd.trim()),
     isEdit: z.boolean(),
   })
@@ -127,18 +132,44 @@ export function UsersActionDialog({
           lastName: "",
           userId: "",
           email: "",
-          role: "",
           phoneNumber: "",
+          role: "manager",
           password: "",
           confirmPassword: "",
           isEdit,
         },
   });
 
+  const queryClient = useQueryClient();
+
+  const createMutation = useMutation({
+    mutationFn: createUser,
+    onSuccess: () => {
+      form.reset();
+      queryClient.invalidateQueries(queryKeys.LIST_USERS);
+      onOpenChange(false);
+      toast.success("User created successfully.");
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: updateUser,
+    onSuccess: () => {
+      form.reset();
+      queryClient.invalidateQueries(queryKeys.LIST_USERS);
+      onOpenChange(false);
+      toast.success("User updated successfully.");
+    },
+  });
+
   const onSubmit = (values: UserForm) => {
-    form.reset();
-    showSubmittedData(values);
-    onOpenChange(false);
+    if (isEdit) {
+      const { confirmPassword, isEdit, ...payload } = values;
+      updateMutation.mutate({ id: currentRow.id, payload });
+    }
+    else {
+      createMutation.mutate(values);
+    }
   };
 
   const isPasswordTouched = !!form.formState.dirtyFields.password;
@@ -147,7 +178,6 @@ export function UsersActionDialog({
     <Dialog
       open={open}
       onOpenChange={(state) => {
-        form.reset();
         onOpenChange(state);
       }}
     >
@@ -176,7 +206,7 @@ export function UsersActionDialog({
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="John"
+                        placeholder="Hazrat"
                         className="col-span-4"
                         autoComplete="off"
                         {...field}
@@ -196,7 +226,7 @@ export function UsersActionDialog({
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Doe"
+                        placeholder="Ali"
                         className="col-span-4"
                         autoComplete="off"
                         {...field}
@@ -216,7 +246,7 @@ export function UsersActionDialog({
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="john_doe"
+                        placeholder="hazrat_ali"
                         className="col-span-4"
                         {...field}
                       />
@@ -233,7 +263,7 @@ export function UsersActionDialog({
                     <FormLabel className="col-span-2 text-end">Email</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="john.doe@gmail.com"
+                        placeholder="hazrat.    ali@gmail.com"
                         className="col-span-4"
                         {...field}
                       />
@@ -324,7 +354,14 @@ export function UsersActionDialog({
           </Form>
         </div>
         <DialogFooter>
-          <Button type="submit" form="user-form">
+          <Button variant="outline" onClick={() => form.reset()}>
+            Reset
+          </Button>
+          <Button
+            type="submit"
+            form="user-form"
+            disabled={createMutation.isPending || updateMutation.isPending}
+          >
             Save changes
           </Button>
         </DialogFooter>

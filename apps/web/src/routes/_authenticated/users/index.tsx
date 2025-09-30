@@ -3,6 +3,7 @@ import z from "zod";
 
 import { Users } from "@/web/features/users";
 import { roles } from "@/web/features/users/data/data";
+import { usersQueryOptions } from "@/web/features/users/data/queries";
 
 const usersSearchSchema = z.object({
   page: z.number().optional().catch(1),
@@ -15,5 +16,6 @@ const usersSearchSchema = z.object({
 
 export const Route = createFileRoute("/_authenticated/users/")({
   validateSearch: usersSearchSchema,
+  loader: ({ context }) => context.queryClient.ensureQueryData(usersQueryOptions),
   component: Users,
 });

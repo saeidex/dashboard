@@ -2,6 +2,7 @@
 
 import type { Table } from "@tanstack/react-table";
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -11,6 +12,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/web/components/ui/alert";
 import { Input } from "@/web/components/ui/input";
 import { Label } from "@/web/components/ui/label";
 import { sleep } from "@/web/lib/utils";
+
+import { deleteUser, queryKeys } from "../data/queries";
 
 type UserMultiDeleteDialogProps<TData> = {
   open: boolean;
@@ -29,6 +32,12 @@ export function UsersMultiDeleteDialog<TData>({
 
   const selectedRows = table.getFilteredSelectedRowModel().rows;
 
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteUser,
+  });
+
   const handleDelete = () => {
     if (value.trim() !== CONFIRM_WORD) {
       toast.error(`Please type "${CONFIRM_WORD}" to confirm.`);
@@ -37,10 +46,17 @@ export function UsersMultiDeleteDialog<TData>({
 
     onOpenChange(false);
 
-    toast.promise(sleep(2000), {
+    toast.promise(async () => {
+      for (const row of selectedRows) {
+        const user = row.original as { id: string };
+        await deleteMutation.mutateAsync(user.id);
+      }
+    }, {
       loading: "Deleting users...",
       success: () => {
         table.resetRowSelection();
+        queryClient.invalidateQueries(queryKeys.LIST_USERS);
+
         return `Deleted ${selectedRows.length} ${
           selectedRows.length > 1 ? "users" : "user"
         }`;

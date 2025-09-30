@@ -5,6 +5,8 @@ import { queryOptions } from "@tanstack/react-query";
 import apiClient from "@/web/lib/api-client";
 import formatApiError from "@/web/lib/format-api-error";
 
+// TODO: implement search
+
 export const queryKeys = {
   LIST_CUSTOMERS: { queryKey: ["list-customers"] },
   LIST_CUSTOMER : (id: string) => ({ queryKey: [`list-customer-${id}`] }),

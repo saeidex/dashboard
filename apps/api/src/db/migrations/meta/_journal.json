@@ -78,6 +78,13 @@
       "when": 1759174243927,
       "tag": "0010_blue_leper_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1759204545387,
+      "tag": "0011_magical_captain_stacy",
+      "breakpoints": true
     }
   ]
 }

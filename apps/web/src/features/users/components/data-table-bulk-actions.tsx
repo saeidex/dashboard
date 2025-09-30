@@ -1,5 +1,6 @@
 import type { Table } from "@tanstack/react-table";
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Mail, Trash2, UserCheck, UserX } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -15,6 +16,7 @@ import { sleep } from "@/web/lib/utils";
 
 import type { User } from "../data/schema";
 
+import { updateUser } from "../data/queries";
 import { UsersMultiDeleteDialog } from "./users-multi-delete-dialog";
 
 type DataTableBulkActionsProps<TData> = {
@@ -27,12 +29,23 @@ export function DataTableBulkActions<TData>({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const selectedRows = table.getFilteredSelectedRowModel().rows;
 
+  const queryClient = useQueryClient();
+
+  const updateMutation = useMutation({
+    mutationFn: updateUser,
+  });
+
   const handleBulkStatusChange = (status: "active" | "inactive") => {
     const selectedUsers = selectedRows.map(row => row.original as User);
-    toast.promise(sleep(2000), {
+    toast.promise(async () => {
+      for (const user of selectedUsers) {
+        await updateMutation.mutateAsync({ id: user.id, payload: { status } });
+      }
+    }, {
       loading: `${status === "active" ? "Activating" : "Deactivating"} users...`,
       success: () => {
         table.resetRowSelection();
+        queryClient.invalidateQueries({ queryKey: ["list-users"] });
         return `${status === "active" ? "Activated" : "Deactivated"} ${selectedUsers.length} user${selectedUsers.length > 1 ? "s" : ""}`;
       },
       error: `Error ${status === "active" ? "activating" : "deactivating"} users`,
@@ -65,6 +78,7 @@ export function DataTableBulkActions<TData>({
               className="size-8"
               aria-label="Invite selected users"
               title="Invite selected users"
+              disabled
             >
               <Mail />
               <span className="sr-only">Invite selected users</span>
