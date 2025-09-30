@@ -18,13 +18,24 @@ export default function configureOpenAPI(app: AppOpenAPI) {
   app.get(
     "/reference",
     Scalar({
-      url: `${BASE_PATH}/doc`,
+      pageTitle: "Universal Packaging & Accessories CRM API Reference",
+      sources: [
+        {
+          title: "Universal Packaging & Accessories CRM API",
+          url: `${BASE_PATH}/doc`,
+        },
+        {
+          title: "Auth API",
+          url: `${BASE_PATH}/auth/open-api/generate-schema`,
+        },
+      ],
       theme: "laserwave",
       layout: "modern",
       defaultHttpClient: {
         targetKey: "js",
         clientKey: "fetch",
       },
+      hideClientButton: true,
     }),
   )
 }
