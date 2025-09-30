@@ -4,21 +4,21 @@ import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 
 export const customers = sqliteTable("customers", {
-  id       : text().primaryKey().$defaultFn(createId),
+  id       : text().primaryKey().$defaultFn(createId).notNull(),
   name     : text().notNull(),
   email    : text().notNull(),
   phone    : text().notNull(),
   address  : text(),
   city     : text(),
   notes    : text(),
-  isActive : integer({ mode: "boolean" }).notNull().default(true),
-  createdAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()),
-  updatedAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()),
+  isActive : integer({ mode: "boolean" }).default(true).notNull(),
+  createdAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  updatedAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 })
 
 export const selectCustomersSchema = createSelectSchema(customers, {
-  createdAt: z.iso.date().nullable(),
-  updatedAt: z.iso.date().nullable(),
+  createdAt: z.iso.date(),
+  updatedAt: z.iso.date(),
 })
 export type selectCustomersSchema = z.infer<typeof selectCustomersSchema>
 

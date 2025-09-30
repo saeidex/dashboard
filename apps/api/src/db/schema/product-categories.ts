@@ -7,6 +7,8 @@ export const productCategories = sqliteTable("categories", {
   name       : text().notNull(),
   description: text(),
   image      : blob({ mode: "buffer" }).notNull(),
+  createdAt  : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  updatedAt  : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 })
 
 const imageOpenApi = {
@@ -27,15 +29,21 @@ const imageDataUrlSchema = z
   .openapi(imageOpenApi)
 
 export const selectProductCategoriesSchema = createSelectSchema(productCategories, {
-  image: imageDataUrlSchema,
+  image    : imageDataUrlSchema,
+  createdAt: z.iso.date(),
+  updatedAt: z.iso.date(),
 })
 export type selectProductCategoriesSchema = z.infer<typeof selectProductCategoriesSchema>
 
 const insertProductCategoriesSchemaBase = createInsertSchema(productCategories, {
   image      : imageDataUrlSchema,
   name       : schema => schema.min(1, "Name is required").max(100, "Name must be at most 100 characters long"),
-  description: schema => schema.max(500, "Description must be at most 500 characters long"),
-}).omit({ id: true })
+  description: schema => schema.max(500, "Description must be at most 500 characters long").optional(),
+}).omit({
+  id       : true,
+  createdAt: true,
+  updatedAt: true,
+})
 
 export const insertProductCategoriesSchema = insertProductCategoriesSchemaBase
 export type insertProductCategoriesSchema = z.infer<typeof insertProductCategoriesSchema>

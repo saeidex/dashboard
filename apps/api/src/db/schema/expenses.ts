@@ -37,8 +37,8 @@ export const expenses = sqliteTable("expenses", {
   currency : text().$type<Currency>().default("BDT").notNull(),
   amount   : real().notNull(),
   notes    : text(),
-  createdAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()),
-  updatedAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()),
+  createdAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  updatedAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 }, table => [
   index("idx_expenses_category").on(table.category),
 ])
@@ -46,8 +46,8 @@ export const expenses = sqliteTable("expenses", {
 export const selectExpensesSchema = createSelectSchema(expenses, {
   category : expenseCategorySchema,
   currency : currencySchema,
-  createdAt: z.iso.date().nullable(),
-  updatedAt: z.iso.date().nullable(),
+  createdAt: z.iso.date(),
+  updatedAt: z.iso.date(),
 })
 export type selectExpensesSchema = z.infer<typeof selectExpensesSchema>
 

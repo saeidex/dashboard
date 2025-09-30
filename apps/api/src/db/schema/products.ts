@@ -3,6 +3,8 @@ import { createId } from "@paralleldrive/cuid2"
 import { index, integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 
+import type { Currency } from "./orders"
+
 import { productCategories } from "./product-categories"
 
 export const products = sqliteTable("products", {
@@ -10,17 +12,17 @@ export const products = sqliteTable("products", {
   title             : text().notNull(),
   status            : text().notNull(),
   label             : text(),
-  categoryId        : text().references(() => productCategories.id),
-  basePrice         : real().notNull().default(0),
-  discountPercentage: real().notNull().default(0),
-  discountAmount    : real().notNull().default(0),
-  taxPercentage     : real().notNull().default(0),
-  taxAmount         : real().notNull().default(0),
-  total             : real().notNull().default(0),
-  currency          : text().notNull().default("BDT"),
-  stock             : integer({ mode: "number" }).notNull().default(0),
-  createdAt         : integer({ mode: "timestamp" }).$defaultFn(() => new Date()),
-  updatedAt         : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()),
+  categoryId        : text().references(() => productCategories.id).notNull(),
+  basePrice         : real().default(0).notNull(),
+  discountPercentage: real().default(0).notNull(),
+  discountAmount    : real().default(0).notNull(),
+  taxPercentage     : real().default(0).notNull(),
+  taxAmount         : real().default(0).notNull(),
+  total             : real().default(0).notNull(),
+  currency          : text().$type<Currency>().default("BDT").notNull(),
+  stock             : integer({ mode: "number" }).default(0).notNull(),
+  createdAt         : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  updatedAt         : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 }, table => [
   index("idx_products_category_id").on(table.categoryId),
   index("idx_products_status").on(table.status),
@@ -36,7 +38,7 @@ export const insertProductsSchema = createInsertSchema(products, {
   title             : schema => schema.min(3, "Title must be at least 3 characters long").max(255, "Title must be at most 255 characters long"),
   status            : schema => schema.min(3, "Status must be at least 3 characters long").max(50, "Status must be at most 50 characters long"),
   label             : schema => schema.max(100, "Label must be at most 100 characters long").optional(),
-  currency          : schema => schema.min(3, "Currency must be at least 3 characters long").max(10, "Currency must be at most 10 characters long"),
+  currency          : schema => schema.min(3, "Currency must be at least 3 characters long").max(10, "Currency must be at most 10 characters long").optional(),
   stock             : schema => schema.min(0).optional(),
   basePrice         : schema => schema.min(0),
   discountPercentage: schema => schema.min(0).max(100).optional(),
