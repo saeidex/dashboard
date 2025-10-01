@@ -1,7 +1,7 @@
 import type { Table } from "@tanstack/react-table";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Mail, Trash2, UserCheck, UserX } from "lucide-react";
+import { Ban, Mail, Trash2, UserCheck, UserX } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -35,20 +35,20 @@ export function DataTableBulkActions<TData>({
     mutationFn: updateUser,
   });
 
-  const handleBulkStatusChange = (status: "active" | "inactive") => {
+  const handleBulkBannedChange = (banned: boolean) => {
     const selectedUsers = selectedRows.map(row => row.original as User);
     toast.promise(async () => {
       for (const user of selectedUsers) {
-        await updateMutation.mutateAsync({ id: user.id, payload: { status } });
+        await updateMutation.mutateAsync({ id: user.id, payload: { banned } });
       }
     }, {
-      loading: `${status === "active" ? "Activating" : "Deactivating"} users...`,
+      loading: `${banned ? "Banning" : "Unbanning"} users...`,
       success: () => {
         table.resetRowSelection();
         queryClient.invalidateQueries({ queryKey: ["list-users"] });
-        return `${status === "active" ? "Activated" : "Deactivated"} ${selectedUsers.length} user${selectedUsers.length > 1 ? "s" : ""}`;
+        return `${banned ? "Banned" : "Unbanned"} ${selectedUsers.length} user${selectedUsers.length > 1 ? "s" : ""}`;
       },
-      error: `Error ${status === "active" ? "activating" : "deactivating"} users`,
+      error: `Error ${banned ? "banning" : "unbanning"} users`,
     });
     table.resetRowSelection();
   };
@@ -94,17 +94,17 @@ export function DataTableBulkActions<TData>({
             <Button
               variant="outline"
               size="icon"
-              onClick={() => handleBulkStatusChange("active")}
+              onClick={() => handleBulkBannedChange(true)}
               className="size-8"
-              aria-label="Activate selected users"
-              title="Activate selected users"
+              aria-label="UnBan selected users"
+              title="UnBan selected users"
             >
               <UserCheck />
-              <span className="sr-only">Activate selected users</span>
+              <span className="sr-only">UnBan selected users</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Activate selected users</p>
+            <p>UnBan selected users</p>
           </TooltipContent>
         </Tooltip>
 
@@ -113,17 +113,17 @@ export function DataTableBulkActions<TData>({
             <Button
               variant="outline"
               size="icon"
-              onClick={() => handleBulkStatusChange("inactive")}
+              onClick={() => handleBulkBannedChange(false)}
               className="size-8"
-              aria-label="Deactivate selected users"
-              title="Deactivate selected users"
+              aria-label="Ban selected users"
+              title="Ban selected users"
             >
-              <UserX />
-              <span className="sr-only">Deactivate selected users</span>
+              <Ban />
+              <span className="sr-only">Ban selected users</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Deactivate selected users</p>
+            <p>Ban selected users</p>
           </TooltipContent>
         </Tooltip>
 

@@ -26,6 +26,13 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const { setOpen, setCurrentRow } = useOrders();
   const { printOrder, downloadOrderPdf } = useOrderPrint();
 
+  const handlePrint = () => printOrder(row.original);
+
+  const handleDownload = () => {
+    setCurrentRow(row.original);
+    downloadOrderPdf(row.original);
+  };
+
   return (
     <>
       <DropdownMenu modal={false}>
@@ -40,10 +47,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[160px]">
           <DropdownMenuItem
-            onClick={() => {
-              setCurrentRow(row.original);
-              downloadOrderPdf(row.original);
-            }}
+            onClick={handleDownload}
           >
             Download
             <DropdownMenuShortcut>
@@ -52,10 +56,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            onClick={() => {
-              setCurrentRow(row.original);
-              printOrder(row.original);
-            }}
+            onClick={handlePrint}
           >
             Print
             <DropdownMenuShortcut>

@@ -3,9 +3,10 @@ import { createId } from "@paralleldrive/cuid2"
 import { index, integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 
-import type { Currency } from "./orders"
-
-import { currencySchema } from "./orders"
+export const currencySchema = z.union([
+  z.literal("BDT"),
+]).default("BDT")
+export type Currency = z.infer<typeof currencySchema>
 
 export const EXPENSE_CATEGORIES = [
   "materials",

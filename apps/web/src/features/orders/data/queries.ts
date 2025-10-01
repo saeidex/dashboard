@@ -1,4 +1,4 @@
-import type { insertOrdersSchema, patchOrdersSchema } from "@crm/api/schema";
+import type { insertOrderWithItemsSchema, patchOrderWithItemsSchema } from "@crm/api/schema";
 
 import { queryOptions } from "@tanstack/react-query";
 
@@ -7,7 +7,7 @@ import formatApiError from "@/web/lib/format-api-error";
 
 export const queryKeys = {
   LIST_ORDERS: { queryKey: ["list-orders"] },
-  LIST_ORDER: (id: string) => ({ queryKey: [`list-order-${id}`] }),
+  LIST_ORDER : (id: string) => ({ queryKey: [`list-order-${id}`] }),
 };
 
 export const ordersQueryOptions = queryOptions({
@@ -23,9 +23,7 @@ export function createOrderQueryOptions(id: string) {
     ...queryKeys.LIST_ORDER(id),
     queryFn: async () => {
       const response = await apiClient.api.orders[":id"].$get({
-        param: {
-          id,
-        },
+        param: { id },
       });
       const json = await response.json();
       if ("message" in json) {
@@ -40,8 +38,8 @@ export function createOrderQueryOptions(id: string) {
   });
 }
 
-export async function createEmployee(order: insertOrdersSchema) {
-  const response = await apiClient.api.employees.$post({
+export async function createOrder(order: insertOrderWithItemsSchema) {
+  const response = await apiClient.api.orders.$post({
     json: order,
   });
   const json = await response.json();
@@ -52,11 +50,9 @@ export async function createEmployee(order: insertOrdersSchema) {
   return json;
 }
 
-export async function deleteEmployee(id: string) {
-  const response = await apiClient.api.employees[":id"].$delete({
-    param: {
-      id,
-    },
+export async function deleteOrder(id: string) {
+  const response = await apiClient.api.orders[":id"].$delete({
+    param: { id },
   });
   if (response.status !== 204) {
     const json = await response.json();
@@ -68,12 +64,10 @@ export async function deleteEmployee(id: string) {
   }
 }
 
-export async function updateEmployee({ id, order }: { id: string; order: patchOrdersSchema }) {
-  const response = await apiClient.api.employees[":id"].$patch({
-    param: {
-      id,
-    },
-    json: order,
+export async function updateOrder({ id, order }: { id: string; order: patchOrderWithItemsSchema }) {
+  const response = await apiClient.api.orders[":id"].$patch({
+    param: { id },
+    json : order,
   });
   if (response.status !== 200) {
     const json = await response.json();

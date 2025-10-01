@@ -54,7 +54,7 @@ export function OrdersDialogs() {
               <>
                 You are about to delete order
                 {" "}
-                <strong>{currentRow.orderNumber}</strong>
+                <strong>{currentRow.id}</strong>
                 .
                 <br />
                 {" "}

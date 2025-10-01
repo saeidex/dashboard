@@ -1,6 +1,5 @@
 "use client";
 
-import { userRoleSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -35,20 +34,27 @@ import { createUser, queryKeys, updateUser } from "../data/queries";
 
 const formSchema = z
   .object({
-    firstName: z.string().min(1, "First Name is required."),
-    lastName: z.string().min(1, "Last Name is required."),
-    userId: z.string().min(1, "UserId is required."),
-    phoneNumber: z.string().min(1, "Phone number is required."),
+    name: z.string().min(1, "Name is required."),
     email: z.email({
       error: iss => (iss.input === "" ? "Email is required." : undefined),
     }),
+    image: z.string().optional().nullable(),
     password: z.string().transform(pwd => pwd.trim()),
-    role: userRoleSchema.nonoptional().refine(role => roles.some(r => r.value === role), {
-      message: `Role is required. Role must be one of the following: ${roles.map(r => r.label).join(", ")}`,
-    }),
     confirmPassword: z.string().transform(pwd => pwd.trim()),
+    role: z.literal("user").or(z.literal("admin")),
     isEdit: z.boolean(),
   })
+  .refine(
+    ({ image }) => {
+      if (image === null || image === undefined || image === "")
+        return true;
+      return z.url().safeParse(image).success;
+    },
+    {
+      message: "Image must be a valid URL.",
+      path: ["image"],
+    },
+  )
   .refine(
     (data) => {
       if (data.isEdit && !data.password)
@@ -123,19 +129,19 @@ export function UsersActionDialog({
     defaultValues: isEdit
       ? {
           ...currentRow,
+          role: currentRow.role as "admin" | "user" | undefined,
           password: "",
           confirmPassword: "",
+          image: currentRow.image ?? null,
           isEdit,
         }
       : {
-          firstName: "",
-          lastName: "",
-          userId: "",
+          name: "",
           email: "",
-          phoneNumber: "",
-          role: "manager",
           password: "",
           confirmPassword: "",
+          role: "user" as const,
+          image: null,
           isEdit,
         },
   });
@@ -189,7 +195,7 @@ export function UsersActionDialog({
             Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
-        <div className="h-[26.25rem] w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3">
+        <div className="max-h-[26.25rem] w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3">
           <Form {...form}>
             <form
               id="user-form"
@@ -198,56 +204,17 @@ export function UsersActionDialog({
             >
               <FormField
                 control={form.control}
-                name="firstName"
+                name="name"
                 render={({ field }) => (
                   <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
                     <FormLabel className="col-span-2 text-end">
-                      First Name
+                      Name
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Hazrat"
+                        placeholder="Hazrat Ali"
                         className="col-span-4"
                         autoComplete="off"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="col-span-4 col-start-3" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                    <FormLabel className="col-span-2 text-end">
-                      Last Name
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Ali"
-                        className="col-span-4"
-                        autoComplete="off"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="col-span-4 col-start-3" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="userId"
-                render={({ field }) => (
-                  <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                    <FormLabel className="col-span-2 text-end">
-                      UserId
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="hazrat_ali"
-                        className="col-span-4"
                         {...field}
                       />
                     </FormControl>
@@ -263,7 +230,7 @@ export function UsersActionDialog({
                     <FormLabel className="col-span-2 text-end">Email</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="hazrat.    ali@gmail.com"
+                        placeholder="hazrat.ali@gmail.com"
                         className="col-span-4"
                         {...field}
                       />
@@ -274,17 +241,18 @@ export function UsersActionDialog({
               />
               <FormField
                 control={form.control}
-                name="phoneNumber"
+                name="image"
                 render={({ field }) => (
                   <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
                     <FormLabel className="col-span-2 text-end">
-                      Phone Number
+                      Image URL
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="+123456789"
+                        placeholder="https://example.com/avatar.png"
                         className="col-span-4"
                         {...field}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormMessage className="col-span-4 col-start-3" />
@@ -311,45 +279,53 @@ export function UsersActionDialog({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                    <FormLabel className="col-span-2 text-end">
-                      Password
-                    </FormLabel>
-                    <FormControl>
-                      <PasswordInput
-                        placeholder="e.g., S3cur3P@ssw0rd"
-                        className="col-span-4"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="col-span-4 col-start-3" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                    <FormLabel className="col-span-2 text-end">
-                      Confirm Password
-                    </FormLabel>
-                    <FormControl>
-                      <PasswordInput
-                        disabled={!isPasswordTouched}
-                        placeholder="e.g., S3cur3P@ssw0rd"
-                        className="col-span-4"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="col-span-4 col-start-3" />
-                  </FormItem>
-                )}
-              />
+
+              {
+                !isEdit && (
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
+                        <FormLabel className="col-span-2 text-end">
+                          Password
+                        </FormLabel>
+                        <FormControl>
+                          <PasswordInput
+                            placeholder="e.g., S3cur3P@ssw0rd"
+                            className="col-span-4"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="col-span-4 col-start-3" />
+                      </FormItem>
+                    )}
+                  />
+                )
+              }
+
+              {!isEdit && (
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
+                      <FormLabel className="col-span-2 text-end">
+                        Confirm Password
+                      </FormLabel>
+                      <FormControl>
+                        <PasswordInput
+                          disabled={!isPasswordTouched}
+                          placeholder="e.g., S3cur3P@ssw0rd"
+                          className="col-span-4"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="col-span-4 col-start-3" />
+                    </FormItem>
+                  )}
+                />
+              )}
             </form>
           </Form>
         </div>

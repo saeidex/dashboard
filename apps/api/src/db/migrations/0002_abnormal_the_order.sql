@@ -1,1 +1,0 @@
-DROP INDEX `orders_orderNumber_unique`;

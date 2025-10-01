@@ -8,6 +8,7 @@ import {
 
   useReactTable,
 } from "@tanstack/react-table";
+import { format } from "date-fns";
 import { useMemo } from "react";
 
 import {
@@ -18,9 +19,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/web/components/ui/table";
-import { vendors } from "@/web/features/vendors/data/vendors";
 
-import type { Order, OrderItem } from "../data/schema";
+import type { OrderWithItemsAndCustomer } from "../data/schema";
 
 import { OwnerInfo } from "../data/data";
 
@@ -39,87 +39,77 @@ export const Invoice = ({
   order,
   printRef,
 }: {
-  order: Order;
+  order: OrderWithItemsAndCustomer;
   printRef?: React.RefObject<HTMLDivElement | null>;
 }) => {
-  const customer = vendors.find(v => v.id === order.customerId);
+  const customer = order.customer;
+  const orderItems = order.items;
 
-  const columnHelper = createColumnHelper<OrderItem>();
+  const columnHelper = createColumnHelper<typeof orderItems[number]>();
   const columns = useMemo(
     () => [
       columnHelper.display({
         id: "index",
         header: "#",
-        cell: info => info.row.index + 1,
+        cell: ({ row }) => row.index + 1,
         meta: { className: "w-8 text-muted-foreground" },
       }),
       columnHelper.accessor("productTitle", {
         header: "Item",
-        cell: info => (
+        cell: ({ row }) => (
           <div className="min-w-40">
-            <div className="leading-tight font-medium">{info.getValue()}</div>
-            <div className="text-muted-foreground text-[11px]">
-              SKU:
-              {" "}
-              {info.row.original.sku}
-            </div>
+            <div className="leading-tight font-medium">{row.getValue("productTitle")}</div>
           </div>
         ),
       }),
-      columnHelper.accessor(r => r.pricing.quantity, {
-        id: "quantity",
+      columnHelper.accessor("quantity", {
         header: "Qty",
-        cell: info => <span className="tabular-nums">{info.getValue()}</span>,
+        cell: ({ row }) => <span className="tabular-nums">{row.getValue("quantity")}</span>,
         meta: { className: "text-right w-12" },
       }),
-      columnHelper.accessor(r => r.pricing.unitPrice, {
-        id: "unitPrice",
+      columnHelper.accessor("unitPrice", {
         header: "Unit",
-        cell: info => (
+        cell: ({ row }) => (
           <span className="tabular-nums">
-            {formatCurrency(
-              info.getValue(),
-              info.row.original.pricing.currency,
-            )}
+            {formatCurrency(row.getValue("unitPrice"), row.getValue("currency"))}
           </span>
         ),
         meta: { className: "text-right w-20" },
       }),
-      columnHelper.accessor(r => r.pricing.discountAmount, {
-        id: "discount",
+      columnHelper.accessor("discountAmount", {
         header: "Discount",
-        cell: info => (
+        cell: ({ row }) => (
           <span className="tabular-nums">
-            {info.getValue()
-              ? `- ${formatCurrency(info.getValue(), info.row.original.pricing.currency)}`
-              : "—"}
+            {row.getValue("discountAmount") === 0
+              ? "—"
+              : `- ${formatCurrency(row.getValue("discountAmount"), row.getValue("currency"))}`}
           </span>
         ),
         meta: { className: "text-right w-24" },
       }),
-      columnHelper.accessor(r => r.pricing.taxAmount, {
+      columnHelper.accessor("taxAmount", {
         id: "tax",
         header: "Tax",
-        cell: info => (
+        cell: ({ row }) => (
           <span className="tabular-nums">
-            {info.getValue()
-              ? formatCurrency(
-                  info.getValue(),
-                  info.row.original.pricing.currency,
-                )
-              : "—"}
+            {row.getValue("taxAmount") === 0
+              ? "—"
+              : formatCurrency(
+                  row.getValue("taxAmount"),
+                  row.getValue("currency"),
+                )}
           </span>
         ),
         meta: { className: "text-right w-20" },
       }),
-      columnHelper.accessor(r => r.pricing.total, {
+      columnHelper.accessor("total", {
         id: "total",
         header: "Total",
-        cell: info => (
+        cell: ({ row }) => (
           <span className="font-medium tabular-nums">
             {formatCurrency(
-              info.getValue(),
-              info.row.original.pricing.currency,
+              row.getValue("total"),
+              row.getValue("currency"),
             )}
           </span>
         ),
@@ -130,7 +120,7 @@ export const Invoice = ({
   );
 
   const table = useReactTable({
-    data: order.items,
+    data: orderItems,
     columns,
     state: {
       sorting: [] as SortingState,
@@ -151,16 +141,16 @@ export const Invoice = ({
             <h2 className="text-muted-foreground text-2xl font-light">
               Order
               {" "}
-              <span className="font-medium">{order.orderNumber}</span>
+              <span className="font-medium">{order.id}</span>
             </h2>
             <p className="text-muted-foreground mt-1 text-xs">
               Created:
               {" "}
-              {order.createdAt.toLocaleDateString()}
+              {format(order.createdAt ?? "", "MMMM dd, yyyy")}
               {" "}
               · Updated:
               {" "}
-              {order.updatedAt.toLocaleDateString()}
+              {format(order.updatedAt ?? "", "MMMM dd, yyyy")}
             </p>
           </div>
           <div className="grid gap-2 text-sm md:text-right">
@@ -181,7 +171,7 @@ export const Invoice = ({
             <div>
               <span className="font-medium">Items:</span>
               {" "}
-              {order.items.length}
+              {orderItems.length}
             </div>
           </div>
         </section>
@@ -201,35 +191,26 @@ export const Invoice = ({
             <h2 className="text-muted-foreground text-sm font-semibold tracking-wide">
               Bill To
             </h2>
-            {customer
-              ? (
-                  <>
-                    <p className="font-medium">{customer.name}</p>
-                    <p className="text-muted-foreground text-xs">
-                      {customer.address}
-                    </p>
-                    <p className="text-muted-foreground text-xs">{customer.city}</p>
-                    <p className="text-muted-foreground text-xs">
-                      {customer.email}
-                    </p>
-                    <p className="text-muted-foreground text-xs">
-                      {customer.phone}
-                    </p>
-                  </>
-                )
-              : (
-                  <p className="text-muted-foreground text-xs">Unknown customer</p>
-                )}
+
+            <p className="font-medium">{customer.name}</p>
+            <p className="text-muted-foreground text-xs">
+              {customer.address}
+            </p>
+            <p className="text-muted-foreground text-xs">{customer.city}</p>
+            <p className="text-muted-foreground text-xs">
+              {customer.email}
+            </p>
+            <p className="text-muted-foreground text-xs">
+              {customer.phone}
+            </p>
           </div>
           <div className="space-y-1">
             <h2 className="text-muted-foreground text-sm font-semibold tracking-wide">
               Summary
             </h2>
-            <p className="text-muted-foreground text-xs">Order No.</p>
-            <p className="font-medium">{order.orderNumber}</p>
             <p className="text-muted-foreground text-xs">Grand Total</p>
             <p className="font-medium">
-              {formatCurrency(order.totals.grandTotal, order.totals.currency)}
+              {formatCurrency(order.grandTotal, order.currency)}
             </p>
           </div>
         </section>
@@ -246,7 +227,8 @@ export const Invoice = ({
                     <TableHead
                       key={header.id}
                       className={
-                        header.column.columnDef.meta?.className as string
+                        // @ts-expect-error className exists
+                        header.column.columnDef.meta?.className
                       }
                     >
                       {header.isPlaceholder
@@ -267,7 +249,8 @@ export const Invoice = ({
                     <TableCell
                       key={cell.id}
                       className={
-                        cell.column.columnDef.meta?.className as string
+                        // @ts-expect-error className exists
+                        cell.column.columnDef.meta?.className
                       }
                     >
                       {flexRender(
@@ -287,42 +270,42 @@ export const Invoice = ({
             <div className="flex justify-between">
               <span className="text-muted-foreground">Items Subtotal</span>
               <span className="font-medium">
-                {formatCurrency(order.totals.itemsTotal, order.totals.currency)}
+                {formatCurrency(order.itemsTotal, order.currency)}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Items Tax</span>
               <span className="font-medium">
                 {formatCurrency(
-                  order.totals.itemsTaxTotal,
-                  order.totals.currency,
+                  order.itemsTaxTotal,
+                  order.currency,
                 )}
               </span>
             </div>
-            {order.totals.discountTotal > 0 && (
+            {order.discountTotal > 0 && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Discount</span>
                 <span className="font-medium">
                   -
                   {formatCurrency(
-                    order.totals.discountTotal,
-                    order.totals.currency,
+                    order.discountTotal,
+                    order.currency,
                   )}
                 </span>
               </div>
             )}
-            {order.totals.shipping > 0 && (
+            {order.shipping > 0 && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping</span>
                 <span className="font-medium">
-                  {formatCurrency(order.totals.shipping, order.totals.currency)}
+                  {formatCurrency(order.shipping, order.currency)}
                 </span>
               </div>
             )}
             <div className="flex justify-between border-t pt-2 text-base">
               <span className="font-semibold">Grand Total</span>
               <span className="font-semibold">
-                {formatCurrency(order.totals.grandTotal, order.totals.currency)}
+                {formatCurrency(order.grandTotal, order.currency)}
               </span>
             </div>
           </div>

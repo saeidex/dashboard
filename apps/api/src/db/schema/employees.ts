@@ -73,6 +73,7 @@ export const insertEmployeesSchema = createInsertSchema(employees, {
   email      : schema => schema.email("Invalid email address").max(100, "Email must be at most 100 characters long"),
   phoneNumber: schema => schema.min(1, "Phone number is required").max(20, "Phone number must be at most 20 characters long").refine(value => /^\+?[0-9\s\-()]+$/.test(value), "Invalid phone number format"),
   salary     : schema => schema.min(0, "Salary must be a non-negative number"),
+  hireDate   : z.coerce.date().default(() => new Date()),
 }).omit({
   id       : true,
   createdAt: true,

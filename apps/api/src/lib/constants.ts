@@ -15,3 +15,4 @@ export const ZOD_ERROR_CODES = {
 }
 
 export const notFoundSchema = createMessageObjectSchema(HttpStatusPhrases.NOT_FOUND)
+export const forbiddenSchema = createMessageObjectSchema(HttpStatusPhrases.FORBIDDEN)

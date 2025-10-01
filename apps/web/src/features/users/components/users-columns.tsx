@@ -1,5 +1,8 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
+import { format } from "date-fns/format";
+import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
+
 import { DataTableColumnHeader } from "@/web/components/data-table";
 import { LongText } from "@/web/components/long-text";
 import { Checkbox } from "@/web/components/ui/checkbox";
@@ -39,12 +42,12 @@ export const usersColumns: ColumnDef<User>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "userId",
+    accessorKey: "id",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="UserId" />
+      <DataTableColumnHeader column={column} title="User ID" />
     ),
-    cell: ({ row }) => (
-      <LongText className="max-w-36 ps-3">{row.getValue("userId")}</LongText>
+    cell: ({ cell }) => (
+      <LongText className="max-w-36 ps-3">{cell.getValue<User["id"]>()}</LongText>
     ),
     meta: {
       className: cn(
@@ -55,14 +58,12 @@ export const usersColumns: ColumnDef<User>[] = [
     enableHiding: false,
   },
   {
-    id: "name",
+    accessorKey: "name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => {
-      const { firstName, lastName } = row.original;
-      const fullName = `${firstName} ${lastName}`;
-      return <LongText className="max-w-36">{fullName}</LongText>;
+    cell: ({ cell }) => {
+      return <LongText className="max-w-36">{cell.getValue<User["name"]>()}</LongText>;
     },
     meta: { className: "w-36" },
   },
@@ -71,25 +72,17 @@ export const usersColumns: ColumnDef<User>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Email" />
     ),
-    cell: ({ row }) => (
-      <div className="w-fit text-nowrap">{row.getValue("email")}</div>
+    cell: ({ cell }) => (
+      <div className="w-fit text-nowrap">{cell.getValue<User["email"]>()}</div>
     ),
-  },
-  {
-    accessorKey: "phoneNumber",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Phone Number" />
-    ),
-    cell: ({ row }) => <div>{row.getValue("phoneNumber")}</div>,
-    enableSorting: false,
   },
   {
     accessorKey: "role",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Role" />
     ),
-    cell: ({ row }) => {
-      const { role } = row.original;
+    cell: ({ cell }) => {
+      const role = cell.getValue<User["role"]>();
       const userType = roles.find(({ value }) => value === role);
 
       if (!userType) {
@@ -101,7 +94,7 @@ export const usersColumns: ColumnDef<User>[] = [
           {userType.icon && (
             <userType.icon size={16} className="text-muted-foreground" />
           )}
-          <span className="text-sm capitalize">{row.getValue("role")}</span>
+          <span className="text-sm capitalize">{role}</span>
         </div>
       );
     },
@@ -110,6 +103,40 @@ export const usersColumns: ColumnDef<User>[] = [
     },
     enableSorting: false,
     enableHiding: false,
+  },
+  {
+    accessorKey: "banned",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Banned" />
+    ),
+    cell: ({ cell }) => {
+      return cell.getValue<User["banned"]>() ? "Yes" : "No";
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id) ? "Yes" : "No");
+    },
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "banReason",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Ban Reason" />
+    ),
+    cell: ({ cell }) => {
+      return cell.getValue<User["banReason"]>() ?? "-";
+    },
+    enableSorting: false,
+  },
+  {
+    accessorKey: "createdAt",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Registered At" />
+    ),
+    cell: ({ cell }) => {
+      return formatDistanceToNow(new Date(cell.getValue<User["createdAt"]>()), { addSuffix: true });
+    },
+    meta: { className: "w-36" },
   },
   {
     id: "actions",

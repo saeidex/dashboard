@@ -102,7 +102,7 @@ export function UsersTable() {
       <DataTableToolbar
         table={table}
         searchPlaceholder="Filter users..."
-        searchKey="username"
+        searchKey="name"
         filters={[
           {
             columnId: "role",

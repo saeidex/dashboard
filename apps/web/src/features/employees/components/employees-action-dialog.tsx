@@ -6,6 +6,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import z from "zod";
 
 import { SelectDropdown } from "@/web/components/select-dropdown";
 import { Button } from "@/web/components/ui/button";
@@ -41,18 +43,22 @@ type EmployeeActionDialogProps = {
   onOpenChange: (open: boolean) => void;
 };
 
+const fromSchema = insertEmployeesSchema.extend({
+  hireDate: z.date().optional(),
+});
+
 export function EmployeesActionDialog({
   currentRow,
   open,
   onOpenChange,
 }: EmployeeActionDialogProps) {
   const isEdit = !!currentRow;
-  const form = useForm<insertEmployeesSchema>({
-    resolver: zodResolver(insertEmployeesSchema),
+  const form = useForm<z.infer<typeof fromSchema>>({
+    resolver: zodResolver(fromSchema),
     defaultValues: isEdit
       ? {
           ...currentRow,
-          hireDate: currentRow?.hireDate ? new Date(currentRow.hireDate) : new Date(),
+          hireDate: new Date(currentRow.hireDate),
         }
       : {
           firstName: "",
@@ -90,6 +96,9 @@ export function EmployeesActionDialog({
         throw new Error("Employee ID must be unique");
       }
     },
+    onError: (error) => {
+      toast.error(error.message);
+    },
   });
 
   const updateMutation = useMutation({
@@ -98,6 +107,9 @@ export function EmployeesActionDialog({
       onOpenChange(false);
       form.reset();
       queryClient.invalidateQueries(queryKeys.LIST_EMPLOYEES);
+    },
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 

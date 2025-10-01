@@ -34,16 +34,20 @@ export function UsersDeleteDialog({
     onSuccess: () => {
       queryClient.invalidateQueries(queryKeys.LIST_USERS);
       toast.success("User deleted successfully.");
+      onOpenChange(false);
+    },
+    onError: (error) => {
+      toast.error(
+        error?.message || "There was an error deleting the user. Please try again.",
+      );
     },
   });
 
   const handleDelete = () => {
-    if (value.trim() !== currentRow.userId)
+    if (value.trim() !== currentRow.email)
       return;
 
     deleteMutation.mutate(currentRow.id);
-
-    onOpenChange(false);
   };
 
   return (
@@ -51,7 +55,7 @@ export function UsersDeleteDialog({
       open={open}
       onOpenChange={onOpenChange}
       handleConfirm={handleDelete}
-      disabled={value.trim() !== currentRow.userId}
+      disabled={value.trim() !== currentRow.email || deleteMutation.isPending}
       title={(
         <span className="text-destructive">
           <AlertTriangle
@@ -67,24 +71,24 @@ export function UsersDeleteDialog({
           <p className="mb-2">
             Are you sure you want to delete
             {" "}
-            <span className="font-bold">{currentRow.userId}</span>
+            <span className="font-bold">{currentRow.name}</span>
             ?
             <br />
-            This action will permanently remove the user with the role of
+            This action will permanently remove the user with the email of
             {" "}
             <span className="font-bold">
-              {currentRow.role.toUpperCase()}
+              {currentRow.email}
             </span>
             {" "}
             from the system. This cannot be undone.
           </p>
 
           <Label className="my-2">
-            UserId:
+            Email:
             <Input
               value={value}
               onChange={e => setValue(e.target.value)}
-              placeholder="Enter userId to confirm deletion."
+              placeholder="Enter email to confirm deletion."
             />
           </Label>
 

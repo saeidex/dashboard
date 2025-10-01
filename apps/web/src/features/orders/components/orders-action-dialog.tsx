@@ -1,9 +1,10 @@
 "use client";
 
+import { insertOrderWithItemsSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useMemo } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { z } from "zod";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import React from "react";
+import { useForm } from "react-hook-form";
 
 import { SelectDropdown } from "@/web/components/select-dropdown";
 import { Button } from "@/web/components/ui/button";
@@ -24,19 +25,17 @@ import {
   FormMessage,
 } from "@/web/components/ui/form";
 import { Input } from "@/web/components/ui/input";
-import { products } from "@/web/features/products/data/products";
-import { vendors } from "@/web/features/vendors/data/vendors";
 import { showSubmittedData } from "@/web/lib/show-submitted-data";
 
 import type { Order } from "../data/schema";
-import type { EditableOrderItem } from "./order-items-editor";
 
+import { customersQueryOptions } from "../../customers/data/queries";
+import { createProductsQueryOptions } from "../../products/data/queries";
 import {
   orderStatusValues,
   paymentMethodValues,
   paymentStatusValues,
 } from "../data/data";
-import { orderItemSchema, orderSchema } from "../data/schema";
 import { OrderItemsEditor } from "./order-items-editor";
 
 type OrderActionDialogProps = {
@@ -45,112 +44,66 @@ type OrderActionDialogProps = {
   onOpenChange: (open: boolean) => void;
 };
 
-const formSchema = z.object({
-  id: orderSchema.shape.id.optional(),
-  customerId: orderSchema.shape.customerId,
-  status: orderSchema.shape.status.default("pending"),
-  paymentStatus: orderSchema.shape.paymentStatus.default("unpaid"),
-  paymentMethod: orderSchema.shape.paymentMethod.optional(),
-  notes: orderSchema.shape.notes.optional(),
-  items: z
-    .array(
-      orderItemSchema.pick({
-        id: true,
-        productId: true,
-        productTitle: true,
-        sku: true,
-        pricing: true,
-      }),
-    )
-    .min(1, "At least one item is required"),
-});
-
-export type OrderUpsertInput = z.output<typeof formSchema>;
-
 export function OrdersActionDialog({
   currentRow,
   open,
   onOpenChange,
 }: OrderActionDialogProps) {
+  const { data: customers } = useSuspenseQuery(customersQueryOptions);
+  const { data: products } = useSuspenseQuery(createProductsQueryOptions());
+
   const isEdit = !!currentRow;
-  const form = useForm({
-    resolver: zodResolver(formSchema),
+  const form = useForm<insertOrderWithItemsSchema>({
+    resolver: zodResolver(insertOrderWithItemsSchema),
     defaultValues: isEdit
-      ? {
-          id: currentRow.id,
-          customerId: currentRow.customerId,
-          status: currentRow.status,
-          paymentStatus: currentRow.paymentStatus,
-          paymentMethod: currentRow.paymentMethod,
-          notes: currentRow.notes ?? "",
-          items: currentRow.items,
-        }
+      ? currentRow
       : {
-          customerId: vendors[0]?.id ?? "",
+          customerId: "",
           status: "pending",
           paymentStatus: "unpaid",
-          paymentMethod: undefined,
+          paymentMethod: "cash",
+          currency: "BDT",
           notes: "",
-          items: [
-            (() => {
-              const p = products[0];
-              return {
-                id: crypto.randomUUID(),
-                productId: p.id,
-                productTitle: p.title,
-                sku: p.sku,
-                pricing: {
-                  unitPrice: p.pricing.total,
-                  quantity: 1,
-                  discountPercentage: 0,
-                  discountAmount: 0,
-                  taxPercentage: 0,
-                  taxAmount: 0,
-                  subTotal: p.pricing.total,
-                  total: p.pricing.total,
-                  currency: "BDT" as const,
-                },
-              };
-            })(),
-          ],
+          items: [],
+          itemsTotal: 0,
+          itemsTaxTotal: 0,
+          discountTotal: 0,
+          shipping: 0,
+          grandTotal: 0,
         },
   });
 
-  const { control, watch, setValue } = form;
-  const itemsFieldArray = useFieldArray({ control, name: "items" as const });
+  const { setValue } = form;
 
-  const items = watch("items");
+  const items = form.watch("items");
 
-  useEffect(() => {
-    items?.forEach((item, index) => {
+  React.useEffect(() => {
+    items.forEach((item, index) => {
       const product = products.find(p => p.id === item.productId);
       if (!product)
         return;
-      const quantity = item.pricing.quantity;
-      const unitPrice = product.pricing.total;
+      const quantity = item.quantity;
+      const unitPrice = product.total;
       const subTotal = +(unitPrice * quantity).toFixed(2);
       const total = subTotal;
       if (
-        item.pricing.unitPrice !== unitPrice
-        || item.pricing.subTotal !== subTotal
-        || item.pricing.total !== total
+        item.unitPrice !== unitPrice
+        || item.subTotal !== subTotal
+        || item.total !== total
       ) {
-        setValue(`items.${index}.pricing`, {
-          ...item.pricing,
-          unitPrice,
-          subTotal,
-          total,
-        });
+        setValue(`items.${index}.unitPrice`, unitPrice);
+        setValue(`items.${index}.subTotal`, subTotal);
+        setValue(`items.${index}.total`, total);
       }
     });
-  }, [items, setValue]);
+  }, [items, products, setValue]);
 
-  const computedTotals = useMemo(() => {
+  const computedTotals = React.useMemo(() => {
     const itemsTotal = +items
-      .reduce((a, i) => a + (i?.pricing?.subTotal ?? 0), 0)
+      .reduce((a, i) => a + (i?.subTotal ?? 0), 0)
       .toFixed(2);
     const itemsTaxTotal = +items
-      .reduce((a, i) => a + (i?.pricing?.taxAmount ?? 0), 0)
+      .reduce((a, i) => a + (i?.taxAmount ?? 0), 0)
       .toFixed(2);
     const discountTotal = 0;
     const shipping = 0;
@@ -170,28 +123,20 @@ export function OrdersActionDialog({
     };
   }, [items]);
 
-  const onSubmit = (values: OrderUpsertInput) => {
-    const orderNumber = isEdit
-      ? currentRow!.orderNumber
-      : `ORD-${Math.floor(Math.random() * 1_000_000)
-        .toString()
-        .padStart(6, "0")}`;
+  const onSubmit = (values: insertOrderWithItemsSchema) => {
     const now = new Date();
     const fullOrder = {
-      id: values.id ?? crypto.randomUUID(),
-      orderNumber,
       customerId: values.customerId,
       status: values.status,
       paymentStatus: values.paymentStatus,
       paymentMethod: values.paymentMethod,
       items: values.items,
-      totals: computedTotals,
       notes: values.notes,
       createdAt: isEdit ? currentRow!.createdAt : now,
       updatedAt: now,
-    };
-    const parsed = orderSchema.parse(fullOrder);
-    showSubmittedData(parsed);
+      ...computedTotals,
+    } as insertOrderWithItemsSchema;
+    showSubmittedData(fullOrder);
     form.reset();
     onOpenChange(false);
   };
@@ -226,7 +171,7 @@ export function OrdersActionDialog({
                 <FormLabel className="col-span-2 text-end">Order #</FormLabel>
                 <div className="col-span-4 font-mono text-sm">
                   {isEdit
-                    ? currentRow.orderNumber
+                    ? currentRow.id
                     : "Will be generated on save"}
                 </div>
               </div>
@@ -243,7 +188,7 @@ export function OrdersActionDialog({
                       onValueChange={field.onChange}
                       placeholder="Select customer"
                       className="col-span-4"
-                      items={vendors.map(v => ({
+                      items={customers.map(v => ({
                         label: v.name,
                         value: v.id,
                       }))}
@@ -332,9 +277,10 @@ export function OrdersActionDialog({
                     <FormLabel className="col-span-2 text-end">Notes</FormLabel>
                     <FormControl>
                       <Input
+                        {...field}
+                        value={field.value ?? ""}
                         placeholder="Additional notes"
                         className="col-span-4"
-                        {...field}
                       />
                     </FormControl>
                     <FormMessage className="col-span-4 col-start-3" />
@@ -342,10 +288,10 @@ export function OrdersActionDialog({
                 )}
               />
               <OrderItemsEditor
-                items={items as unknown as EditableOrderItem[]}
-                fieldArray={itemsFieldArray}
+                editMode="insert"
+                items={items}
+                control={form.control}
                 setValue={setValue}
-                currency="BDT"
               />
             </form>
           </Form>

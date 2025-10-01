@@ -9,7 +9,7 @@ import {
   patchUsersSchema,
   selectUsersSchema,
 } from "@/api/db/schema"
-import { notFoundSchema } from "@/api/lib/constants"
+import { forbiddenSchema, notFoundSchema } from "@/api/lib/constants"
 
 const tags = ["Users"]
 
@@ -26,6 +26,10 @@ export const list = createRoute({
       z.array(selectUsersSchema),
       "List of users",
     ),
+    [HttpStatusCodes.FORBIDDEN]: jsonContent(
+      forbiddenSchema,
+      "Access denied",
+    ),
   },
 })
 
@@ -41,6 +45,10 @@ export const create = createRoute({
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(insertUsersSchema),
       "Validation error(s)",
+    ),
+    [HttpStatusCodes.FORBIDDEN]: jsonContent(
+      forbiddenSchema,
+      "Access denied",
     ),
   },
 })
@@ -62,6 +70,10 @@ export const getOne = createRoute({
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(UserIdParamsSchema),
       "Invalid id error",
+    ),
+    [HttpStatusCodes.FORBIDDEN]: jsonContent(
+      forbiddenSchema,
+      "Access denied",
     ),
   },
 })
@@ -86,6 +98,10 @@ export const patch = createRoute({
       ),
       "Validation error(s)",
     ),
+    [HttpStatusCodes.FORBIDDEN]: jsonContent(
+      forbiddenSchema,
+      "Access denied",
+    ),
   },
 })
 
@@ -103,6 +119,10 @@ export const remove = createRoute({
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(UserIdParamsSchema),
       "Invalid id error",
+    ),
+    [HttpStatusCodes.FORBIDDEN]: jsonContent(
+      forbiddenSchema,
+      "Access denied",
     ),
   },
 })

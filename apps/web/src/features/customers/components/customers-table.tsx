@@ -16,8 +16,6 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 
-import type { NavigateFn } from "@/web/hooks/use-table-url-state";
-
 import { DataTablePagination, DataTableToolbar } from "@/web/components/data-table";
 import {
   Table,

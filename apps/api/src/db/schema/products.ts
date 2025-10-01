@@ -3,8 +3,9 @@ import { createId } from "@paralleldrive/cuid2"
 import { index, integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 
-import type { Currency } from "./orders"
+import type { Currency } from "./expenses"
 
+import { currencySchema } from "./expenses"
 import { productCategories } from "./product-categories"
 
 export const products = sqliteTable("products", {
@@ -29,16 +30,17 @@ export const products = sqliteTable("products", {
 ])
 
 export const selectProductsSchema = createSelectSchema(products, {
+  currency : currencySchema,
   createdAt: z.iso.date(),
   updatedAt: z.iso.date(),
 })
 export type selectProductsSchema = z.infer<typeof selectProductsSchema>
 
 export const insertProductsSchema = createInsertSchema(products, {
+  currency          : currencySchema.optional(),
   title             : schema => schema.min(3, "Title must be at least 3 characters long").max(255, "Title must be at most 255 characters long"),
   status            : schema => schema.min(3, "Status must be at least 3 characters long").max(50, "Status must be at most 50 characters long"),
   label             : schema => schema.max(100, "Label must be at most 100 characters long").optional(),
-  currency          : schema => schema.min(3, "Currency must be at least 3 characters long").max(10, "Currency must be at most 10 characters long").optional(),
   stock             : schema => schema.min(0).optional(),
   basePrice         : schema => schema.min(0),
   discountPercentage: schema => schema.min(0).max(100).optional(),

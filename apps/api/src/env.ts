@@ -13,6 +13,7 @@ expand(config({
 
 const EnvSchema = z.object({
   NODE_ENV: z.string().default("development"),
+  CLIENT_URL: z.string().url().default("http://localhost:3000"),
   PORT: z.coerce.number().default(9999),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]),
   DATABASE_URL: z.string().url(),

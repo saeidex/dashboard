@@ -36,7 +36,7 @@ import {
   paymentStatusValues,
 } from "../data/data";
 import { DataTableBulkActions } from "./data-table-bulk-actions";
-import { OrdersColumns as columns } from "./orders-columns";
+import { ordersColumns as columns } from "./orders-columns";
 
 type DataTableProps = {
   data: Order[];
@@ -47,7 +47,9 @@ type DataTableProps = {
 export function OrdersTable({ data, search, navigate }: DataTableProps) {
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({});
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    id: false,
+  });
   const [sorting, setSorting] = useState<SortingState>([
     { id: "createdAt", desc: true },
   ]);
@@ -70,7 +72,7 @@ export function OrdersTable({ data, search, navigate }: DataTableProps) {
     globalFilter: { enabled: false },
     columnFilters: [
       // firstName per-column text filter
-      { columnId: "orderNumber", searchKey: "orderNumber", type: "string" },
+      { columnId: "id", searchKey: "id", type: "string" },
       { columnId: "status", searchKey: "status", type: "array" },
       { columnId: "paymentStatus", searchKey: "paymentStatus", type: "array" },
       { columnId: "paymentMethod", searchKey: "paymentMethod", type: "array" },
@@ -79,7 +81,7 @@ export function OrdersTable({ data, search, navigate }: DataTableProps) {
 
   const table = useReactTable({
     data,
-    columns: columns(),
+    columns,
     state: {
       sorting,
       pagination,
@@ -110,7 +112,7 @@ export function OrdersTable({ data, search, navigate }: DataTableProps) {
       <DataTableToolbar
         table={table}
         searchPlaceholder="Filter by order number..."
-        searchKey="orderNumber"
+        searchKey="id"
         filters={[
           {
             columnId: "status",

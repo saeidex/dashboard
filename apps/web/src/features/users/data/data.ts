@@ -1,22 +1,17 @@
-import type { UserRole } from "@crm/api/schema";
+import type { userRoleSchema } from "@crm/api/schema";
 import type { LucideProps } from "lucide-react";
 
-import { Shield, UserCheck, Users } from "lucide-react";
+import { Shield, Users } from "lucide-react";
 
-export const roles: Array<{ label: Capitalize<UserRole>; value: UserRole; icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>> }> = [
-  {
-    label: "Superadmin",
-    value: "superadmin",
-    icon : Shield,
-  },
+export const roles: Array<{ label: Capitalize<userRoleSchema>; value: userRoleSchema; icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>> }> = [
   {
     label: "Admin",
     value: "admin",
-    icon : UserCheck,
+    icon : Shield,
   },
   {
-    label: "Manager",
-    value: "manager",
+    label: "User",
+    value: "user",
     icon : Users,
   },
 ] as const;
