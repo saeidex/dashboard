@@ -65,8 +65,8 @@ export function ProductsTable() {
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: true, key: "filter" },
     columnFilters: [
-      { columnId: "status", searchKey: "status", type: "array" },
-      { columnId: "categoryId", searchKey: "categoryId", type: "array" },
+      { columnId: "status", searchKey: "status", type: "string" },
+      { columnId: "categoryId", searchKey: "categoryId", type: "string" },
     ],
   });
 

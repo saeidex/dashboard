@@ -1,9 +1,8 @@
-import type { NoUndefined } from "node_modules/zod/v4/core/util.cjs"
-
 import { z } from "@hono/zod-openapi"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 
 import type { auth } from "@/api/lib/auth"
+import type { NoUndefined } from "@/api/lib/types"
 
 import { users } from "./auth"
 

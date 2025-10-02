@@ -102,7 +102,7 @@ const queryClient = new QueryClient({
 const router = createRouter({
   routeTree,
   context: { queryClient },
-  defaultPreload: "render",
+  defaultPreload: "intent",
   defaultPreloadStaleTime: 0,
   scrollRestoration: true,
 });

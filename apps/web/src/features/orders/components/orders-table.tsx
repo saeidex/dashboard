@@ -1,5 +1,7 @@
 import type { SortingState, VisibilityState } from "@tanstack/react-table";
 
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
 import {
   flexRender,
   getCoreRowModel,
@@ -14,8 +16,6 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 
-import type { NavigateFn } from "@/web/hooks/use-table-url-state";
-
 import { DataTablePagination, DataTableToolbar } from "@/web/components/data-table";
 import {
   Table,
@@ -28,31 +28,30 @@ import {
 import { useTableUrlState } from "@/web/hooks/use-table-url-state";
 import { cn } from "@/web/lib/utils";
 
-import type { Order } from "../data/schema";
-
 import {
   orderStatusValues,
   paymentMethodValues,
   paymentStatusValues,
 } from "../data/data";
+import { createOrdersQueryOptions } from "../data/queries";
 import { DataTableBulkActions } from "./data-table-bulk-actions";
 import { ordersColumns as columns } from "./orders-columns";
 
-type DataTableProps = {
-  data: Order[];
-  search: Record<string, unknown>;
-  navigate: NavigateFn;
-};
+const route = getRouteApi("/_authenticated/orders/");
 
-export function OrdersTable({ data, search, navigate }: DataTableProps) {
+export function OrdersTable() {
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
-    id: false,
+    id: true,
   });
   const [sorting, setSorting] = useState<SortingState>([
     { id: "createdAt", desc: true },
   ]);
+  const navigate = route.useNavigate();
+  const search = route.useSearch();
+
+  const { data: { rows: data, rowCount, pageCount } } = useSuspenseQuery(createOrdersQueryOptions(search));
 
   // Local state management for table (uncomment to use local-only state, not synced with URL)
   // const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>([])
@@ -73,7 +72,7 @@ export function OrdersTable({ data, search, navigate }: DataTableProps) {
     columnFilters: [
       // firstName per-column text filter
       { columnId: "id", searchKey: "id", type: "string" },
-      { columnId: "status", searchKey: "status", type: "array" },
+      { columnId: "orderStatus", searchKey: "orderStatus", type: "array" },
       { columnId: "paymentStatus", searchKey: "paymentStatus", type: "array" },
       { columnId: "paymentMethod", searchKey: "paymentMethod", type: "array" },
     ],
@@ -89,6 +88,9 @@ export function OrdersTable({ data, search, navigate }: DataTableProps) {
       columnFilters,
       columnVisibility,
     },
+    rowCount,
+    pageCount,
+    manualPagination: true,
     enableRowSelection: true,
     onPaginationChange,
     onColumnFiltersChange,
@@ -115,7 +117,7 @@ export function OrdersTable({ data, search, navigate }: DataTableProps) {
         searchKey="id"
         filters={[
           {
-            columnId: "status",
+            columnId: "orderStatus",
             title: "Order Status",
             options: orderStatusValues.map(status => ({
               label: status.replace(/-/g, " "),

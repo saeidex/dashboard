@@ -1,3 +1,5 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
 import { ArrowLeft, Download, Edit2, Printer } from "lucide-react";
 
 import { Header } from "@/web/components/layout/header";
@@ -5,15 +7,19 @@ import { Main } from "@/web/components/layout/main";
 import { Button } from "@/web/components/ui/button";
 import { useOrderPrint } from "@/web/hooks/use-order-print";
 
-import type { Order, OrderWithItemsAndCustomer } from "./data/schema";
-
 import { Invoice } from "./components/invoice";
 import { OrdersDialogs } from "./components/orders-dialogs";
 import { OrdersProvider, useOrders } from "./components/orders-provider";
+import { createOrderQueryOptions } from "./data/queries";
 
-const PrimaryButtons = ({ order }: { order: Order }) => {
+const route = getRouteApi("/_authenticated/orders/$id");
+
+const PrimaryButtons = () => {
   const { setOpen, setCurrentRow } = useOrders();
   const { printOrder, downloadOrderPdf } = useOrderPrint();
+
+  const { id } = route.useParams();
+  const { data: order } = useSuspenseQuery(createOrderQueryOptions(id));
 
   const handlePrint = () => printOrder(order);
 
@@ -53,11 +59,14 @@ const PrimaryButtons = ({ order }: { order: Order }) => {
   );
 };
 
-export const OrderDetailPage = ({ order }: { order: OrderWithItemsAndCustomer }) => {
+export const OrderDetailPage = () => {
+  const { id } = route.useParams();
+  const { data: order } = useSuspenseQuery(createOrderQueryOptions(id));
+
   return (
     <OrdersProvider>
       <Header fixed hideBreadcrumbs>
-        <PrimaryButtons order={order} />
+        <PrimaryButtons />
       </Header>
 
       <Main>

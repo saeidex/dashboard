@@ -1,21 +1,22 @@
-import type { insertOrderWithItemsSchema, patchOrderWithItemsSchema } from "@crm/api/schema";
+import type { insertOrderWithItemsSchema, orderListQueryParamsSchema, patchOrderWithItemsSchema } from "@crm/api/schema";
 
-import { queryOptions } from "@tanstack/react-query";
+import { keepPreviousData, queryOptions } from "@tanstack/react-query";
 
 import apiClient from "@/web/lib/api-client";
 import formatApiError from "@/web/lib/format-api-error";
 
 export const queryKeys = {
-  LIST_ORDERS: { queryKey: ["list-orders"] },
+  LIST_ORDERS: (query: orderListQueryParamsSchema) => ({ queryKey: ["list-orders", query] }),
   LIST_ORDER : (id: string) => ({ queryKey: [`list-order-${id}`] }),
 };
 
-export const ordersQueryOptions = queryOptions({
-  ...queryKeys.LIST_ORDERS,
+export const createOrdersQueryOptions = (query: orderListQueryParamsSchema = { pageIndex: 0, pageSize: 10 }) => queryOptions({
+  ...queryKeys.LIST_ORDERS(query),
   queryFn: async () => {
-    const response = await apiClient.api.orders.$get();
+    const response = await apiClient.api.orders.$get({ query });
     return response.json();
   },
+  placeholderData: keepPreviousData,
 });
 
 export function createOrderQueryOptions(id: string) {

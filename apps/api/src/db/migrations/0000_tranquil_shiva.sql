@@ -100,18 +100,11 @@ CREATE TABLE `order_items` (
 	`id` text PRIMARY KEY NOT NULL,
 	`order_id` text NOT NULL,
 	`product_id` text NOT NULL,
-	`product_title` text NOT NULL,
-	`currency` text DEFAULT 'BDT' NOT NULL,
-	`unit_price` real NOT NULL,
 	`quantity` integer DEFAULT 1 NOT NULL,
-	`discount_percentage` real DEFAULT 0 NOT NULL,
-	`discount_amount` real DEFAULT 0 NOT NULL,
-	`tax_percentage` real DEFAULT 0 NOT NULL,
-	`tax_amount` real DEFAULT 0 NOT NULL,
-	`total` real NOT NULL,
-	`sub_total` real NOT NULL,
-	`created_at` integer,
-	`updated_at` integer,
+	`additional_discount` real DEFAULT 0 NOT NULL,
+	`total` real DEFAULT 0 NOT NULL,
+	`created_at` integer NOT NULL,
+	`updated_at` integer NOT NULL,
 	FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON UPDATE no action ON DELETE no action
 );
@@ -121,13 +114,14 @@ CREATE INDEX `idx_order_items_product_id` ON `order_items` (`product_id`);--> st
 CREATE TABLE `orders` (
 	`id` text PRIMARY KEY NOT NULL,
 	`customer_id` text NOT NULL,
-	`status` text DEFAULT 'pending' NOT NULL,
+	`order_status` text DEFAULT 'pending' NOT NULL,
 	`payment_status` text DEFAULT 'unpaid' NOT NULL,
 	`payment_method` text DEFAULT 'cash' NOT NULL,
 	`currency` text DEFAULT 'BDT' NOT NULL,
-	`items_total` real DEFAULT 0 NOT NULL,
-	`items_tax_total` real DEFAULT 0 NOT NULL,
-	`discount_total` real DEFAULT 0 NOT NULL,
+	`base_price` real DEFAULT 0 NOT NULL,
+	`tax` real DEFAULT 0 NOT NULL,
+	`discount` real DEFAULT 0 NOT NULL,
+	`additional_discount` real DEFAULT 0 NOT NULL,
 	`shipping` real DEFAULT 0 NOT NULL,
 	`grand_total` real DEFAULT 0 NOT NULL,
 	`notes` text,
@@ -137,7 +131,7 @@ CREATE TABLE `orders` (
 );
 --> statement-breakpoint
 CREATE INDEX `idx_orders_customer_id` ON `orders` (`customer_id`);--> statement-breakpoint
-CREATE INDEX `idx_orders_status` ON `orders` (`status`);--> statement-breakpoint
+CREATE INDEX `idx_orders_order_status` ON `orders` (`order_status`);--> statement-breakpoint
 CREATE INDEX `idx_orders_payment_status` ON `orders` (`payment_status`);--> statement-breakpoint
 CREATE TABLE `categories` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,

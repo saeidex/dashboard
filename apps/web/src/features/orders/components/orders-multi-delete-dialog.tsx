@@ -2,6 +2,8 @@
 
 import type { Table } from "@tanstack/react-table";
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
 import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -12,6 +14,8 @@ import { Input } from "@/web/components/ui/input";
 import { Label } from "@/web/components/ui/label";
 import { sleep } from "@/web/lib/utils";
 
+import { deleteOrder, queryKeys } from "../data/queries";
+
 type OrdersMultiDeleteDialogProps<TData> = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -20,14 +24,21 @@ type OrdersMultiDeleteDialogProps<TData> = {
 
 const CONFIRM_WORD = "DELETE";
 
+const route = getRouteApi("/_authenticated/orders/");
+
 export function OrdersMultiDeleteDialog<TData>({
   open,
   onOpenChange,
   table,
 }: OrdersMultiDeleteDialogProps<TData>) {
   const [value, setValue] = useState("");
-
   const selectedRows = table.getFilteredSelectedRowModel().rows;
+  const queryClient = useQueryClient();
+  const search = route.useSearch();
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteOrder,
+  });
 
   const handleDelete = () => {
     if (value.trim() !== CONFIRM_WORD) {
@@ -37,10 +48,15 @@ export function OrdersMultiDeleteDialog<TData>({
 
     onOpenChange(false);
 
-    toast.promise(sleep(2000), {
+    toast.promise(async () => {
+      for (const row of selectedRows) {
+        await deleteMutation.mutateAsync(row.getValue("id"));
+      }
+    }, {
       loading: "Deleting orders...",
       success: () => {
         table.resetRowSelection();
+        queryClient.invalidateQueries(queryKeys.LIST_ORDERS(search));
         return `Deleted ${selectedRows.length} ${
           selectedRows.length > 1 ? "orders" : "order"
         }`;

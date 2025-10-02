@@ -1,11 +1,31 @@
-import { ConfirmDialog } from "@/web/components/confirm-dialog";
-import { showSubmittedData } from "@/web/lib/show-submitted-data";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
+import { toast } from "sonner";
 
+import { ConfirmDialog } from "@/web/components/confirm-dialog";
+
+import { deleteOrder, queryKeys } from "../data/queries";
 import { OrdersActionDialog } from "./orders-action-dialog";
 import { useOrders } from "./orders-provider";
 
+const route = getRouteApi("/_authenticated/orders/");
+
 export function OrdersDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useOrders();
+  const queryClient = useQueryClient();
+  const search = route.useSearch();
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteOrder,
+    onSuccess: () => {
+      queryClient.invalidateQueries(queryKeys.LIST_ORDERS(search));
+      toast.success("Order deleted successfully.");
+    },
+    onError: (error) => {
+      toast.error(`Error deleting order: ${error.message}`);
+    },
+  });
+
   return (
     <>
       <OrdersActionDialog
@@ -43,10 +63,7 @@ export function OrdersDialogs() {
               setTimeout(() => {
                 setCurrentRow(null);
               }, 500);
-              showSubmittedData(
-                currentRow,
-                "The following order has been deleted:",
-              );
+              deleteMutation.mutate(currentRow.id);
             }}
             className="max-w-md"
             title={`Delete this order: ${currentRow.id} ?`}

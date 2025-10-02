@@ -1,15 +1,4 @@
-import type { SortingState } from "@tanstack/react-table";
-
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-
-  useReactTable,
-} from "@tanstack/react-table";
 import { format } from "date-fns";
-import { useMemo } from "react";
 
 import {
   Table,
@@ -20,7 +9,7 @@ import {
   TableRow,
 } from "@/web/components/ui/table";
 
-import type { OrderWithItemsAndCustomer } from "../data/schema";
+import type { Order } from "../data/schema";
 
 import { OwnerInfo } from "../data/data";
 
@@ -39,95 +28,21 @@ export const Invoice = ({
   order,
   printRef,
 }: {
-  order: OrderWithItemsAndCustomer;
+  order: Order;
   printRef?: React.RefObject<HTMLDivElement | null>;
 }) => {
   const customer = order.customer;
   const orderItems = order.items;
 
-  const columnHelper = createColumnHelper<typeof orderItems[number]>();
-  const columns = useMemo(
-    () => [
-      columnHelper.display({
-        id: "index",
-        header: "#",
-        cell: ({ row }) => row.index + 1,
-        meta: { className: "w-8 text-muted-foreground" },
-      }),
-      columnHelper.accessor("productTitle", {
-        header: "Item",
-        cell: ({ row }) => (
-          <div className="min-w-40">
-            <div className="leading-tight font-medium">{row.getValue("productTitle")}</div>
-          </div>
-        ),
-      }),
-      columnHelper.accessor("quantity", {
-        header: "Qty",
-        cell: ({ row }) => <span className="tabular-nums">{row.getValue("quantity")}</span>,
-        meta: { className: "text-right w-12" },
-      }),
-      columnHelper.accessor("unitPrice", {
-        header: "Unit",
-        cell: ({ row }) => (
-          <span className="tabular-nums">
-            {formatCurrency(row.getValue("unitPrice"), row.getValue("currency"))}
-          </span>
-        ),
-        meta: { className: "text-right w-20" },
-      }),
-      columnHelper.accessor("discountAmount", {
-        header: "Discount",
-        cell: ({ row }) => (
-          <span className="tabular-nums">
-            {row.getValue("discountAmount") === 0
-              ? "—"
-              : `- ${formatCurrency(row.getValue("discountAmount"), row.getValue("currency"))}`}
-          </span>
-        ),
-        meta: { className: "text-right w-24" },
-      }),
-      columnHelper.accessor("taxAmount", {
-        id: "tax",
-        header: "Tax",
-        cell: ({ row }) => (
-          <span className="tabular-nums">
-            {row.getValue("taxAmount") === 0
-              ? "—"
-              : formatCurrency(
-                  row.getValue("taxAmount"),
-                  row.getValue("currency"),
-                )}
-          </span>
-        ),
-        meta: { className: "text-right w-20" },
-      }),
-      columnHelper.accessor("total", {
-        id: "total",
-        header: "Total",
-        cell: ({ row }) => (
-          <span className="font-medium tabular-nums">
-            {formatCurrency(
-              row.getValue("total"),
-              row.getValue("currency"),
-            )}
-          </span>
-        ),
-        meta: { className: "text-right w-24" },
-      }),
-    ],
-    [columnHelper],
-  );
-
-  const table = useReactTable({
-    data: orderItems,
-    columns,
-    state: {
-      sorting: [] as SortingState,
-    },
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-  });
+  const headerConfig = [
+    { label: "#", className: "w-8 text-muted-foreground" },
+    { label: "Item", className: "" },
+    { label: "Qty", className: "text-right w-12" },
+    { label: "Unit", className: "text-right w-20" },
+    { label: "Discount", className: "text-right w-24" },
+    { label: "Tax", className: "text-right w-20" },
+    { label: "Total", className: "text-right w-24" },
+  ] as const;
 
   return (
     <div className="print:pt-0">
@@ -157,7 +72,7 @@ export const Invoice = ({
             <div>
               <span className="font-medium">Status:</span>
               {" "}
-              <span className="capitalize">{order.status}</span>
+              <span className="capitalize">{order.orderStatus}</span>
             </div>
             <div>
               <span className="font-medium">Payment:</span>
@@ -218,47 +133,44 @@ export const Invoice = ({
         <section className="mt-6">
           <Table className="border-collapse text-sm">
             <TableHeader>
-              {table.getHeaderGroups().map(hg => (
-                <TableRow
-                  key={hg.id}
-                  className="bg-muted/50 print:bg-transparent"
-                >
-                  {hg.headers.map(header => (
-                    <TableHead
-                      key={header.id}
-                      className={
-                        // @ts-expect-error className exists
-                        header.column.columnDef.meta?.className
-                      }
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
+              <TableRow className="bg-muted/50 print:bg-transparent">
+                {headerConfig.map(column => (
+                  <TableHead key={column.label} className={column.className}>
+                    {column.label}
+                  </TableHead>
+                ))}
+              </TableRow>
             </TableHeader>
             <TableBody>
-              {table.getRowModel().rows.map(row => (
-                <TableRow key={row.id} className="last:border-b-0">
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell
-                      key={cell.id}
-                      className={
-                        // @ts-expect-error className exists
-                        cell.column.columnDef.meta?.className
-                      }
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
+              {orderItems.map((item, index) => (
+                <TableRow key={item.id ?? `${item.productId}-${index}`} className="last:border-b-0">
+                  <TableCell className="w-8 text-muted-foreground">
+                    {index + 1}
+                  </TableCell>
+                  <TableCell>
+                    <div className="min-w-40">
+                      <div className="leading-tight font-medium">{item.product.title}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right w-12 tabular-nums">
+                    {item.quantity}
+                  </TableCell>
+                  <TableCell className="text-right w-20 tabular-nums">
+                    {formatCurrency(item.total, order.currency)}
+                  </TableCell>
+                  <TableCell className="text-right w-24 tabular-nums">
+                    {order.discount + order.additionalDiscount === 0
+                      ? "—"
+                      : `- ${formatCurrency(order.discount + order.additionalDiscount, order.currency)}`}
+                  </TableCell>
+                  <TableCell className="text-right w-20 tabular-nums">
+                    {order.tax === 0
+                      ? "—"
+                      : formatCurrency(order.tax, order.currency)}
+                  </TableCell>
+                  <TableCell className="text-right w-24 tabular-nums font-medium">
+                    {formatCurrency(order.grandTotal, order.currency)}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -270,25 +182,25 @@ export const Invoice = ({
             <div className="flex justify-between">
               <span className="text-muted-foreground">Items Subtotal</span>
               <span className="font-medium">
-                {formatCurrency(order.itemsTotal, order.currency)}
+                {formatCurrency(order.basePrice, order.currency)}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Items Tax</span>
               <span className="font-medium">
                 {formatCurrency(
-                  order.itemsTaxTotal,
+                  order.tax,
                   order.currency,
                 )}
               </span>
             </div>
-            {order.discountTotal > 0 && (
+            {order.discount + order.additionalDiscount > 0 && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Discount</span>
                 <span className="font-medium">
                   -
                   {formatCurrency(
-                    order.discountTotal,
+                    order.discount + order.additionalDiscount,
                     order.currency,
                   )}
                 </span>

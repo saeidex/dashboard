@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "761dd8cc-db34-4b28-8870-430a210f6759",
+  "id": "c3c68b11-296e-4d92-b04f-e0ee500c6159",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "accounts": {
@@ -666,28 +666,6 @@
           "notNull": true,
           "autoincrement": false
         },
-        "product_title": {
-          "name": "product_title",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "currency": {
-          "name": "currency",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'BDT'"
-        },
-        "unit_price": {
-          "name": "unit_price",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
         "quantity": {
           "name": "quantity",
           "type": "integer",
@@ -696,32 +674,8 @@
           "autoincrement": false,
           "default": 1
         },
-        "discount_percentage": {
-          "name": "discount_percentage",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
-        },
-        "discount_amount": {
-          "name": "discount_amount",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
-        },
-        "tax_percentage": {
-          "name": "tax_percentage",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
-        },
-        "tax_amount": {
-          "name": "tax_amount",
+        "additional_discount": {
+          "name": "additional_discount",
           "type": "real",
           "primaryKey": false,
           "notNull": true,
@@ -733,27 +687,21 @@
           "type": "real",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
-        },
-        "sub_total": {
-          "name": "sub_total",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": 0
         },
         "created_at": {
           "name": "created_at",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "updated_at": {
           "name": "updated_at",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
@@ -822,8 +770,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "status": {
-          "name": "status",
+        "order_status": {
+          "name": "order_status",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -854,24 +802,32 @@
           "autoincrement": false,
           "default": "'BDT'"
         },
-        "items_total": {
-          "name": "items_total",
+        "base_price": {
+          "name": "base_price",
           "type": "real",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
           "default": 0
         },
-        "items_tax_total": {
-          "name": "items_tax_total",
+        "tax": {
+          "name": "tax",
           "type": "real",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
           "default": 0
         },
-        "discount_total": {
-          "name": "discount_total",
+        "discount": {
+          "name": "discount",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "additional_discount": {
+          "name": "additional_discount",
           "type": "real",
           "primaryKey": false,
           "notNull": true,
@@ -924,10 +880,10 @@
           ],
           "isUnique": false
         },
-        "idx_orders_status": {
-          "name": "idx_orders_status",
+        "idx_orders_order_status": {
+          "name": "idx_orders_order_status",
           "columns": [
-            "status"
+            "order_status"
           ],
           "isUnique": false
         },

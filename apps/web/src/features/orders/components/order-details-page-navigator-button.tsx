@@ -1,18 +1,9 @@
-import type { Row } from "@tanstack/react-table";
-
 import { useNavigate } from "@tanstack/react-router";
 
 import { LongText } from "@/web/components/long-text";
 
-import type { Order } from "../data/schema";
-
-type OrderDetailsPageNavigatorButtonProps = {
-  row: Row<Order>;
-};
-
-export const OrderDetailsPageNavigatorButton = ({ row }: OrderDetailsPageNavigatorButtonProps) => {
+export const OrderDetailsPageNavigatorButton = ({ id }: { id: string }) => {
   const navigate = useNavigate();
-  const id = row.original.id;
 
   return (
     <span

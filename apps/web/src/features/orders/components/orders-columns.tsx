@@ -1,5 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
+import { formatDistanceToNow } from "date-fns";
+
 import { DataTableColumnHeader } from "@/web/components/data-table";
 import { LongText } from "@/web/components/long-text";
 import { Checkbox } from "@/web/components/ui/checkbox";
@@ -19,19 +21,33 @@ export const ordersColumns: ColumnDef<Order>[] = [
           table.getIsAllPageRowsSelected()
           || (table.getIsSomePageRowsSelected() && "indeterminate")
         }
-        onCheckedChange={value =>
-          table.toggleAllPageRowsSelected(!!value)}
+        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
         className="translate-y-[2px]"
       />
     ),
+    meta: {
+      className: cn("sticky md:table-cell start-0 z-10 rounded-tl-[inherit]"),
+    },
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={value => row.toggleSelected(!!value)}
+        aria-label="Select row"
+        className="translate-y-[2px]"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     accessorKey: "id",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Order #" />
+      <DataTableColumnHeader column={column} title="Order ID" />
     ),
-    cell: OrderDetailsPageNavigatorButton,
+    cell: ({ cell }) => (
+      <OrderDetailsPageNavigatorButton id={cell.getValue<Order["id"]>()} />
+    ),
     meta: {
       className: cn(
         "drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]",
@@ -41,37 +57,37 @@ export const ordersColumns: ColumnDef<Order>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "status",
+    accessorKey: "orderStatus",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
+      <DataTableColumnHeader column={column} title="Order Status" />
     ),
-    cell: ({ row }) => (
+    cell: ({ cell }) => (
       <div className="font-medium capitalize">
-        {String(row.getValue("status")).replace(/-/g, " ")}
+        {String(cell.getValue<Order["orderStatus"]>()).replace(/-/g, " ")}
       </div>
     ),
   },
   {
     accessorKey: "paymentStatus",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Payment" />
+      <DataTableColumnHeader column={column} title="Payment Status" />
     ),
-    cell: ({ row }) => (
+    cell: ({ cell }) => (
       <div className="font-medium capitalize">
-        {String(row.getValue("paymentStatus")).replace(/-/g, " ")}
+        {String(cell.getValue<Order["paymentStatus"]>()).replace(/-/g, " ")}
       </div>
     ),
   },
   {
     accessorKey: "paymentMethod",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Method" />
+      <DataTableColumnHeader column={column} title="Payment Method" />
     ),
-    cell: ({ row }) => (
+    cell: ({ cell }) => (
       <div className="text-xs capitalize">
-        {row.getValue("paymentMethod")
+        {cell.getValue<Order["paymentMethod"]>()
           ? (
-              String(row.getValue("paymentMethod")).replace(/-/g, " ")
+              String(cell.getValue<Order["paymentMethod"]>()).replace(/-/g, " ")
             )
           : (
               <span className="opacity-50">-</span>
@@ -84,8 +100,8 @@ export const ordersColumns: ColumnDef<Order>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Total" />
     ),
-    cell: ({ row }) => {
-      const total = row.original.grandTotal.toFixed(2);
+    cell: ({ cell }) => {
+      const total = cell.getValue<Order["grandTotal"]>().toFixed(2);
       return (
         <div className="font-bold">
           ৳
@@ -97,11 +113,33 @@ export const ordersColumns: ColumnDef<Order>[] = [
   {
     accessorKey: "createdAt",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Created" />
+      <DataTableColumnHeader column={column} title="Created at" />
     ),
-    cell: ({ row }) => {
-      const date = row.getValue("createdAt") as Date;
-      return <div className="text-xs">{date.toLocaleDateString()}</div>;
+    cell: ({ cell }) => {
+      const date = cell.getValue<Order["createdAt"]>();
+      return (
+        <div className="text-xs">
+          {formatDistanceToNow(date, {
+            addSuffix: true,
+          })}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "updatedAt",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Updated at" />
+    ),
+    cell: ({ cell }) => {
+      const date = cell.getValue<Order["updatedAt"]>();
+      return (
+        <div className="text-xs">
+          {formatDistanceToNow(date, {
+            addSuffix: true,
+          })}
+        </div>
+      );
     },
   },
   {
@@ -109,9 +147,9 @@ export const ordersColumns: ColumnDef<Order>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Notes" />
     ),
-    cell: ({ row }) => (
+    cell: ({ cell }) => (
       <LongText className="max-w-40">
-        {row.getValue("notes") || <span className="opacity-50">-</span>}
+        {cell.getValue<Order["notes"]>() || <span className="opacity-50">-</span>}
       </LongText>
     ),
     enableSorting: false,

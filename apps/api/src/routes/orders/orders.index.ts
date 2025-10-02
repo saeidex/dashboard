@@ -9,10 +9,5 @@ const router = createRouter()
   .openapi(routes.getOne, handlers.getOne)
   .openapi(routes.patch, handlers.patch)
   .openapi(routes.remove, handlers.remove)
-  // Items
-  .openapi(routes.listItems, handlers.listItems)
-  .openapi(routes.createItem, handlers.createItem)
-  .openapi(routes.patchItem, handlers.patchItem)
-  .openapi(routes.removeItem, handlers.removeItem)
 
 export default router
