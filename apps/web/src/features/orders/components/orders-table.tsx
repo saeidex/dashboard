@@ -1,10 +1,11 @@
-import type { SortingState, VisibilityState } from "@tanstack/react-table";
+import type { ExpandedState, Row, SortingState, VisibilityState } from "@tanstack/react-table";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import {
   flexRender,
   getCoreRowModel,
+  getExpandedRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
@@ -14,7 +15,7 @@ import {
   useReactTable,
 
 } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 import { DataTablePagination, DataTableToolbar } from "@/web/components/data-table";
 import {
@@ -35,6 +36,7 @@ import {
 } from "../data/data";
 import { createOrdersQueryOptions } from "../data/queries";
 import { DataTableBulkActions } from "./data-table-bulk-actions";
+import { OrderExpandedPanel } from "./order-expanded-panel";
 import { ordersColumns as columns } from "./orders-columns";
 
 const route = getRouteApi("/_authenticated/orders/");
@@ -48,6 +50,7 @@ export function OrdersTable() {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "createdAt", desc: true },
   ]);
+  const [expanded, setExpanded] = useState<ExpandedState>({});
   const navigate = route.useNavigate();
   const search = route.useSearch();
 
@@ -87,6 +90,7 @@ export function OrdersTable() {
       rowSelection,
       columnFilters,
       columnVisibility,
+      expanded,
     },
     rowCount,
     pageCount,
@@ -97,17 +101,22 @@ export function OrdersTable() {
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
+    onExpandedChange: setExpanded,
     getPaginationRowModel: getPaginationRowModel(),
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    getExpandedRowModel: getExpandedRowModel(),
+    getRowCanExpand: row => (row.original.items?.length ?? 0) > 0,
   });
 
   useEffect(() => {
     ensurePageInRange(table.getPageCount());
   }, [table, ensurePageInRange]);
+
+  const visibleColumnCount = table.getVisibleLeafColumns().length;
 
   return (
     <div className='space-y-4 max-sm:has-[div[role="toolbar"]]:mb-16'>
@@ -174,27 +183,35 @@ export function OrdersTable() {
             {table.getRowModel().rows?.length
               ? (
                   table.getRowModel().rows.map(row => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                      className="group/row"
-                    >
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell
-                          key={cell.id}
-                          className={cn(
-                            "bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted",
-                            // @ts-expect-error TS is confused here
-                            cell.column.columnDef.meta?.className ?? "",
-                          )}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
+                    <Fragment key={row.id}>
+                      <TableRow
+                        data-state={row.getIsSelected() && "selected"}
+                        className="group/row"
+                      >
+                        {row.getVisibleCells().map(cell => (
+                          <TableCell
+                            key={cell.id}
+                            className={cn(
+                              "bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted",
+                              // @ts-expect-error TS is confused here
+                              cell.column.columnDef.meta?.className ?? "",
+                            )}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                      {row.getIsExpanded() && (
+                        <TableRow className="bg-muted/40">
+                          <TableCell colSpan={visibleColumnCount} className="p-4">
+                            <OrderExpandedPanel order={row.original} />
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </Fragment>
                   ))
                 )
               : (

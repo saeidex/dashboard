@@ -8,10 +8,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/web/components/ui/table";
+import { cn } from "@/web/lib/utils";
 
 import type { Order } from "../data/schema";
 
 import { OwnerInfo } from "../data/data";
+
+type InvoiceProps = {
+  order: Order;
+  printRef?: React.RefObject<HTMLDivElement | null>;
+  monochrome?: boolean;
+};
 
 function formatCurrency(amount: number, currency: string) {
   return new Intl.NumberFormat("en-US", {
@@ -27,15 +34,13 @@ function formatCurrency(amount: number, currency: string) {
 export const Invoice = ({
   order,
   printRef,
-}: {
-  order: Order;
-  printRef?: React.RefObject<HTMLDivElement | null>;
-}) => {
+  monochrome = false,
+}: InvoiceProps) => {
   const customer = order.customer;
   const orderItems = order.items;
 
   const headerConfig = [
-    { label: "#", className: "w-8 text-muted-foreground" },
+    { label: "#", className: "w-8" },
     { label: "Item", className: "" },
     { label: "Qty", className: "text-right w-12" },
     { label: "Unit", className: "text-right w-20" },
@@ -48,17 +53,32 @@ export const Invoice = ({
     <div className="print:pt-0">
       <div
         ref={printRef}
-        className="bg-background relative mx-auto w-full max-w-4xl rounded-lg border p-6 shadow-sm print:max-w-none print:border-0 print:p-0 print:shadow-none"
+        className={cn(
+          "relative mx-auto w-full max-w-4xl rounded-lg border p-6 shadow-sm bg-background print:max-w-none print:border-0 print:p-0 print:shadow-none print:bg-transparent",
+          monochrome && "invoice-monochrome bg-white text-black shadow-none",
+        )}
       >
-        <section className="flex flex-col gap-4 border-b pb-4 md:flex-row md:items-start md:justify-between print:flex-row print:items-start print:justify-between">
+        <section
+          className="flex flex-col gap-4 border-b pb-4 md:flex-row md:items-start md:justify-between print:flex-row print:items-start print:justify-between"
+          data-invoice-divider={monochrome ? "" : undefined}
+        >
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Invoice</h1>
-            <h2 className="text-muted-foreground text-2xl font-light">
+            <h2
+              className={cn(
+                "text-2xl font-light",
+                !monochrome && "text-muted-foreground",
+              )}
+              data-invoice-muted={monochrome ? "" : undefined}
+            >
               Order
               {" "}
               <span className="font-medium">{order.id}</span>
             </h2>
-            <p className="text-muted-foreground mt-1 text-xs">
+            <p
+              className={cn("mt-1 text-xs", !monochrome && "text-muted-foreground")}
+              data-invoice-muted={monochrome ? "" : undefined}
+            >
               Created:
               {" "}
               {format(order.createdAt ?? "", "MMMM dd, yyyy")}
@@ -91,39 +111,99 @@ export const Invoice = ({
           </div>
         </section>
 
-        <section className="parties-section mt-6 flex justify-between border-b pb-6 print:flex print:justify-between">
+        <section
+          className="parties-section mt-6 flex justify-between border-b pb-6 print:flex print:justify-between"
+          data-invoice-divider={monochrome ? "" : undefined}
+        >
           <div className="space-y-1">
-            <h2 className="text-muted-foreground text-sm font-semibold tracking-wide">
+            <h2
+              className={cn(
+                "text-sm font-semibold tracking-wide",
+                !monochrome && "text-muted-foreground",
+              )}
+              data-invoice-muted={monochrome ? "" : undefined}
+            >
               From
             </h2>
             <p className="font-medium">{OwnerInfo.name}</p>
-            <p className="text-muted-foreground text-xs">{OwnerInfo.address}</p>
-            <p className="text-muted-foreground text-xs">{OwnerInfo.city}</p>
-            <p className="text-muted-foreground text-xs">{OwnerInfo.email}</p>
-            <p className="text-muted-foreground text-xs">{OwnerInfo.phone}</p>
+            <p
+              className={cn("text-xs", !monochrome && "text-muted-foreground")}
+              data-invoice-muted={monochrome ? "" : undefined}
+            >
+              {OwnerInfo.address}
+            </p>
+            <p
+              className={cn("text-xs", !monochrome && "text-muted-foreground")}
+              data-invoice-muted={monochrome ? "" : undefined}
+            >
+              {OwnerInfo.city}
+            </p>
+            <p
+              className={cn("text-xs", !monochrome && "text-muted-foreground")}
+              data-invoice-muted={monochrome ? "" : undefined}
+            >
+              {OwnerInfo.email}
+            </p>
+            <p
+              className={cn("text-xs", !monochrome && "text-muted-foreground")}
+              data-invoice-muted={monochrome ? "" : undefined}
+            >
+              {OwnerInfo.phone}
+            </p>
           </div>
           <div className="space-y-1">
-            <h2 className="text-muted-foreground text-sm font-semibold tracking-wide">
+            <h2
+              className={cn(
+                "text-sm font-semibold tracking-wide",
+                !monochrome && "text-muted-foreground",
+              )}
+              data-invoice-muted={monochrome ? "" : undefined}
+            >
               Bill To
             </h2>
 
             <p className="font-medium">{customer.name}</p>
-            <p className="text-muted-foreground text-xs">
+            <p
+              className={cn("text-xs", !monochrome && "text-muted-foreground")}
+              data-invoice-muted={monochrome ? "" : undefined}
+            >
               {customer.address}
             </p>
-            <p className="text-muted-foreground text-xs">{customer.city}</p>
-            <p className="text-muted-foreground text-xs">
+            <p
+              className={cn("text-xs", !monochrome && "text-muted-foreground")}
+              data-invoice-muted={monochrome ? "" : undefined}
+            >
+              {customer.city}
+            </p>
+            <p
+              className={cn("text-xs", !monochrome && "text-muted-foreground")}
+              data-invoice-muted={monochrome ? "" : undefined}
+            >
               {customer.email}
             </p>
-            <p className="text-muted-foreground text-xs">
+            <p
+              className={cn("text-xs", !monochrome && "text-muted-foreground")}
+              data-invoice-muted={monochrome ? "" : undefined}
+            >
               {customer.phone}
             </p>
           </div>
           <div className="space-y-1">
-            <h2 className="text-muted-foreground text-sm font-semibold tracking-wide">
+            <h2
+              className={cn(
+                "text-sm font-semibold tracking-wide",
+                !monochrome && "text-muted-foreground",
+              )}
+              data-invoice-muted={monochrome ? "" : undefined}
+            >
               Summary
             </h2>
-            <p className="text-muted-foreground text-xs">Grand Total</p>
+            <p
+              className={cn("text-xs", !monochrome && "text-muted-foreground")}
+              data-invoice-muted={monochrome ? "" : undefined}
+            >
+              Grand Total
+            </p>
             <p className="font-medium">
               {formatCurrency(order.grandTotal, order.currency)}
             </p>
@@ -133,7 +213,13 @@ export const Invoice = ({
         <section className="mt-6">
           <Table className="border-collapse text-sm">
             <TableHeader>
-              <TableRow className="bg-muted/50 print:bg-transparent">
+              <TableRow
+                className={cn(
+                  "print:bg-transparent",
+                  !monochrome && "bg-muted/50",
+                )}
+                data-invoice-table-header={monochrome ? "" : undefined}
+              >
                 {headerConfig.map(column => (
                   <TableHead key={column.label} className={column.className}>
                     {column.label}
@@ -143,8 +229,15 @@ export const Invoice = ({
             </TableHeader>
             <TableBody>
               {orderItems.map((item, index) => (
-                <TableRow key={item.id ?? `${item.productId}-${index}`} className="last:border-b-0">
-                  <TableCell className="w-8 text-muted-foreground">
+                <TableRow
+                  key={item.id ?? `${item.productId}-${index}`}
+                  className={cn("last:border-b-0", monochrome && "hover:bg-transparent")}
+                  data-invoice-table-row={monochrome ? "" : undefined}
+                >
+                  <TableCell
+                    className={cn("w-8", !monochrome && "text-muted-foreground")}
+                    data-invoice-muted={monochrome ? "" : undefined}
+                  >
                     {index + 1}
                   </TableCell>
                   <TableCell>
@@ -180,13 +273,23 @@ export const Invoice = ({
         <section className="mt-8 flex flex-col gap-4 md:flex-row md:justify-end print:flex-row print:justify-end">
           <div className="w-full max-w-sm space-y-1 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Items Subtotal</span>
+              <span
+                className={cn(!monochrome && "text-muted-foreground")}
+                data-invoice-muted={monochrome ? "" : undefined}
+              >
+                Items Subtotal
+              </span>
               <span className="font-medium">
                 {formatCurrency(order.basePrice, order.currency)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Items Tax</span>
+              <span
+                className={cn(!monochrome && "text-muted-foreground")}
+                data-invoice-muted={monochrome ? "" : undefined}
+              >
+                Items Tax
+              </span>
               <span className="font-medium">
                 {formatCurrency(
                   order.tax,
@@ -196,7 +299,12 @@ export const Invoice = ({
             </div>
             {order.discount + order.additionalDiscount > 0 && (
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Discount</span>
+                <span
+                  className={cn(!monochrome && "text-muted-foreground")}
+                  data-invoice-muted={monochrome ? "" : undefined}
+                >
+                  Discount
+                </span>
                 <span className="font-medium">
                   -
                   {formatCurrency(
@@ -208,13 +316,21 @@ export const Invoice = ({
             )}
             {order.shipping > 0 && (
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Shipping</span>
+                <span
+                  className={cn(!monochrome && "text-muted-foreground")}
+                  data-invoice-muted={monochrome ? "" : undefined}
+                >
+                  Shipping
+                </span>
                 <span className="font-medium">
                   {formatCurrency(order.shipping, order.currency)}
                 </span>
               </div>
             )}
-            <div className="flex justify-between border-t pt-2 text-base">
+            <div
+              className="flex justify-between border-t pt-2 text-base"
+              data-invoice-summary={monochrome ? "" : undefined}
+            >
               <span className="font-semibold">Grand Total</span>
               <span className="font-semibold">
                 {formatCurrency(order.grandTotal, order.currency)}
@@ -226,6 +342,29 @@ export const Invoice = ({
 
       <style>
         {`
+        .invoice-monochrome,
+        .invoice-monochrome * {
+          color: #000 !important;
+          background-color: #fff !important;
+          border-color: #000 !important;
+          box-shadow: none !important;
+          background-image: none !important;
+        }
+        .invoice-monochrome [data-invoice-muted] {
+          color: #4b5563 !important;
+        }
+        .invoice-monochrome [data-invoice-divider] {
+          border-color: #d1d5db !important;
+        }
+        .invoice-monochrome [data-invoice-table-header] {
+          background-color: #f3f4f6 !important;
+        }
+        .invoice-monochrome [data-invoice-table-row] {
+          border-color: #e5e7eb !important;
+        }
+        .invoice-monochrome [data-invoice-summary] {
+          border-color: #d1d5db !important;
+        }
         @media print {
           body { background: #fff; }
           header, .print-hidden { display: none !important; }

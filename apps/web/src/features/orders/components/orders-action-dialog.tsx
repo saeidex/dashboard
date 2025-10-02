@@ -3,7 +3,6 @@
 import { insertOrderWithItemsSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { useSearch } from "@tanstack/react-router";
 import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -180,7 +179,6 @@ export function OrdersActionDialog({
   }, [productsById, setValue, subscribe]);
 
   const queryclient = useQueryClient();
-  const search = useSearch({ from: "/_authenticated/orders/" });
 
   const createMutation = useMutation({
     mutationFn: createOrder,
@@ -188,7 +186,7 @@ export function OrdersActionDialog({
       toast.success("Order created successfully!");
       form.reset();
       onOpenChange(false);
-      queryclient.invalidateQueries(queryKeys.LIST_ORDERS(search));
+      queryclient.invalidateQueries({ queryKey: ["list-orders"] });
     },
     onError: (error) => {
       toast.error(`Error creating order: ${error.message}`);
@@ -201,7 +199,10 @@ export function OrdersActionDialog({
       toast.success("Order updated successfully!");
       form.reset();
       onOpenChange(false);
-      queryclient.invalidateQueries(queryKeys.LIST_ORDERS(search));
+      queryclient.invalidateQueries({ queryKey: ["list-orders"] });
+      if (currentRow) {
+        queryclient.invalidateQueries(queryKeys.LIST_ORDER(currentRow.id));
+      }
     },
     onError: (error) => {
       toast.error(`Error updating order: ${error.message}`);

@@ -76,7 +76,7 @@ export function EditorTable() {
             <TableHead className="w-[320px] text-muted-foreground pl-4">Product</TableHead>
             <TableHead className="w-[120px] text-center text-muted-foreground">Qty</TableHead>
             <TableHead className="w-[140px] text-center text-muted-foreground">Unit Price</TableHead>
-            <TableHead className="w-[160px] text-center text-muted-foreground">Discount</TableHead>
+            <TableHead className="w-[160px] text-center text-muted-foreground">Addditional Dsc.</TableHead>
             <TableHead className="w-[140px] text-right text-muted-foreground">Total</TableHead>
             <TableHead className="w-[80px] text-center text-muted-foreground">Remove</TableHead>
           </TableRow>

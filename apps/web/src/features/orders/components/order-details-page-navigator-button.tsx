@@ -9,6 +9,7 @@ export const OrderDetailsPageNavigatorButton = ({ id }: { id: string }) => {
     <span
       onClick={() =>
         navigate({
+          from: "/orders",
           to: "/orders/$id",
           params: { id },
         })}

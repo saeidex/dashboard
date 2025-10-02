@@ -65,11 +65,23 @@ export function useOrderPrint({
   const internalRef = useRef<HTMLDivElement | null>(null);
   const targetRef = externalRef ?? internalRef;
 
+  const addMonochromeClass = useCallback(() => {
+    targetRef.current?.classList.add("invoice-monochrome");
+  }, [targetRef]);
+
+  const removeMonochromeClass = useCallback(() => {
+    targetRef.current?.classList.remove("invoice-monochrome");
+  }, [targetRef]);
+
   const reactToPrint = useReactToPrint({
     contentRef: targetRef,
     pageStyle:
       "@page { size: A4; margin: 16mm; } body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }",
+    onBeforePrint: async () => {
+      addMonochromeClass();
+    },
     onAfterPrint: () => {
+      removeMonochromeClass();
       if (!externalRef)
         clearPortal();
     },
@@ -85,7 +97,7 @@ export function useOrderPrint({
       if (!portalRoot)
         return;
       const Wrapper: React.FC = () =>
-        React.createElement(Invoice, { order, printRef: targetRef });
+        React.createElement(Invoice, { order, printRef: targetRef, monochrome: true });
       if (portalRoot)
         portalRoot.render(React.createElement(Wrapper));
       requestAnimationFrame(() => void reactToPrint());
@@ -100,7 +112,7 @@ export function useOrderPrint({
         if (!portalRoot)
           return;
         const Wrapper: React.FC = () =>
-          React.createElement(Invoice, { order, printRef: targetRef });
+          React.createElement(Invoice, { order, printRef: targetRef, monochrome: true });
         portalRoot.render(React.createElement(Wrapper));
         await new Promise(r =>
           requestAnimationFrame(() => requestAnimationFrame(r)),
@@ -113,92 +125,99 @@ export function useOrderPrint({
 
       void el.offsetHeight;
 
-      const canvas = await html2canvas(el, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-        logging: false,
-      });
-      const imgData = canvas.toDataURL("image/png");
+      addMonochromeClass();
 
-      const pdf = new JsPDF({ orientation: "p", unit: "pt", format: "a4" });
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = pageWidth - 32; // small horizontal margin
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      try {
+        const canvas = await html2canvas(el, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          logging: false,
+        });
+        const imgData = canvas.toDataURL("image/png");
 
-      const verticalMargin = 16;
-      if (imgHeight <= pageHeight - verticalMargin * 2) {
-        pdf.addImage(
-          imgData,
-          "PNG",
-          verticalMargin,
-          verticalMargin,
-          imgWidth,
-          imgHeight,
-          undefined,
-          "FAST",
-        );
-      }
-      else {
-        let renderedHeight = 0;
-        const sliceHeight = pageHeight - verticalMargin * 2;
-        const ratio = imgWidth / canvas.width;
-        // We'll draw portions of the original canvas onto a temp canvas
-        while (renderedHeight < imgHeight - 1) {
-          const pageCanvas = document.createElement("canvas");
-          pageCanvas.width = canvas.width;
-          const remaining = imgHeight - renderedHeight;
-          const targetDrawHeight = Math.min(sliceHeight, remaining);
-          const pageChunkHeight = Math.min(
-            targetDrawHeight / ratio,
-            canvas.height
-            - Math.floor((renderedHeight / imgHeight) * canvas.height),
+        const pdf = new JsPDF({ orientation: "p", unit: "pt", format: "a4" });
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const imgWidth = pageWidth - 32; // small horizontal margin
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        const verticalMargin = 16;
+        if (imgHeight <= pageHeight - verticalMargin * 2) {
+          pdf.addImage(
+            imgData,
+            "PNG",
+            verticalMargin,
+            verticalMargin,
+            imgWidth,
+            imgHeight,
+            undefined,
+            "FAST",
           );
-          pageCanvas.height = Math.ceil(pageChunkHeight);
-          const ctx = pageCanvas.getContext("2d");
-          if (ctx) {
-            const sourceY = Math.floor(
-              (renderedHeight / imgHeight) * canvas.height,
+        }
+        else {
+          let renderedHeight = 0;
+          const sliceHeight = pageHeight - verticalMargin * 2;
+          const ratio = imgWidth / canvas.width;
+          // We'll draw portions of the original canvas onto a temp canvas
+          while (renderedHeight < imgHeight - 1) {
+            const pageCanvas = document.createElement("canvas");
+            pageCanvas.width = canvas.width;
+            const remaining = imgHeight - renderedHeight;
+            const targetDrawHeight = Math.min(sliceHeight, remaining);
+            const pageChunkHeight = Math.min(
+              targetDrawHeight / ratio,
+              canvas.height
+              - Math.floor((renderedHeight / imgHeight) * canvas.height),
             );
-            ctx.drawImage(
-              canvas,
-              0,
-              sourceY,
-              canvas.width,
-              pageChunkHeight,
-              0,
-              0,
-              canvas.width,
-              pageChunkHeight,
-            );
-            const pageImg = pageCanvas.toDataURL("image/png");
-            pdf.addImage(
-              pageImg,
-              "PNG",
-              verticalMargin,
-              verticalMargin,
-              imgWidth,
-              pageChunkHeight * ratio,
-              undefined,
-              "FAST",
-            );
-            renderedHeight += sliceHeight;
-            if (renderedHeight < imgHeight - 1)
-              pdf.addPage();
-          }
-          else {
-            break;
+            pageCanvas.height = Math.ceil(pageChunkHeight);
+            const ctx = pageCanvas.getContext("2d");
+            if (ctx) {
+              const sourceY = Math.floor(
+                (renderedHeight / imgHeight) * canvas.height,
+              );
+              ctx.drawImage(
+                canvas,
+                0,
+                sourceY,
+                canvas.width,
+                pageChunkHeight,
+                0,
+                0,
+                canvas.width,
+                pageChunkHeight,
+              );
+              const pageImg = pageCanvas.toDataURL("image/png");
+              pdf.addImage(
+                pageImg,
+                "PNG",
+                verticalMargin,
+                verticalMargin,
+                imgWidth,
+                pageChunkHeight * ratio,
+                undefined,
+                "FAST",
+              );
+              renderedHeight += sliceHeight;
+              if (renderedHeight < imgHeight - 1)
+                pdf.addPage();
+            }
+            else {
+              break;
+            }
           }
         }
-      }
 
-      pdf.save(`invoice-${order.id}.pdf`);
-      if (!externalRef) {
-        setTimeout(() => clearPortal(), 0);
+        pdf.save(`invoice-${order.id}.pdf`);
+      }
+      finally {
+        removeMonochromeClass();
+        if (!externalRef) {
+          setTimeout(() => clearPortal(), 0);
+        }
       }
     },
-    [externalRef, targetRef],
+    [externalRef, targetRef, addMonochromeClass, removeMonochromeClass],
   );
 
   return { printRef: targetRef, printOrder, downloadOrderPdf };

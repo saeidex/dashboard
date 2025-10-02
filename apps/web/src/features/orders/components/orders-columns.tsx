@@ -11,8 +11,20 @@ import type { Order } from "../data/schema";
 
 import { DataTableRowActions } from "./data-table-row-actions";
 import { OrderDetailsPageNavigatorButton } from "./order-details-page-navigator-button";
+import { OrderExpandToggle } from "./order-expand-toggle";
 
 export const ordersColumns: ColumnDef<Order>[] = [
+  {
+    id: "expander",
+    header: () => null,
+    cell: ({ row }) => <OrderExpandToggle row={row} />,
+    enableSorting: false,
+    enableHiding: false,
+    size: 40,
+    meta: {
+      className: cn("w-10 text-center"),
+    },
+  },
   {
     id: "select",
     header: ({ table }) => (
