@@ -57,7 +57,7 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
             variant={destructive ? "destructive" : "default"}
             onClick={handleConfirm}
             disabled={disabled || isLoading}
-            
+
           >
             {confirmText ?? "Continue"}
           </Button>

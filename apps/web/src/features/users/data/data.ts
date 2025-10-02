@@ -7,11 +7,11 @@ export const roles: Array<{ label: Capitalize<userRoleSchema>; value: userRoleSc
   {
     label: "Admin",
     value: "admin",
-    icon : Shield,
+    icon: Shield,
   },
   {
     label: "User",
     value: "user",
-    icon : Users,
+    icon: Users,
   },
 ] as const;

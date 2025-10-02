@@ -1,7 +1,7 @@
 import type { Table } from "@tanstack/react-table";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Ban, Mail, Trash2, UserCheck, UserX } from "lucide-react";
+import { Ban, Mail, Trash2, UserCheck } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 

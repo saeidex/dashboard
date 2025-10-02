@@ -1,4 +1,4 @@
-import type { ExpandedState, Row, SortingState, VisibilityState } from "@tanstack/react-table";
+import type { ExpandedState, SortingState, VisibilityState } from "@tanstack/react-table";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";

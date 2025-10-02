@@ -7,7 +7,7 @@ import formatApiError from "@/web/lib/format-api-error";
 
 export const queryKeys = {
   LIST_EXPENSES: { queryKey: ["list-expenses"] },
-  LIST_EXPENSE : (id: string) => ({ queryKey: [`list-expense-${id}`] }),
+  LIST_EXPENSE: (id: string) => ({ queryKey: [`list-expense-${id}`] }),
 };
 
 export const expensesQueryOptions = queryOptions({

@@ -9,7 +9,7 @@ import formatApiError from "@/web/lib/format-api-error";
 
 export const queryKeys = {
   LIST_CUSTOMERS: { queryKey: ["list-customers"] },
-  LIST_CUSTOMER : (id: string) => ({ queryKey: [`list-customer-${id}`] }),
+  LIST_CUSTOMER: (id: string) => ({ queryKey: [`list-customer-${id}`] }),
 };
 
 export const customersQueryOptions = queryOptions({

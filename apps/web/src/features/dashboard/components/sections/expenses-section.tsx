@@ -9,6 +9,7 @@ import {
   YAxis,
 } from "recharts";
 
+import { Button } from "@/web/components/ui/button";
 import {
   Card,
   CardContent,
@@ -104,7 +105,8 @@ export function ExpensesSection() {
               </div>
               <div className="flex gap-1">
                 {[3, 6, 12].map(m => (
-                  <button
+                  <Button
+                    variant="ghost"
                     key={m}
                     onClick={() => setMonths(m as 3 | 6 | 12)}
                     className={`rounded border px-2 py-1 text-xs font-medium transition-colors ${months === m ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
@@ -112,7 +114,7 @@ export function ExpensesSection() {
                   >
                     {m}
                     m
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>

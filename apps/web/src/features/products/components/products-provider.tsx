@@ -19,8 +19,18 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<ProductsDialogType>(null);
   const [currentRow, setCurrentRow] = useState<Product | null>(null);
 
+  const values = React.useMemo(
+    () => ({
+      open,
+      setOpen,
+      currentRow,
+      setCurrentRow,
+    }),
+    [open, setOpen, currentRow, setCurrentRow],
+  );
+
   return (
-    <ProductsContext value={{ open, setOpen, currentRow, setCurrentRow }}>
+    <ProductsContext value={values}>
       {children}
     </ProductsContext>
   );

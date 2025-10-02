@@ -19,8 +19,18 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<UsersDialogType>(null);
   const [currentRow, setCurrentRow] = useState<User | null>(null);
 
+  const values = React.useMemo(
+    () => ({
+      open,
+      setOpen,
+      currentRow,
+      setCurrentRow,
+    }),
+    [open, setOpen, currentRow, setCurrentRow],
+  );
+
   return (
-    <UsersContext value={{ open, setOpen, currentRow, setCurrentRow }}>
+    <UsersContext value={values}>
       {children}
     </UsersContext>
   );

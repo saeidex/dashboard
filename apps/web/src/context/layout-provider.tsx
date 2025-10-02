@@ -1,4 +1,4 @@
-import { createContext, use, useState } from "react";
+import { createContext, use, useCallback, useMemo, useState } from "react";
 
 import { getCookie, setCookie } from "@/web/lib/cookies";
 
@@ -43,36 +43,53 @@ export function LayoutProvider({ children }: LayoutProviderProps) {
     return (saved as Variant) || DEFAULT_VARIANT;
   });
 
-  const setCollapsible = (newCollapsible: Collapsible) => {
-    _setCollapsible(newCollapsible);
-    setCookie(
-      LAYOUT_COLLAPSIBLE_COOKIE_NAME,
-      newCollapsible,
-      LAYOUT_COOKIE_MAX_AGE,
-    );
-  };
+  const setCollapsible = useCallback(
+    (newCollapsible: Collapsible) => {
+      _setCollapsible(newCollapsible);
+      setCookie(
+        LAYOUT_COLLAPSIBLE_COOKIE_NAME,
+        newCollapsible,
+        LAYOUT_COOKIE_MAX_AGE,
+      );
+    },
+    [_setCollapsible],
+  );
 
-  const setVariant = (newVariant: Variant) => {
-    _setVariant(newVariant);
-    setCookie(LAYOUT_VARIANT_COOKIE_NAME, newVariant, LAYOUT_COOKIE_MAX_AGE);
-  };
+  const setVariant = useCallback(
+    (newVariant: Variant) => {
+      _setVariant(newVariant);
+      setCookie(
+        LAYOUT_VARIANT_COOKIE_NAME,
+        newVariant,
+        LAYOUT_COOKIE_MAX_AGE,
+      );
+    },
+    [_setVariant],
+  );
 
-  const resetLayout = () => {
+  const resetLayout = useCallback(() => {
     setCollapsible(DEFAULT_COLLAPSIBLE);
     setVariant(DEFAULT_VARIANT);
-  };
+  }, [setCollapsible, setVariant]);
 
-  const contextValue: LayoutContextType = {
-    resetLayout,
-    defaultCollapsible: DEFAULT_COLLAPSIBLE,
-    collapsible,
-    setCollapsible,
-    defaultVariant: DEFAULT_VARIANT,
-    variant,
-    setVariant,
-  };
+  const contextValue = useMemo<LayoutContextType>(
+    () => ({
+      resetLayout,
+      defaultCollapsible: DEFAULT_COLLAPSIBLE,
+      collapsible,
+      setCollapsible,
+      defaultVariant: DEFAULT_VARIANT,
+      variant,
+      setVariant,
+    }),
+    [collapsible, resetLayout, setCollapsible, setVariant, variant],
+  );
 
-  return <LayoutContext value={contextValue}>{children}</LayoutContext>;
+  return (
+    <LayoutContext value={contextValue}>
+      {children}
+    </LayoutContext>
+  );
 }
 
 // Define the hook for the provider

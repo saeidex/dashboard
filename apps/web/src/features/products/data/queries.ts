@@ -9,7 +9,7 @@ import formatApiError from "@/web/lib/format-api-error";
 
 export const queryKeys = {
   LIST_PRODUCTS: (query: ProductSearch) => ({ queryKey: ["list-products", query] }),
-  LIST_PRODUCT : (id: string) => ({ queryKey: [`list-product-${id}`] }),
+  LIST_PRODUCT: (id: string) => ({ queryKey: [`list-product-${id}`] }),
 };
 
 export const createProductsQueryOptions = (query: ProductSearch = {}) => queryOptions({

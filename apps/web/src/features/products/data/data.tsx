@@ -15,21 +15,21 @@ export const statuses = [
   {
     label: "Available",
     value: "available" as const,
-    icon : CheckCircle,
+    icon: CheckCircle,
   },
   {
     label: "Out of Stock",
     value: "out-of-stock" as const,
-    icon : CircleOff,
+    icon: CircleOff,
   },
   {
     label: "Coming Soon",
     value: "coming-soon" as const,
-    icon : Timer,
+    icon: Timer,
   },
   {
     label: "Discontinued",
     value: "discontinued" as const,
-    icon : Circle,
+    icon: Circle,
   },
 ] as const;

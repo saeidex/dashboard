@@ -4,7 +4,7 @@ import pluginRouter from "@tanstack/eslint-plugin-router";
 
 export default createConfig({
   react: true,
-  ignores: ["src/routeTree.gen.ts", "src/components/ui/*"],
+  ignores: ["src/routeTree.gen.ts", "src/components/ui/*", "src/components/data-table"],
 }, {
   plugins: {
     "@tanstack/query": pluginQuery,
@@ -18,11 +18,4 @@ export default createConfig({
       ignore: ["README.md", "~__root.tsx"],
     }],
   },
-}, ...pluginRouter.configs["flat/recommended"], {
-  files: ["**/features/**/data/*.{ts,tsx}"],
-  rules: {
-    "style/key-spacing": ["error", {
-      align: "colon",
-    }],
-  },
-});
+}, ...pluginRouter.configs["flat/recommended"]);

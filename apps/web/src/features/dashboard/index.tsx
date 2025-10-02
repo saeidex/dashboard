@@ -38,7 +38,7 @@ type DashboardKpis = {
 export function Dashboard() {
   const kpis = useDashboardKpis() as DashboardKpis;
   const fmtTrend = (val?: number) => {
-    if (val === undefined || isNaN(val))
+    if (val === undefined || Number.isNaN(val))
       return "—";
     const sign = val > 0 ? "+" : "";
     return `${sign}${val.toFixed(1)}% MoM`;

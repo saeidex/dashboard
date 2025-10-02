@@ -7,7 +7,7 @@ import formatApiError from "@/web/lib/format-api-error";
 
 export const queryKeys = {
   LIST_CATEGORIES: { queryKey: ["list-categories"] },
-  LIST_CATEGORY  : (id: number) => ({ queryKey: [`list-category-${id}`] }),
+  LIST_CATEGORY: (id: number) => ({ queryKey: [`list-category-${id}`] }),
 };
 
 export const categoriesQueryOptions = queryOptions({

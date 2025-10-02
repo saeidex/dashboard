@@ -7,7 +7,7 @@ import formatApiError from "@/web/lib/format-api-error";
 
 export const queryKeys = {
   LIST_ORDERS: (query: orderListQueryParamsSchema) => ({ queryKey: ["list-orders", query] }),
-  LIST_ORDER : (id: string) => ({ queryKey: [`list-order-${id}`] }),
+  LIST_ORDER: (id: string) => ({ queryKey: [`list-order-${id}`] }),
 };
 
 export const createOrdersQueryOptions = (query: orderListQueryParamsSchema = { pageIndex: 0, pageSize: 10 }) => queryOptions({
@@ -68,7 +68,7 @@ export async function deleteOrder(id: string) {
 export async function updateOrder({ id, order }: { id: string; order: patchOrderWithItemsSchema }) {
   const response = await apiClient.api.orders[":id"].$patch({
     param: { id },
-    json : order,
+    json: order,
   });
   if (response.status !== 200) {
     const json = await response.json();

@@ -27,8 +27,8 @@ import { ClerkLogo } from "@/web/assets/clerk-logo";
 
 import type { SidebarData } from "../types";
 
-const pages = () => {
-  if (process.env.NODE_ENV === "production") {
+const devOnlyPages = () => {
+  if (import.meta.env.PROD) {
     return [];
   }
   return [
@@ -200,7 +200,7 @@ export const sidebarData: SidebarData = {
         },
       ],
     },
-    ...pages(),
+    ...devOnlyPages(),
     {
       title: "Other",
       items: [

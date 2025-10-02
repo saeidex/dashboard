@@ -19,8 +19,13 @@ export function CustomersProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<CustomersDialogType>(null);
   const [currentRow, setCurrentRow] = useState<Customer | null>(null);
 
+  const values = React.useMemo(
+    () => ({ open, setOpen, currentRow, setCurrentRow }),
+    [open, setOpen, currentRow, setCurrentRow],
+  );
+
   return (
-    <CustomersContext value={{ open, setOpen, currentRow, setCurrentRow }}>
+    <CustomersContext value={values}>
       {children}
     </CustomersContext>
   );

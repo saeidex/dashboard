@@ -7,7 +7,7 @@ import formatApiError from "@/web/lib/format-api-error";
 
 export const queryKeys = {
   LIST_USERS: { queryKey: ["list-users"] },
-  LIST_USER : (id: string) => ({ queryKey: ["list-user", id] }),
+  LIST_USER: (id: string) => ({ queryKey: ["list-user", id] }),
 };
 
 export const usersQueryOptions = queryOptions({
@@ -33,7 +33,7 @@ export async function createUser(payload: insertUsersSchema) {
 export async function updateUser({ id, payload }: { id: string; payload: patchUsersSchema }) {
   const response = await apiClient.api.users[":id"].$patch({
     param: { id },
-    json : payload,
+    json: payload,
   });
   if (response.status !== 200) {
     const json = await response.json();

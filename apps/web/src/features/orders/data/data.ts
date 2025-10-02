@@ -22,9 +22,9 @@ export const paymentMethodValues = [
 ] as const;
 
 export const OwnerInfo = {
-  name   : "Universal Packaging & Accessories",
+  name: "Universal Packaging & Accessories",
   address: "Tongi, Gazipur",
-  city   : "Dhaka",
-  phone  : "(123) 456-7890",
-  email  : "support@example.com",
+  city: "Dhaka",
+  phone: "(123) 456-7890",
+  email: "support@example.com",
 };

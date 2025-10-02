@@ -46,6 +46,7 @@ export function CommandMenu() {
                 if (navItem.url) {
                   return (
                     <CommandItem
+                      // eslint-disable-next-line react/no-array-index-key
                       key={`${navItem.url}-${i}`}
                       value={navItem.title}
                       onSelect={() => {
@@ -62,6 +63,7 @@ export function CommandMenu() {
 
                 return navItem.items?.map((subItem, i) => (
                   <CommandItem
+                    // eslint-disable-next-line react/no-array-index-key
                     key={`${navItem.title}-${subItem.url}-${i}`}
                     value={`${navItem.title}-${subItem.url}`}
                     onSelect={() => {

@@ -19,8 +19,18 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<OrdersDialogType>(null);
   const [currentRow, setCurrentRow] = useState<Order | null>(null);
 
+  const values = React.useMemo(
+    () => ({
+      open,
+      setOpen,
+      currentRow,
+      setCurrentRow,
+    }),
+    [open, setOpen, currentRow, setCurrentRow],
+  );
+
   return (
-    <OrdersContext value={{ open, setOpen, currentRow, setCurrentRow }}>
+    <OrdersContext value={values}>
       {children}
     </OrdersContext>
   );

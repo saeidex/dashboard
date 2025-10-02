@@ -11,7 +11,6 @@ import { ConfirmDialog } from "@/web/components/confirm-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/web/components/ui/alert";
 import { Input } from "@/web/components/ui/input";
 import { Label } from "@/web/components/ui/label";
-import { sleep } from "@/web/lib/utils";
 
 import { deleteUser, queryKeys } from "../data/queries";
 

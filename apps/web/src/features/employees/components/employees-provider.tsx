@@ -19,8 +19,18 @@ export function EmployeesProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<EmployeesDialogType>(null);
   const [currentRow, setCurrentRow] = useState<Employee | null>(null);
 
+  const values = React.useMemo(
+    () => ({
+      open,
+      setOpen,
+      currentRow,
+      setCurrentRow,
+    }),
+    [open, setOpen, currentRow, setCurrentRow],
+  );
+
   return (
-    <EmployeesContext value={{ open, setOpen, currentRow, setCurrentRow }}>
+    <EmployeesContext value={values}>
       {children}
     </EmployeesContext>
   );

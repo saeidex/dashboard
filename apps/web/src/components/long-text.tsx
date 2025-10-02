@@ -19,6 +19,16 @@ type LongTextProps = {
   contentClassName?: string;
 };
 
+const checkOverflow = (textContainer: HTMLDivElement | null) => {
+  if (textContainer) {
+    return (
+      textContainer.offsetHeight < textContainer.scrollHeight
+      || textContainer.offsetWidth < textContainer.scrollWidth
+    );
+  }
+  return false;
+};
+
 export function LongText({
   children,
   className = "",
@@ -29,10 +39,12 @@ export function LongText({
 
   useEffect(() => {
     if (checkOverflow(ref.current)) {
+      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
       setIsOverflown(true);
       return;
     }
 
+    // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
     setIsOverflown(false);
   }, []);
 
@@ -75,13 +87,3 @@ export function LongText({
     </>
   );
 }
-
-const checkOverflow = (textContainer: HTMLDivElement | null) => {
-  if (textContainer) {
-    return (
-      textContainer.offsetHeight < textContainer.scrollHeight
-      || textContainer.offsetWidth < textContainer.scrollWidth
-    );
-  }
-  return false;
-};

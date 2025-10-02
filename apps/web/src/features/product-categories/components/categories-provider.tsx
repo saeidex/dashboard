@@ -25,8 +25,18 @@ export function CategoriesProvider({
   const [open, setOpen] = useDialogState<CategoriesDialogType>(null);
   const [currentRow, setCurrentRow] = useState<Category | null>(null);
 
+  const values = React.useMemo(
+    () => ({
+      open,
+      setOpen,
+      currentRow,
+      setCurrentRow,
+    }),
+    [open, setOpen, currentRow, setCurrentRow],
+  );
+
   return (
-    <CategoriesContext value={{ open, setOpen, currentRow, setCurrentRow }}>
+    <CategoriesContext value={values}>
       {children}
     </CategoriesContext>
   );

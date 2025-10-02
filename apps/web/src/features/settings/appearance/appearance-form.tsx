@@ -43,9 +43,9 @@ export function AppearanceForm() {
   });
 
   function onSubmit(data: AppearanceFormValues) {
-    if (data.font != font)
+    if (data.font !== font)
       setFont(data.font);
-    if (data.theme != theme)
+    if (data.theme !== theme)
       setTheme(data.theme);
 
     toast.success("Appearance updated.");

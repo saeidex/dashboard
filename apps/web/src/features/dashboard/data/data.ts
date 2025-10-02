@@ -5,40 +5,40 @@ type ProjectedOrderItem = {
   quantity: number;
   unitPrice: number;
   discount: number;
-  tax : number;
+  tax: number;
 };
 
 type ProjectedOrderTotals = {
-  itemsTotal : number;
+  itemsTotal: number;
   discountTotal: number;
   itemsTaxTotal: number;
-  shipping : number;
-  grandTotal : number;
+  shipping: number;
+  grandTotal: number;
 };
 
 type ProjectedOrder = {
-  id : string;
-  createdAt : Date;
-  status : OrderStatus;
+  id: string;
+  createdAt: Date;
+  status: OrderStatus;
   paymentStatus: PaymentStatus;
   paymentMethod: string;
-  totals : ProjectedOrderTotals;
-  items : ProjectedOrderItem[];
+  totals: ProjectedOrderTotals;
+  items: ProjectedOrderItem[];
 };
 
 type ProjectedProduct = {
-  id : string;
-  name : string;
+  id: string;
+  name: string;
   pricingTotal: number;
-  stock : number;
-  status : "available" | "archived";
-  createdAt : Date;
+  stock: number;
+  status: "available" | "archived";
+  createdAt: Date;
 };
 
 type ProjectedExpense = {
-  id : string;
+  id: string;
   category: string;
-  amount : number;
+  amount: number;
   createdAt: Date;
 };
 
@@ -95,10 +95,10 @@ export function computeKpis() {
   const prevAov = prevOrders ? prevSales / prevOrders : 0;
 
   const trends = {
-    salesTotal    : pctChange(latestSales, prevSales),
-    expensesTotal : pctChange(latestExpenses, prevExpenses),
-    ordersCount   : pctChange(latestOrders, prevOrders),
-    avgOrderValue : pctChange(latestAov, prevAov),
+    salesTotal: pctChange(latestSales, prevSales),
+    expensesTotal: pctChange(latestExpenses, prevExpenses),
+    ordersCount: pctChange(latestOrders, prevOrders),
+    avgOrderValue: pctChange(latestAov, prevAov),
     inventoryValue: 0,
   };
 
@@ -125,7 +125,7 @@ export function getMonthlySalesSeries(limitMonths = 12) {
   return sliced.map(([k, total]) => {
     const date = new Date(`${k}-01`);
     return {
-      key       : k,
+      key: k,
       monthLabel: date.toLocaleString(undefined, { month: "short" }),
       total,
     };
@@ -158,9 +158,9 @@ export function getMonthlyExpensesSeries(limitMonths = 12) {
   return months.map((k) => {
     const date = new Date(`${k}-01`);
     return {
-      key       : k,
+      key: k,
       monthLabel: date.toLocaleString(undefined, { month: "short" }),
-      total     : grouped[k] ?? 0,
+      total: grouped[k] ?? 0,
     };
   });
 }

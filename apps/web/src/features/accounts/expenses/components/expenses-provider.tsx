@@ -19,8 +19,13 @@ export function ExpensesProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<ExpensesDialogType>(null);
   const [currentRow, setCurrentRow] = useState<Expense | null>(null);
 
+  const values = React.useMemo(
+    () => ({ open, setOpen, currentRow, setCurrentRow }),
+    [open, setOpen, currentRow, setCurrentRow],
+  );
+
   return (
-    <ExpensesContext value={{ open, setOpen, currentRow, setCurrentRow }}>
+    <ExpensesContext value={values}>
       {children}
     </ExpensesContext>
   );
