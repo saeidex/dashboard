@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
     "knip": "knip",
-    "ui-add": "pnpm dlx shadcn@latest add && pnpm dlx prettier src --write --list-different"
+    "ui-add": "pnpm dlx shadcn@latest add && pnpm dlx prettier src --write --list-different",
+    "scan": "pnpm dlx react-scan@latest http://localhost:5173"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.48.1",
