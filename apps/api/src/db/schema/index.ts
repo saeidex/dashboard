@@ -12,11 +12,11 @@ export const userRoleSchema = z.union([z.literal("user"), z.literal("admin"), z.
 export const selectUsersSchema = createSelectSchema(users, {
   banned    : z.boolean().nullable().optional(),
   banReason : z.string().nullable().optional(),
-  banExpires: z.date().nullable().optional(),
+  banExpires: z.string().nullable().optional(),
   role      : z.string().optional().or(z.string().nullable()),
   image     : z.string().nullable().optional(),
-  createdAt : z.date(),
-  updatedAt : z.date(),
+  createdAt : z.string(),
+  updatedAt : z.string(),
 })
 export type selectUsersSchema = z.infer<typeof selectUsersSchema>
 

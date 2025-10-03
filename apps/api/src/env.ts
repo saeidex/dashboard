@@ -13,11 +13,12 @@ expand(config({
 
 const EnvSchema = z.object({
   NODE_ENV: z.string().default("development"),
-  CLIENT_URL: z.string().url().default("http://localhost:3000"),
+  CLIENT_URL: z.url().default("http://localhost:5173"),
   PORT: z.coerce.number().default(9999),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]),
-  DATABASE_URL: z.string().url(),
+  DATABASE_URL: z.url(),
   DATABASE_AUTH_TOKEN: z.string().optional(),
+  TRUSTED_ORIGINS: z.string().default("http://localhost:5173").transform(val => val.split(",").map(s => s.trim())),
 }).superRefine((input, ctx) => {
   if (input.NODE_ENV === "production" && !input.DATABASE_AUTH_TOKEN) {
     ctx.addIssue({

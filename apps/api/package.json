@@ -6,7 +6,8 @@
   "license": "MIT",
   "exports": {
     "./routes": "./src/routes/index.ts",
-    "./schema": "./src/db/schema/index.ts"
+    "./schema": "./src/db/schema/index.ts",
+    "./lib/permissions": "./src/lib/permissions.ts"
   },
   "scripts": {
     "clean": "git clean -xdf node_modules",

@@ -1,27 +1,33 @@
+import type { AdminOptions } from "better-auth/plugins"
+
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
-import { admin as adminPlugin, bearer, openAPI } from "better-auth/plugins"
+import { admin as adminPlugin, openAPI } from "better-auth/plugins"
 
 import db from "@/api/db"
+import env from "@/api/env"
 
-import { accessController, admin, user } from "./permisions"
+import { accessController, admin, user } from "./permissions"
+
+export const adminOptions: AdminOptions = {
+  ac: accessController,
+  roles: { admin, user },
+  adminRoles: ["admin"],
+}
 
 export const auth = betterAuth({
-  emailAndPassword: {
-    enabled: true,
-    disableSignUp: true,
-  },
+  appName: "@crm/api",
   database: drizzleAdapter(db, {
     provider: "sqlite",
     usePlural: true,
   }),
-  appName: "@crm/api",
+  emailAndPassword: {
+    enabled: true,
+    disableSignUp: true,
+  },
+  trustedOrigins: env.TRUSTED_ORIGINS,
   plugins: [
-    adminPlugin({
-      ac: accessController,
-      roles: { admin, user },
-    }),
-    bearer(),
+    adminPlugin(adminOptions),
     openAPI({
       disableDefaultReference: true,
     }),

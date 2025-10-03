@@ -170,7 +170,7 @@ export type selectOrderDetailsSchema = z.infer<typeof selectOrderDetailsSchema>
  */
 export const orderListQueryParamsSchema = z.object({
   pageIndex: z.coerce.number().min(0).default(0).optional(),
-  pageSize : z.coerce.number().min(1).max(100).default(10).optional(),
+  pageSize : z.coerce.number().min(1).default(10).optional(),
 })
 export type orderListQueryParamsSchema = z.infer<typeof orderListQueryParamsSchema>
 

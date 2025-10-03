@@ -32,3 +32,5 @@ test.db
 dist
 
 .dev.vars
+
+public
