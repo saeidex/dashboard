@@ -94,8 +94,10 @@ export const sidebarData: SidebarData = {
     email: "example@mail.com",
     image: "/avatars/example.jpg",
     emailVerified: false,
-    role: ["admin"],
-    exp: Date.now() + 24 * 60 * 60 * 1000, // 24 hours from now
+    role: "admin",
+    banned: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
   teams: [
     {
@@ -164,11 +166,6 @@ export const sidebarData: SidebarData = {
             // },
           ],
         },
-        // {
-        //   title: 'Reports',
-        //   url: '/reports',
-        //   icon: FileX,
-        // },
         {
           title: "Software Users",
           url: "/users",
