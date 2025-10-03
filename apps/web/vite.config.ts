@@ -5,6 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
+import tsConfigPaths from "vite-tsconfig-paths";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,20 +20,19 @@ export default defineConfig({
       tsconfigPath: path.join(__dirname, "tsconfig.json"),
     }),
     react(),
+    tsConfigPaths(),
     tanstackRouter({
       target: "react",
       autoCodeSplitting: true,
     }),
     tailwindcss(),
   ],
-  resolve: {
-    alias: {
-      "@/web": path.resolve(__dirname, "./src"),
-    },
-  },
   server: {
     proxy: {
       "/api": "http://localhost:9999",
+    },
+    warmup: {
+      clientFiles: ["./src/components/**/*.{ts,tsx}"],
     },
   },
   build: {

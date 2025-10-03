@@ -14,7 +14,13 @@ export const usersQueryOptions = queryOptions({
   ...queryKeys.LIST_USERS,
   queryFn: async () => {
     const response = await apiClient.api.users.$get();
-    return response.json();
+    const json = await response.json();
+
+    if ("message" in json) {
+      const message = json.message;
+      throw new Error(message);
+    }
+    return json;
   },
 });
 

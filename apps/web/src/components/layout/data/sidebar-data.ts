@@ -89,9 +89,13 @@ const devOnlyPages = () => {
 
 export const sidebarData: SidebarData = {
   user: {
+    id: "1",
     name: "Example",
     email: "example@mail.com",
-    avatar: "/avatars/example.jpg",
+    image: "/avatars/example.jpg",
+    emailVerified: false,
+    role: ["admin"],
+    exp: Date.now() + 24 * 60 * 60 * 1000, // 24 hours from now
   },
   teams: [
     {

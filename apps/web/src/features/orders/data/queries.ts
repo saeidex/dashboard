@@ -6,7 +6,7 @@ import apiClient from "@/web/lib/api-client";
 import formatApiError from "@/web/lib/format-api-error";
 
 export const queryKeys = {
-  LIST_ORDERS: (query: orderListQueryParamsSchema) => ({ queryKey: ["list-orders", query] }),
+  LIST_ORDERS: (query: orderListQueryParamsSchema = { pageIndex: 0, pageSize: 10 }) => ({ queryKey: ["list-orders", query] }),
   LIST_ORDER: (id: string) => ({ queryKey: [`list-order-${id}`] }),
 };
 

@@ -1,10 +1,6 @@
 import type { LinkProps } from "@tanstack/react-router";
 
-type User = {
-  name: string;
-  email: string;
-  avatar: string;
-};
+import type { AuthUser } from "@/web/stores/auth-store";
 
 type Team = {
   name: string;
@@ -36,7 +32,7 @@ type NavGroup = {
 };
 
 type SidebarData = {
-  user: User;
+  user: AuthUser;
   teams: Team[];
   navGroups: NavGroup[];
 };

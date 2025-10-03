@@ -7,7 +7,7 @@ import { useMemo } from "react";
 import { paymentStatusValues } from "@/web/features/orders/data/data";
 
 import { customersQueryOptions } from "../../customers/data/queries";
-import { ordersQueryOptions } from "../../orders/data/queries";
+import { createOrdersQueryOptions } from "../../orders/data/queries";
 
 type RecentOrdersProps = {
   limit?: number;
@@ -15,7 +15,13 @@ type RecentOrdersProps = {
 };
 
 export function RecentOrders({ limit = 6, type }: RecentOrdersProps) {
-  const { data: orders } = useSuspenseQuery(ordersQueryOptions);
+  const { data: { rows: orders } } = useSuspenseQuery(
+    {
+      ...createOrdersQueryOptions({ pageSize: 1000 }),
+      staleTime: 1000 * 60 * 5,
+      refetchOnWindowFocus: false,
+    },
+  );
   const { data: customers } = useSuspenseQuery(customersQueryOptions);
 
   const recent = useMemo(() => {

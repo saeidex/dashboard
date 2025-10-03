@@ -7,6 +7,7 @@ import {
 } from "@/web/components/ui/sidebar";
 import { useLayout } from "@/web/context/layout-provider";
 import { filterSidebarItems, isToggleableGroup } from "@/web/lib/sidebar-utils";
+import { useAuthStore } from "@/web/stores/auth-store";
 import { useSettingsStore } from "@/web/stores/settings-store";
 
 import { AppTitle } from "./app-title";
@@ -17,6 +18,7 @@ import { NavUser } from "./nav-user";
 export function AppSidebar() {
   const { collapsible, variant } = useLayout();
   const { display } = useSettingsStore();
+  const user = useAuthStore(state => state.auth.user);
 
   const filteredNavGroups = sidebarData.navGroups
     .map((group) => {
@@ -41,7 +43,7 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={sidebarData.user} />
+        <NavUser user={user ?? sidebarData.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

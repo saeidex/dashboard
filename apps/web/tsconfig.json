@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "paths": {
-      "@/web/*": ["./src/*"]
+      "@/web/*": ["./src/*"],
+      "@/api/*": ["../api/src/*"]
     }
   },
   "references": [

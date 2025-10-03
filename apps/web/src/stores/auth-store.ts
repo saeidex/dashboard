@@ -1,54 +1,58 @@
+import type { InferAdminRolesFromOption } from "better-auth/plugins";
+
 import { create } from "zustand";
+import { devtools } from "zustand/middleware";
 
-import { getCookie, removeCookie, setCookie } from "@/web/lib/cookies";
+import type { adminOptions } from "@/api/lib/auth";
+import type { authClient } from "@/web/features/auth/lib/auth-client";
 
-const ACCESS_TOKEN = "thisisjustarandomstring";
-
-type AuthUser = {
-  accountNo: string;
-  email: string;
-  role: string[];
-  exp: number;
-};
+export type AuthSession = typeof authClient.$Infer["Session"]["session"];
+export type AuthUser = typeof authClient.$Infer["Session"]["user"];
+export type UserRole = InferAdminRolesFromOption<typeof adminOptions>;
 
 type AuthState = {
   auth: {
     user: AuthUser | null;
+    session: AuthSession | null;
+  };
+};
+
+type AuthActions = {
+  auth: {
     setUser: (user: AuthUser | null) => void;
-    accessToken: string;
-    setAccessToken: (accessToken: string) => void;
-    resetAccessToken: () => void;
+    setSession: (session: AuthSession | null) => void;
+    setUserRole: (role: UserRole | string) => void;
+    getUserId: () => string | undefined;
+    getUserRole: () => UserRole | string | undefined;
     reset: () => void;
   };
 };
 
-export const useAuthStore = create<AuthState>()((set) => {
-  const cookieState = getCookie(ACCESS_TOKEN);
-  const initToken = cookieState ? JSON.parse(cookieState) : "";
-  return {
-    auth: {
-      user: null,
-      setUser: user =>
-        set(state => ({ ...state, auth: { ...state.auth, user } })),
-      accessToken: initToken,
-      setAccessToken: accessToken =>
-        set((state) => {
-          setCookie(ACCESS_TOKEN, JSON.stringify(accessToken));
-          return { ...state, auth: { ...state.auth, accessToken } };
-        }),
-      resetAccessToken: () =>
-        set((state) => {
-          removeCookie(ACCESS_TOKEN);
-          return { ...state, auth: { ...state.auth, accessToken: "" } };
-        }),
-      reset: () =>
-        set((state) => {
-          removeCookie(ACCESS_TOKEN);
-          return {
-            ...state,
-            auth: { ...state.auth, user: null, accessToken: "" },
-          };
-        }),
-    },
-  };
-});
+type AuthStore = AuthState & AuthActions;
+
+export const useAuthStore = create<AuthStore>()(
+  devtools(
+    (set, get) => ({
+      auth: {
+        user: null,
+        session: null,
+        setUser: user => set(state => ({ auth: { ...state.auth, user } })),
+        setSession: session => set(state => ({ auth: { ...state.auth, session } })),
+        setUserRole: (role = "user") => set(state => ({
+          auth: {
+            ...state.auth,
+            user: state.auth.user ? { ...state.auth.user, role } : null,
+          },
+        })),
+        getUserId: () => get().auth.user?.id,
+        getUserRole: () => get().auth.user?.role ?? undefined,
+        reset: () => set(state => ({
+          auth: { ...state.auth, user: null, session: null },
+        })),
+      },
+    }),
+    { name: "AuthStore" },
+  ),
+);
+
+useAuthStore.devtools.cleanup();

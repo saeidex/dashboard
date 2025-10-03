@@ -11,15 +11,21 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/web/components/ui/dropdown-menu";
 import { useOrderPrint } from "@/web/hooks/use-order-print";
 
 import type { Order } from "../data/schema";
 
-import { createOrder, queryKeys } from "../data/queries";
+import { orderStatusValues, paymentMethodValues, paymentStatusValues } from "../data/data";
+import { createOrder, queryKeys, updateOrder } from "../data/queries";
 import { useOrders } from "./orders-provider";
 
 type DataTableRowActionsProps = {
@@ -43,6 +49,14 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
     },
     onError: (error) => {
       toast.error(`Error creating order: ${error.message}`);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: updateOrder,
+    onSuccess: () => {
+      queryClient.invalidateQueries(queryKeys.LIST_ORDERS());
+      toast.success("Order updated successfully");
     },
   });
 
@@ -74,14 +88,76 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[160px]">
-          <DropdownMenuItem
-            onClick={handleDownload}
-          >
-            Download
-            <DropdownMenuShortcut>
-              <Download size={16} />
-            </DropdownMenuShortcut>
-          </DropdownMenuItem>
+
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Order Status</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuRadioGroup
+                onValueChange={value =>
+                  updateMutation.mutate({
+                    id: row.original.id,
+                    order: {
+                      orderStatus: value as typeof orderStatusValues[number],
+                      items: row.original.items,
+                    },
+                  })}
+                value={row.original.orderStatus ?? undefined}
+              >
+                {orderStatusValues.map(orderStatus => (
+                  <DropdownMenuRadioItem key={orderStatus} value={orderStatus}>
+                    {orderStatus.replace(/^./, match => match.toUpperCase())}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Payment Status</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuRadioGroup
+                onValueChange={value =>
+                  updateMutation.mutate({
+                    id: row.original.id,
+                    order: {
+                      paymentStatus: value as typeof paymentStatusValues[number],
+                      items: row.original.items,
+                    },
+                  })}
+                value={row.original.paymentStatus ?? undefined}
+              >
+                {paymentStatusValues.map(paymentStatus => (
+                  <DropdownMenuRadioItem key={paymentStatus} value={paymentStatus}>
+                    {paymentStatus.replace(/^./, match => match.toUpperCase())}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Payment Methods</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuRadioGroup
+                onValueChange={value =>
+                  updateMutation.mutate({
+                    id: row.original.id,
+                    order: {
+                      paymentMethod: value as typeof paymentMethodValues[number],
+                      items: row.original.items,
+                    },
+                  })}
+                value={row.original.paymentMethod ?? undefined}
+              >
+                {paymentMethodValues.map(paymentMethod => (
+                  <DropdownMenuRadioItem key={paymentMethod} value={paymentMethod}>
+                    {paymentMethod.replace(/^./, match => match.toUpperCase())}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={handlePrint}
@@ -112,6 +188,15 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             Copy as new
             <DropdownMenuShortcut>
               <Copy size={16} />
+            </DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={handleDownload}
+          >
+            Download
+            <DropdownMenuShortcut>
+              <Download size={16} />
             </DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuSeparator />

@@ -1,12 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Loader2, LogIn } from "lucide-react";
-import { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { IconFacebook, IconGithub } from "@/web/assets/brand-icons";
 import { PasswordInput } from "@/web/components/password-input";
 import { Button } from "@/web/components/ui/button";
 import {
@@ -18,7 +17,8 @@ import {
   FormMessage,
 } from "@/web/components/ui/form";
 import { Input } from "@/web/components/ui/input";
-import { cn, sleep } from "@/web/lib/utils";
+import { authClient } from "@/web/features/auth/lib/auth-client";
+import { cn } from "@/web/lib/utils";
 import { useAuthStore } from "@/web/stores/auth-store";
 
 const formSchema = z.object({
@@ -40,9 +40,9 @@ export function UserAuthForm({
   redirectTo,
   ...props
 }: UserAuthFormProps) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const navigate = useNavigate();
-  const { auth } = useAuthStore();
+  const auth = useAuthStore(state => state.auth);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,34 +52,66 @@ export function UserAuthForm({
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
 
-    // Mock successful authentication
-    const mockUser = {
-      accountNo: "ACC001",
-      email: data.email,
-      role: ["user"],
-      exp: Date.now() + 24 * 60 * 60 * 1000, // 24 hours from now
-    };
+    toast.promise(
+      async () => {
+        try {
+          await authClient.signIn.email(values, {
+            // throw: true,
+            onError: (error) => {
+              setIsLoading(false);
+              // Flow 1: For 401 (unauthorized credentials), show error inline without redirect
+              if (error.response.status === 401) {
+                form.setError("email", { message: error.error.message });
+                form.setFocus("email");
+                throw error;
+              }
+              // Flow 1: For 403 (forbidden), show error inline without redirect
+              if (error.response.status === 403) {
+                throw navigate({ to: "/403", search: { from: "/sign-in" } });
+              }
+            },
+            onSuccess: () => setIsLoading(false),
+          });
 
-    toast.promise(sleep(2000), {
-      loading: "Signing in...",
-      success: () => {
-        setIsLoading(false);
+          const { data: session } = await authClient.getSession();
 
-        // Set user and access token
-        auth.setUser(mockUser);
-        auth.setAccessToken("mock-access-token");
+          const isValidAdmin
+            = session
+              && session.user.role?.includes("admin")
+              && !session.user.banned;
 
-        // Redirect to the stored location or default to dashboard
-        const targetPath = redirectTo || "/";
-        navigate({ to: targetPath, replace: true });
+          if (!isValidAdmin) {
+            throw navigate({ to: "/403", search: { from: "/sign-in" } });
+          }
 
-        return `Welcome back, ${data.email}!`;
+          auth.setUser(session.user);
+          auth.setSession(session.session);
+
+          return { name: session.user.name };
+        }
+        catch (error) {
+          setIsLoading(false);
+          throw error;
+        }
       },
-      error: "Error",
-    });
+      {
+        loading: "Signing in...",
+        success: ({ name }) => {
+          setIsLoading(false);
+
+          // Redirect to the stored location or default to dashboard
+          // The _authenticated route will handle admin permission checking
+          const targetPath = redirectTo || "/";
+          navigate({ to: targetPath, replace: true });
+
+          return `Welcome back, ${name}!`;
+        },
+        error: "Failed to sign in. Please check your credentials.",
+      },
+    );
   }
 
   return (
@@ -125,30 +157,6 @@ export function UserAuthForm({
           {isLoading ? <Loader2 className="animate-spin" /> : <LogIn />}
           Sign in
         </Button>
-
-        <div className="relative my-2">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background text-muted-foreground px-2">
-              Or continue with
-            </span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2">
-          <Button variant="outline" type="button" disabled={isLoading}>
-            <IconGithub className="h-4 w-4" />
-            {" "}
-            GitHub
-          </Button>
-          <Button variant="outline" type="button" disabled={isLoading}>
-            <IconFacebook className="h-4 w-4" />
-            {" "}
-            Facebook
-          </Button>
-        </div>
       </form>
     </Form>
   );

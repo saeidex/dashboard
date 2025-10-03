@@ -1,10 +1,14 @@
-import { useNavigate, useRouter } from "@tanstack/react-router";
+import { getRouteApi, useNavigate, useRouter } from "@tanstack/react-router";
 
 import { Button } from "@/web/components/ui/button";
+
+const route = getRouteApi("/(errors)/403");
 
 export function ForbiddenError() {
   const navigate = useNavigate();
   const { history } = useRouter();
+  const { from } = route.useSearch();
+
   return (
     <div className="h-svh">
       <div className="m-auto flex h-full w-full flex-col items-center justify-center gap-2">
@@ -20,7 +24,7 @@ export function ForbiddenError() {
           <Button variant="outline" onClick={() => history.go(-1)}>
             Go Back
           </Button>
-          <Button onClick={() => navigate({ to: "/" })}>Back to Home</Button>
+          <Button onClick={() => navigate({ to: "/", search: { from } })}>Back to Home</Button>
         </div>
       </div>
     </div>

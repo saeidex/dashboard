@@ -8,6 +8,10 @@
     "useDefineForClassFields": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "paths": {
+      "@/web/*": ["./apps/web/src/*"],
+      "@/api/*": ["./apps/api/src/*"]
+    },
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
