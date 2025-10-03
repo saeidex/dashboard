@@ -1,6 +1,5 @@
 import type { Statements } from "better-auth/plugins/access"
 
-import { AdminOptions } from "better-auth/plugins"
 import { createAccessControl } from "better-auth/plugins/access"
 import { adminAc, defaultStatements, userAc } from "better-auth/plugins/admin/access"
 
