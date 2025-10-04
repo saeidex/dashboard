@@ -1,15 +1,15 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import { AuthenticatedLayout } from "@/web/components/layout/authenticated-layout";
-import { useAuthStore } from "@/web/stores/auth-store";
+import { authClient } from "@/web/features/auth/lib/auth-client";
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ location }) => {
-    const { user } = useAuthStore.getState().auth;
+    const { data: session } = await authClient.getSession();
 
-    const isValidAdmin = user
-      && user.role?.includes("admin")
-      && !user.banned;
+    const isValidAdmin = session
+      && session.user?.role?.includes("admin")
+      && !session.user?.banned;
 
     if (!isValidAdmin) {
       throw redirect({

@@ -1,7 +1,7 @@
 import type { InferAdminRolesFromOption } from "better-auth/plugins";
 
 import { create } from "zustand";
-import { devtools } from "zustand/middleware";
+import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
 import type { adminOptions } from "@/api/lib/auth";
 import type { authClient } from "@/web/features/auth/lib/auth-client";
@@ -32,25 +32,31 @@ type AuthStore = AuthState & AuthActions;
 
 export const useAuthStore = create<AuthStore>()(
   devtools(
-    (set, get) => ({
-      auth: {
-        user: null,
-        session: null,
-        setUser: user => set(state => ({ auth: { ...state.auth, user } })),
-        setSession: session => set(state => ({ auth: { ...state.auth, session } })),
-        setUserRole: (role = "user") => set(state => ({
-          auth: {
-            ...state.auth,
-            user: state.auth.user ? { ...state.auth.user, role } : null,
-          },
-        })),
-        getUserId: () => get().auth.user?.id,
-        getUserRole: () => get().auth.user?.role ?? undefined,
-        reset: () => set(state => ({
-          auth: { ...state.auth, user: null, session: null },
-        })),
+    persist(
+      (set, get) => ({
+        auth: {
+          user: null,
+          session: null,
+          setUser: user => set(state => ({ auth: { ...state.auth, user } })),
+          setSession: session => set(state => ({ auth: { ...state.auth, session } })),
+          setUserRole: (role = "user") => set(state => ({
+            auth: {
+              ...state.auth,
+              user: state.auth.user ? { ...state.auth.user, role } : null,
+            },
+          })),
+          getUserId: () => get().auth.user?.id,
+          getUserRole: () => get().auth.user?.role ?? undefined,
+          reset: () => set(state => ({
+            auth: { ...state.auth, user: null, session: null },
+          })),
+        },
+      }),
+      {
+        name: "auth-storage",
+        storage: createJSONStorage(() => sessionStorage),
       },
-    }),
+    ),
     { name: "AuthStore" },
   ),
 );
