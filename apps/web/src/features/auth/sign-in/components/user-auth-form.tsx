@@ -62,16 +62,19 @@ export function UserAuthForm({
             // throw: true,
             onError: (error) => {
               setIsLoading(false);
-              // Flow 1: For 401 (unauthorized credentials), show error inline without redirect
               if (error.response.status === 401) {
                 form.setError("email", { message: error.error.message });
                 form.setFocus("email");
                 throw error;
               }
-              // Flow 1: For 403 (forbidden), show error inline without redirect
               if (error.response.status === 403) {
                 throw navigate({ to: "/403", search: { from: "/sign-in" } });
               }
+              if (error.response.status === 500) {
+                throw navigate({ to: "/500", search: { from: "/sign-in" } });
+              }
+
+              throw error;
             },
             onSuccess: () => setIsLoading(false),
           });

@@ -8,7 +8,6 @@ import db from "@/api/db"
 import { users } from "@/api/db/schema"
 import { auth } from "@/api/lib/auth"
 import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "@/api/lib/constants"
-import { admin } from "@/api/lib/permissions"
 
 import type {
   CreateRoute,
@@ -46,9 +45,7 @@ export const create: AppRouteHandler<CreateRoute> = async (c) => {
       userId: c.var.user?.id,
       role: "admin",
       permissions: {
-        user: admin.statements.user,
-        session: admin.statements.session,
-        product: admin.statements.product,
+        user: ["create"],
       },
     },
   })

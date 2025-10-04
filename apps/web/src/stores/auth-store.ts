@@ -54,5 +54,3 @@ export const useAuthStore = create<AuthStore>()(
     { name: "AuthStore" },
   ),
 );
-
-useAuthStore.devtools.cleanup();

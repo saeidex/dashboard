@@ -36,7 +36,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: path.join(__dirname, "../api/public"),
+    // outDir: path.join(__dirname, "../api/public"),
     emptyOutDir: true,
     commonjsOptions: {
       transformMixedEsModules: true,
