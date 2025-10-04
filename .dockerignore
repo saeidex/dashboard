@@ -1,0 +1,12 @@
+# Use the smallest possible docker build context
+.git
+.vscode
+node_modules
+apps/*/node_modules
+packages/*/node_modules
+dist
+build
+tmp
+coverage
+*.log
+.env*

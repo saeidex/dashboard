@@ -1,4 +1,3 @@
-import { serveStatic } from "@hono/node-server/serve-static"
 import { cors } from "hono/cors"
 import { requestId } from "hono/request-id"
 import * as HttpStatusCodes from "stoker/http-status-codes"
@@ -16,7 +15,6 @@ import createRouter from "./create-router"
 
 export default function createApp() {
   const app = createRouter()
-    .use("*", serveStatic({ root: "./public" }))
     .basePath(BASE_PATH) as AppOpenAPI
 
   app

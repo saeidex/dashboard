@@ -1,0 +1,41 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 9999
+      CLIENT_URL: "${CLIENT_URL:-http://localhost:4173}"
+      LOG_LEVEL: info
+      DATABASE_URL: "${DOCKER_DATABASE_URL:-file:/data/prod.db}"
+      DATABASE_AUTH_TOKEN: "${DATABASE_AUTH_TOKEN:-}"
+      TRUSTED_ORIGINS: "${TRUSTED_ORIGINS:-http://localhost:4173}"
+      BETTER_AUTH_SECRET: "${BETTER_AUTH_SECRET}"
+      BETTER_AUTH_URL: "${BETTER_AUTH_URL:-http://localhost:9999}"
+
+    ports:
+      - "9999:9999"
+    volumes:
+      - api-data:/data
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:9999/api}
+    ports:
+      - "4173:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+networks:
+  default:
+    name: crm-network
+    driver: bridge
+
+volumes:
+  api-data:
