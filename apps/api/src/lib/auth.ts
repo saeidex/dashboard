@@ -23,7 +23,6 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    disableSignUp: true,
   },
   trustedOrigins: env.TRUSTED_ORIGINS,
   plugins: [

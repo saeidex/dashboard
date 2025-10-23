@@ -11,21 +11,17 @@ export type AuthUser = typeof authClient.$Infer["Session"]["user"];
 export type UserRole = InferAdminRolesFromOption<typeof adminOptions>;
 
 type AuthState = {
-  auth: {
-    user: AuthUser | null;
-    session: AuthSession | null;
-  };
+  user: AuthUser | null;
+  session: AuthSession | null;
 };
 
 type AuthActions = {
-  auth: {
-    setUser: (user: AuthUser | null) => void;
-    setSession: (session: AuthSession | null) => void;
-    setUserRole: (role: UserRole | string) => void;
-    getUserId: () => string | undefined;
-    getUserRole: () => UserRole | string | undefined;
-    reset: () => void;
-  };
+  setUser: (user: AuthUser | null) => void;
+  setSession: (session: AuthSession | null) => void;
+  setUserRole: (role: UserRole | string) => void;
+  getUserId: () => string | undefined;
+  getUserRole: () => UserRole | string | undefined;
+  reset: () => void;
 };
 
 type AuthStore = AuthState & AuthActions;
@@ -34,27 +30,24 @@ export const useAuthStore = create<AuthStore>()(
   devtools(
     persist(
       (set, get) => ({
-        auth: {
-          user: null,
-          session: null,
-          setUser: user => set(state => ({ auth: { ...state.auth, user } })),
-          setSession: session => set(state => ({ auth: { ...state.auth, session } })),
-          setUserRole: (role = "user") => set(state => ({
-            auth: {
-              ...state.auth,
-              user: state.auth.user ? { ...state.auth.user, role } : null,
-            },
-          })),
-          getUserId: () => get().auth.user?.id,
-          getUserRole: () => get().auth.user?.role ?? undefined,
-          reset: () => set(state => ({
-            auth: { ...state.auth, user: null, session: null },
-          })),
-        },
+        user: null,
+        session: null,
+        setUser: user => set({ user }),
+        setSession: session => set({ session }),
+        setUserRole: (role = "user") => set(state => ({
+          user: state.user ? { ...state.user, role } : null,
+        })),
+        getUserId: () => get().user?.id,
+        getUserRole: () => get().user?.role ?? undefined,
+        reset: () => set({ user: null, session: null }),
       }),
       {
         name: "auth-storage",
         storage: createJSONStorage(() => sessionStorage),
+        partialize: state => ({
+          user: state.user,
+          session: state.session,
+        }),
       },
     ),
     { name: "AuthStore" },

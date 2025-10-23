@@ -19,7 +19,8 @@ import { useAuthStore } from "../stores/auth-store";
 
 export function ProfileDropdown() {
   const [open, setOpen] = useDialogState();
-  const user = useAuthStore(state => state.auth.user);
+  const user = useAuthStore(state => state.user);
+  const fallbackInitial = user?.name?.charAt(0) ?? user?.email?.charAt(0) ?? "U";
 
   return (
     <>
@@ -28,7 +29,7 @@ export function ProfileDropdown() {
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">
             <Avatar className="h-8 w-8">
               <AvatarImage src={user?.image ?? undefined} alt={user?.name} />
-              <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
+              <AvatarFallback>{fallbackInitial}</AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>

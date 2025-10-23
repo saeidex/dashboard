@@ -7,6 +7,7 @@ import customers from "./customers/customers.index"
 import employees from "./employees/employees.index"
 import expenses from "./expenses/expenses.index"
 import index from "./index.route"
+import onboarding from "./onboarding/onboarding.index"
 import orders from "./orders/orders.index"
 import productCategories from "./product-categories/product-categories.index"
 import products from "./products/products.index"
@@ -15,6 +16,7 @@ import users from "./users/users.index"
 export function registerRoutes(app: AppOpenAPI) {
   return app
     .route("/", index)
+    .route("/", onboarding)
     .route("/", orders)
     .route("/", products)
     .route("/", productCategories)

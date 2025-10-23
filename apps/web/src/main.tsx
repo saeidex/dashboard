@@ -80,7 +80,7 @@ const queryClient = new QueryClient({
 
       if (status === 401) {
         toast.error("Session expired!");
-        useAuthStore.getState().auth.reset();
+        useAuthStore.getState().reset();
         // eslint-disable-next-line ts/no-use-before-define
         const redirect = `${router.history.location.href}`;
         // eslint-disable-next-line ts/no-use-before-define

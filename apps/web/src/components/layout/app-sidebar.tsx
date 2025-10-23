@@ -18,7 +18,7 @@ import { NavUser } from "./nav-user";
 export function AppSidebar() {
   const { collapsible, variant } = useLayout();
   const { display } = useSettingsStore();
-  const user = useAuthStore(state => state.auth.user);
+  const user = useAuthStore(state => state.user);
 
   const filteredNavGroups = sidebarData.navGroups
     .map((group) => {

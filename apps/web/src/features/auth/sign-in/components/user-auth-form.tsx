@@ -42,7 +42,7 @@ export function UserAuthForm({
 }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState(false);
   const navigate = useNavigate();
-  const auth = useAuthStore(state => state.auth);
+  const auth = useAuthStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

@@ -34,6 +34,10 @@ export default function createApp() {
       // Allow static files (already served by serveStatic middleware)
       // Static files are served before basePath, so they won't reach here
 
+      // Allow onboarding routes without authentication
+      if (path.startsWith(`${BASE_PATH}/onboarding/`)) {
+        return next()
+      }
       // Allow auth routes without authentication
       if (path.startsWith(`${BASE_PATH}/auth/`)) {
         return next()

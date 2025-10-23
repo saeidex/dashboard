@@ -92,6 +92,17 @@ const formSchema = z
     ({ isEdit, password }) => {
       if (isEdit && !password)
         return true;
+      return /[A-Z]/.test(password);
+    },
+    {
+      message: "Password must contain at least one uppercase letter.",
+      path: ["password"],
+    },
+  )
+  .refine(
+    ({ isEdit, password }) => {
+      if (isEdit && !password)
+        return true;
       return /\d/.test(password);
     },
     {

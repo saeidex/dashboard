@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 
 import { ConfirmDialog } from "@/web/components/confirm-dialog";
 import { useAuthStore } from "@/web/stores/auth-store";
@@ -13,20 +14,34 @@ type SignOutDialogProps = {
 export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { auth } = useAuthStore();
+  const resetAuth = useAuthStore(state => state.reset);
 
   const handleSignOut = async () => {
-    auth.reset();
-    // Preserve current location for redirect after sign-in
-    const currentPath = location.href;
+    try {
+      const { error } = await authClient.signOut({
+        fetchOptions: {
+          redirect: "manual",
+        },
+      });
 
-    await authClient.signOut();
+      // Treat missing or expired sessions as already signed out.
+      if (error && ![400, 401].includes(error.status)) {
+        throw new Error(error.message || "Failed to sign out");
+      }
 
-    navigate({
-      to: "/sign-in",
-      search: { redirect: currentPath },
-      replace: true,
-    });
+      resetAuth();
+      onOpenChange(false);
+
+      const currentPath = location.href;
+      navigate({
+        to: "/sign-in",
+        search: { redirect: currentPath },
+        replace: true,
+      });
+    }
+    catch (error) {
+      toast.error((error as Error).message || "Sign out failed");
+    }
   };
 
   return (
