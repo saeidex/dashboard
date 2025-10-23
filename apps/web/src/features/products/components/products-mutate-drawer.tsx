@@ -4,7 +4,7 @@ import { insertProductsSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -60,8 +60,6 @@ export function ProductsMutateDrawer({
           title: "",
           status: "available",
           basePrice: 0,
-          discountPercentage: 0,
-          discountAmount: 0,
           taxPercentage: 0,
           taxAmount: 0,
           total: 0,
@@ -71,77 +69,19 @@ export function ProductsMutateDrawer({
   });
 
   const basePrice = useWatch({ control: form.control, name: "basePrice" });
-  const discountPercentage = useWatch({
-    control: form.control,
-    name: "discountPercentage",
-  });
-  const discountAmount = useWatch({
-    control: form.control,
-    name: "discountAmount",
-  });
   const taxPercentage = useWatch({
     control: form.control,
     name: "taxPercentage",
   });
 
-  const lastEditedRef = useRef<"discountPercentage" | "discountAmount" | null>(
-    null,
-  );
-
   useEffect(() => {
     const b = typeof basePrice === "number" ? basePrice : 0;
-    let dPct = typeof discountPercentage === "number" ? discountPercentage : 0;
-    let dAmt = typeof discountAmount === "number" ? discountAmount : 0;
     const tPct = typeof taxPercentage === "number" ? taxPercentage : 0;
-
-    if (lastEditedRef.current === "discountPercentage") {
-      const expectedAmt = +(b * (dPct / 100)).toFixed(2);
-      if (Math.abs(expectedAmt - dAmt) > 0.1) {
-        form.setValue("discountAmount", expectedAmt, {
-          shouldDirty: true,
-          shouldValidate: false,
-        });
-        dAmt = expectedAmt;
-      }
-    }
-    else if (lastEditedRef.current === "discountAmount") {
-      // Clamp amount to basePrice
-      if (dAmt > b) {
-        dAmt = b;
-        form.setValue("discountAmount", b, {
-          shouldDirty: true,
-          shouldValidate: false,
-        });
-      }
-      const computedPct = b > 0 ? +((dAmt / b) * 100).toFixed(2) : 0;
-      const clampedPct = Math.min(100, Math.max(0, computedPct));
-      if (Math.abs(clampedPct - dPct) > 0.1) {
-        form.setValue("discountPercentage", clampedPct, {
-          shouldDirty: true,
-          shouldValidate: false,
-        });
-        dPct = clampedPct;
-      }
-    }
-    else {
-      const expectedAmt = +(b * (dPct / 100)).toFixed(2);
-      if (Math.abs(expectedAmt - dAmt) > 0.1) {
-        form.setValue("discountAmount", expectedAmt, {
-          shouldDirty: true,
-          shouldValidate: false,
-        });
-        dAmt = expectedAmt;
-      }
-    }
-
-    const discountedBase = +(b - dAmt).toFixed(2);
-    const taxAmt = +(discountedBase * (tPct / 100)).toFixed(2);
-    const total = +(discountedBase + taxAmt).toFixed(2);
+    const taxAmt = +((b) * (tPct / 100)).toFixed(2);
+    const total = +(b + taxAmt).toFixed(2);
     form.setValue("taxAmount", taxAmt, { shouldDirty: true });
     form.setValue("total", total, { shouldDirty: true });
-
-    lastEditedRef.current = null;
-  }, [basePrice, discountPercentage, discountAmount, taxPercentage, form]);
+  }, [basePrice, taxPercentage, form]);
 
   const queryClient = useQueryClient();
   const search = route.useSearch();
@@ -319,7 +259,7 @@ export function ProductsMutateDrawer({
             </div>
             <div className="space-y-4 rounded-md border p-4">
               <h4 className="font-medium">Pricing Breakdown</h4>
-              <div className="grid gap-4 md:grid-cols-6">
+              <div className="grid gap-4 md:grid-cols-4">
                 <FormField
                   control={form.control}
                   name="basePrice"
@@ -333,50 +273,6 @@ export function ProductsMutateDrawer({
                           {...field}
                           onChange={e =>
                             field.onChange(Number.parseFloat(e.target.value) || 0)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="discountPercentage"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Discount %</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          step="0.1"
-                          {...field}
-                          onChange={(e) => {
-                            lastEditedRef.current = "discountPercentage";
-                            const value = Number.parseFloat(e.target.value);
-                            field.onChange(value);
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="discountAmount"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Discount Amt</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          step="0.1"
-                          {...field}
-                          onChange={(e) => {
-                            lastEditedRef.current = "discountAmount";
-                            const value = Number.parseFloat(e.target.value);
-                            field.onChange(value);
-                          }}
                         />
                       </FormControl>
                       <FormMessage />

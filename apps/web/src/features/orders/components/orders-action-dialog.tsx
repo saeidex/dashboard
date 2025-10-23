@@ -69,9 +69,7 @@ export function OrdersActionDialog({
           items: [],
           basePrice: 0,
           tax: 0,
-          discount: 0,
           shipping: 0,
-          additionalDiscount: 0,
           grandTotal: 0,
         },
   });
@@ -97,7 +95,6 @@ export function OrdersActionDialog({
             Number.isFinite(value) ? +value.toFixed(2) : 0;
 
           let totalBasePrice = 0;
-          let totalDiscount = 0;
           let totalTax = 0;
           let itemsGrandTotal = 0;
 
@@ -118,30 +115,17 @@ export function OrdersActionDialog({
             const quantity = Number(item.quantity ?? 0);
             const unitBasePrice = product.basePrice ?? product.total ?? 0;
 
-            const discountPerUnit
-              = product.discountAmount
-                ?? (typeof product.discountPercentage === "number"
-                  ? (product.discountPercentage / 100) * unitBasePrice
-                  : 0);
-
             const taxPerUnit
               = product.taxAmount
                 ?? (typeof product.taxPercentage === "number"
                   ? (product.taxPercentage / 100) * unitBasePrice
                   : 0);
 
-            const additionalDiscount = Number(item.additionalDiscount ?? 0);
-
             const lineBasePrice = unitBasePrice * quantity;
-            const lineDiscount = discountPerUnit * quantity;
             const lineTax = taxPerUnit * quantity;
-            const lineAdditionalDiscount = additionalDiscount;
-
-            const lineSubTotal = lineBasePrice - lineDiscount;
-            const lineTotal = lineSubTotal + lineTax - lineAdditionalDiscount;
+            const lineTotal = lineBasePrice + lineTax;
 
             totalBasePrice += lineBasePrice;
-            totalDiscount += lineDiscount;
             totalTax += lineTax;
             itemsGrandTotal += lineTotal;
           });
@@ -154,17 +138,12 @@ export function OrdersActionDialog({
             setValue("basePrice", roundedBasePrice, { shouldDirty: true });
           }
 
-          const roundedDiscount = roundToTwo(totalDiscount);
-          if ((values.discount ?? 0) !== roundedDiscount) {
-            setValue("discount", roundedDiscount, { shouldDirty: true });
-          }
-
           const roundedTax = roundToTwo(totalTax);
           if ((values.tax ?? 0) !== roundedTax) {
             setValue("tax", roundedTax, { shouldDirty: true });
           }
 
-          const grandTotal = roundToTwo(itemsGrandTotal + shipping + (values.additionalDiscount ?? 0));
+          const grandTotal = roundToTwo(itemsGrandTotal + shipping);
           if ((values.grandTotal ?? 0) !== grandTotal) {
             setValue("grandTotal", grandTotal, { shouldDirty: true });
           }

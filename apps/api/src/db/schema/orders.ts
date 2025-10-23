@@ -15,21 +15,19 @@ import { products, selectProductsSchema } from "./products"
 /*                                  Tables                                    */
 
 export const orders = sqliteTable("orders", {
-  id                : text().primaryKey().$defaultFn(() => createId()),
-  customerId        : text().references(() => customers.id).notNull(),
-  orderStatus       : text().$type<OrderStatus>().default("pending").notNull(),
-  paymentStatus     : text().$type<PaymentStatus>().default("unpaid").notNull(),
-  paymentMethod     : text().$type<PaymentMethod>().default("cash").notNull(),
-  currency          : text().$type<Currency>().default("BDT").notNull(),
-  basePrice         : real().notNull().default(0).notNull(),
-  tax               : real().notNull().default(0).notNull(),
-  discount          : real().notNull().default(0).notNull(),
-  additionalDiscount: real().notNull().default(0).notNull(),
-  shipping          : real().notNull().default(0).notNull(),
-  grandTotal        : real().notNull().default(0).notNull(),
-  notes             : text(),
-  createdAt         : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
-  updatedAt         : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
+  id           : text().primaryKey().$defaultFn(() => createId()),
+  customerId   : text().references(() => customers.id).notNull(),
+  orderStatus  : text().$type<OrderStatus>().default("pending").notNull(),
+  paymentStatus: text().$type<PaymentStatus>().default("unpaid").notNull(),
+  paymentMethod: text().$type<PaymentMethod>().default("cash").notNull(),
+  currency     : text().$type<Currency>().default("BDT").notNull(),
+  basePrice    : real().notNull().default(0).notNull(),
+  tax          : real().notNull().default(0).notNull(),
+  shipping     : real().notNull().default(0).notNull(),
+  grandTotal   : real().notNull().default(0).notNull(),
+  notes        : text(),
+  createdAt    : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  updatedAt    : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 }, table => [
   index("idx_orders_customer_id").on(table.customerId),
   index("idx_orders_order_status").on(table.orderStatus),
@@ -37,14 +35,13 @@ export const orders = sqliteTable("orders", {
 ])
 
 export const orderItems = sqliteTable("order_items", {
-  id                : text().primaryKey().$defaultFn(() => createId()),
-  orderId           : text().notNull().references(() => orders.id, { onDelete: "cascade" }),
-  productId         : text().notNull().references(() => products.id),
-  quantity          : integer().default(1).notNull(),
-  additionalDiscount: real().default(0.0).notNull(),
-  total             : real().default(0.0).notNull(),
-  createdAt         : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
-  updatedAt         : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
+  id       : text().primaryKey().$defaultFn(() => createId()),
+  orderId  : text().notNull().references(() => orders.id, { onDelete: "cascade" }),
+  productId: text().notNull().references(() => products.id),
+  quantity : integer().default(1).notNull(),
+  total    : real().default(0.0).notNull(),
+  createdAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  updatedAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 }, table => [
   index("idx_order_items_order_id").on(table.orderId),
   index("idx_order_items_product_id").on(table.productId),
@@ -115,7 +112,6 @@ const insertOrdersSchema = createInsertSchema(orders, {
   customerId   : schema => schema.min(1, "Customer ID is required"),
   basePrice    : schema => schema.min(0, "Base price must be a positive number"),
   tax          : schema => schema.min(0, "Tax must be a positive number"),
-  discount     : schema => schema.min(0, "Discount must be a positive number"),
   shipping     : schema => schema.min(0, "Shipping cost must be a positive number"),
   grandTotal   : schema => schema.min(0, "Grand total must be a positive number"),
   notes        : schema => schema.max(500, "Notes must be at most 500 characters long"),
@@ -125,11 +121,10 @@ const insertOrdersSchema = createInsertSchema(orders, {
   updatedAt: true,
 })
 const insertOrderItemsSchema = createInsertSchema(orderItems, {
-  id                : schema => schema.min(1, "Order Item ID is required"),
-  productId         : schema => schema.min(1, "Product ID is required"),
-  quantity          : schema => schema.min(1, "Quantity must be at least 1"),
-  additionalDiscount: schema => schema.min(0, "Additional discount must be a positive number"),
-  total             : schema => schema.min(0, "Total must be a positive number"),
+  id       : schema => schema.min(1, "Order Item ID is required"),
+  productId: schema => schema.min(1, "Product ID is required"),
+  quantity : schema => schema.min(1, "Quantity must be at least 1"),
+  total    : schema => schema.min(0, "Total must be a positive number"),
 }).omit({
   orderId  : true,
   createdAt: true,
@@ -199,7 +194,6 @@ export type selectPaginatedOrderDetailsSchema = z.infer<typeof selectPaginatedOr
  *       id?: "item-id", // <- auto-generated if not provided
  *       productId: "product-id",
  *       quantity: 2,
- *       additionalDiscount: 0,
  *       total: 100,
  *     },
  *   ],
@@ -220,7 +214,6 @@ export type insertOrderWithItemsSchema = z.infer<typeof insertOrderWithItemsSche
  *       id: "item-id", // <- required to identify existing items
  *       productId: "product-id",
  *       quantity: 2,
- *       additionalDiscount: 0,
  *       total: 100,
  *     },
  *   ],

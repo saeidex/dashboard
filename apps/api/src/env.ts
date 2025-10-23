@@ -53,6 +53,8 @@ const EnvSchema = z.object({
   DATABASE_URL: DatabaseUrlSchema.optional().default(() => resolveDefaultDatabaseUrl(process.env.NODE_ENV)),
   DATABASE_AUTH_TOKEN: z.string().optional(),
   TRUSTED_ORIGINS: z.string().default("http://localhost:5173").transform(val => val.split(",").map(s => s.trim())),
+  BETTER_AUTH_SECRET: z.string().min(1, "BETTER_AUTH_SECRET is required"),
+  BETTER_AUTH_URL: z.url().default("http://localhost:9999"),
 }).superRefine((input, ctx) => {
   let protocol: string | undefined
   try {

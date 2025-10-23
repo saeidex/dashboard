@@ -43,7 +43,6 @@ export function EditorTable() {
       id: isEdit ? currentRow.id : crypto.randomUUID(),
       productId: firstProduct.id,
       quantity: 1,
-      additionalDiscount: 0,
       total: firstProduct.total,
     });
   }, [isEdit, currentRow, fieldArray, products]);
@@ -56,14 +55,12 @@ export function EditorTable() {
     }
 
     const quantity = getValues(`items.${index}.quantity`) ?? 1;
-    const additionalDiscount = getValues(`items.${index}.additionalDiscount`) ?? 0;
-    const total = (product.total * quantity) - additionalDiscount;
+    const total = (product.total * quantity);
 
     fieldArray.update(index, {
       id: isEdit ? currentRow.id : crypto.randomUUID(),
       productId: product.id,
       quantity,
-      additionalDiscount,
       total,
     });
   }, [products, fieldArray, isEdit, currentRow, getValues]);
@@ -76,7 +73,6 @@ export function EditorTable() {
             <TableHead className="w-[320px] text-muted-foreground pl-4">Product</TableHead>
             <TableHead className="w-[120px] text-center text-muted-foreground">Qty</TableHead>
             <TableHead className="w-[140px] text-center text-muted-foreground">Unit Price</TableHead>
-            <TableHead className="w-[160px] text-center text-muted-foreground">Addditional Dsc.</TableHead>
             <TableHead className="w-[140px] text-right text-muted-foreground">Total</TableHead>
             <TableHead className="w-[80px] text-center text-muted-foreground">Remove</TableHead>
           </TableRow>
@@ -124,8 +120,7 @@ export function EditorTable() {
                           onChange={(e) => {
                             const value = Number.parseInt(e.target.value) || 1;
                             const total = fieldArray.fields[index].total;
-                            const discount = getValues(`items.${index}.additionalDiscount`);
-                            const newTotal = total * value - discount;
+                            const newTotal = total * value;
                             setValue(`items.${index}.total`, newTotal, { shouldValidate: true, shouldDirty: true });
                             field.onChange(value);
                           }}
@@ -140,35 +135,6 @@ export function EditorTable() {
                 <span className="inline-flex h-10 w-full items-center justify-center px-1">
                   {products.find(p => p.id === field.productId)?.total ?? "-"}
                 </span>
-              </TableCell>
-
-              <TableCell className="align-top">
-                <FormField
-                  control={control}
-                  name={`items.${index}.additionalDiscount`}
-                  render={({ field }) => (
-                    <FormItem className="space-y-1">
-                      <FormLabel className="sr-only">Additional Discount</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          min={0}
-                          className="h-10 w-full text-center"
-                          {...field}
-                          defaultValue={0}
-                          onChange={(e) => {
-                            const value = Number.parseInt(e.target.value);
-                            const quantity = getValues(`items.${index}.quantity`);
-                            const total = (fieldArray.fields[index].total * quantity) - value;
-                            setValue(`items.${index}.total`, total, { shouldValidate: true, shouldDirty: true });
-
-                            field.onChange(value);
-                          }}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
               </TableCell>
 
               <TableCell className="align-top text-right font-semibold">
@@ -203,13 +169,13 @@ export function EditorTable() {
           ))}
           {isItemsEmpty && (
             <TableRow className="divide-x divide-border">
-              <TableCell colSpan={6} className="py-6 text-center text-sm text-muted-foreground">
+              <TableCell colSpan={5} className="py-6 text-center text-sm text-muted-foreground">
                 No items added yet.
               </TableCell>
             </TableRow>
           )}
           <TableRow className="divide-x divide-border bg-muted/20">
-            <TableCell colSpan={6} className="p-4">
+            <TableCell colSpan={5} className="p-4">
               <Button
                 type="button"
                 variant="secondary"

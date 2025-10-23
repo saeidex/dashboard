@@ -44,7 +44,6 @@ export const Invoice = ({
     { label: "Item", className: "" },
     { label: "Qty", className: "text-right w-12" },
     { label: "Unit", className: "text-right w-20" },
-    { label: "Discount", className: "text-right w-24" },
     { label: "Tax", className: "text-right w-20" },
     { label: "Total", className: "text-right w-24" },
   ] as const;
@@ -251,11 +250,6 @@ export const Invoice = ({
                   <TableCell className="text-right w-20 tabular-nums">
                     {formatCurrency(item.total, order.currency)}
                   </TableCell>
-                  <TableCell className="text-right w-24 tabular-nums">
-                    {order.discount + order.additionalDiscount === 0
-                      ? "—"
-                      : `- ${formatCurrency(order.discount + order.additionalDiscount, order.currency)}`}
-                  </TableCell>
                   <TableCell className="text-right w-20 tabular-nums">
                     {order.tax === 0
                       ? "—"
@@ -297,23 +291,6 @@ export const Invoice = ({
                 )}
               </span>
             </div>
-            {order.discount + order.additionalDiscount > 0 && (
-              <div className="flex justify-between">
-                <span
-                  className={cn(!monochrome && "text-muted-foreground")}
-                  data-invoice-muted={monochrome ? "" : undefined}
-                >
-                  Discount
-                </span>
-                <span className="font-medium">
-                  -
-                  {formatCurrency(
-                    order.discount + order.additionalDiscount,
-                    order.currency,
-                  )}
-                </span>
-              </div>
-            )}
             {order.shipping > 0 && (
               <div className="flex justify-between">
                 <span

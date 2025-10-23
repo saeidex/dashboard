@@ -106,7 +106,6 @@ function SummaryCard({ icon: Icon, label, value, hint, accent, highlight }: Summ
 export function OrderExpandedPanel({ order }: OrderExpandedPanelProps) {
   const items = order.items ?? [];
   const currencySymbol = getCurrencySymbol(order.currency);
-  const discountTotal = Number(order.discount ?? 0) + Number(order.additionalDiscount ?? 0);
   const taxTotal = Number(order.tax ?? 0);
   const shippingTotal = Number(order.shipping ?? 0);
   const uniqueItemCount = items.length;
@@ -129,10 +128,8 @@ export function OrderExpandedPanel({ order }: OrderExpandedPanelProps) {
     {
       icon: BadgePercent,
       label: "Discounts",
-      value: discountTotal > 0
-        ? `-${currencySymbol}${formatAmount(discountTotal)}`
-        : "No discounts",
-      hint: discountTotal > 0 ? "Applied at checkout" : "Full price order",
+      value: "No discounts",
+      hint: "Full price order",
       accent: "bg-gradient-to-br from-amber-500/10 via-transparent to-transparent dark:from-amber-400/15",
     },
     {
@@ -239,7 +236,6 @@ export function OrderExpandedPanel({ order }: OrderExpandedPanelProps) {
               <div className="grid sm:grid-cols-3 gap-2">
                 {items.map((item, index) => {
                   const key = item.id ?? `${item.productId ?? "item"}-${index}`;
-                  const itemDiscount = Number(item.additionalDiscount ?? 0);
                   return (
                     <div
                       key={key}
@@ -264,13 +260,6 @@ export function OrderExpandedPanel({ order }: OrderExpandedPanelProps) {
                               {" "}
                               {item.productId ?? "—"}
                             </span>
-                            {itemDiscount > 0 && (
-                              <span>
-                                Discount -
-                                {currencySymbol}
-                                {formatAmount(itemDiscount)}
-                              </span>
-                            )}
                           </div>
                         </div>
                         <div className="text-right">

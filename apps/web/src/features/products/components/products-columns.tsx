@@ -117,28 +117,6 @@ export const productsColumns: ColumnDef<Product>[] = [
     },
   },
   {
-    accessorKey: "discountAmount",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Discount" />
-    ),
-    cell: ({ cell }) => {
-      const amt = cell.getValue<Product["discountAmount"]>();
-      const pct = cell.getValue<Product["discountPercentage"]>();
-      if (!amt)
-        return <span className="text-muted-foreground">—</span>;
-      return (
-        <span className="text-xs text-red-400">
-          -৳
-          {amt.toFixed(2)}
-          {" "}
-          (
-          {pct}
-          %)
-        </span>
-      );
-    },
-  },
-  {
     accessorKey: "taxAmount",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Tax" />

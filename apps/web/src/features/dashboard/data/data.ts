@@ -4,13 +4,11 @@ type ProjectedOrderItem = {
   productId: string;
   quantity: number;
   unitPrice: number;
-  discount: number;
   tax: number;
 };
 
 type ProjectedOrderTotals = {
   itemsTotal: number;
-  discountTotal: number;
   itemsTaxTotal: number;
   shipping: number;
   grandTotal: number;
@@ -197,7 +195,7 @@ export function getTopProducts(limit = 10) {
         agg[key] = { quantity: 0, revenue: 0, name: product.name };
       agg[key].quantity += item.quantity;
       agg[key].revenue
-        += item.unitPrice * item.quantity - item.discount + item.tax;
+        += item.unitPrice * item.quantity + item.tax;
     }
   }
   return Object.entries(agg)
