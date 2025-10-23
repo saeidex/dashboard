@@ -97,8 +97,10 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                   updateMutation.mutate({
                     id: row.original.id,
                     order: {
+                      ...row.original,
                       orderStatus: value as typeof orderStatusValues[number],
-                      items: row.original.items,
+                      paymentStatus: row.getValue("paymentStatus"),
+                      paymentMethod: row.getValue("paymentMethod"),
                     },
                   })}
                 value={row.original.orderStatus ?? undefined}
@@ -120,8 +122,10 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                   updateMutation.mutate({
                     id: row.original.id,
                     order: {
+                      ...row.original,
                       paymentStatus: value as typeof paymentStatusValues[number],
-                      items: row.original.items,
+                      paymentMethod: row.getValue("paymentMethod"),
+                      orderStatus: row.getValue("orderStatus"),
                     },
                   })}
                 value={row.original.paymentStatus ?? undefined}
@@ -143,8 +147,10 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                   updateMutation.mutate({
                     id: row.original.id,
                     order: {
+                      ...row.original,
                       paymentMethod: value as typeof paymentMethodValues[number],
-                      items: row.original.items,
+                      orderStatus: row.getValue("orderStatus"),
+                      paymentStatus: row.getValue("paymentStatus"),
                     },
                   })}
                 value={row.original.paymentMethod ?? undefined}
