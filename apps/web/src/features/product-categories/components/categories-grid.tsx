@@ -14,7 +14,6 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useQuery } from "@tanstack/react-query";
-import { GripVertical } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { Card, CardContent } from "@/web/components/ui/card";
@@ -51,7 +50,7 @@ function SortableCategoryCard({ category }: SortableCategoryCardProps) {
       {...attributes}
       {...listeners}
     >
-      <Card className="group overflow-hidden p-0 transition-shadow duration-300 hover:shadow-lg cursor-grab ">
+      <Card className="group overflow-hidden p-0 transition-shadow duration-300 hover:shadow-lg cursor-grab active:cursor-grabbing">
         <CardContent className="p-0">
           <div
             className="relative h-48 bg-cover bg-center bg-no-repeat"
@@ -81,7 +80,11 @@ export const CategoriesGrid = () => {
   const [items, setItems] = useState<Category[]>([]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 10,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),

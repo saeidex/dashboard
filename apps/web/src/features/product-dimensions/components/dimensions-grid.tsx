@@ -14,7 +14,6 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useQuery } from "@tanstack/react-query";
-import { GripVertical } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { Badge } from "@/web/components/ui/badge";
@@ -94,7 +93,11 @@ export function DimensionsGrid() {
   const [items, setItems] = useState<Dimension[]>([]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 10,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
