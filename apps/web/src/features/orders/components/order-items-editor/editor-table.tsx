@@ -25,6 +25,11 @@ import { useOrders } from "../orders-provider";
 export function EditorTable() {
   const { data: products } = useSuspenseQuery(createProductsQueryOptions());
 
+  const availableProducts = React.useMemo(
+    () => products.filter(p => p.status !== "out-of-stock" && (p.stock ?? 0) > 0),
+    [products],
+  );
+
   const { currentRow } = useOrders();
   const isEdit = !!currentRow;
 
@@ -34,9 +39,9 @@ export function EditorTable() {
   const isItemsEmpty = !fieldArray.fields.length;
 
   const handleAddItem = React.useCallback(() => {
-    const firstProduct = products[0];
+    const firstProduct = availableProducts[0];
     if (!firstProduct) {
-      toast.error("No products available to add.");
+      toast.error("No products available in stock to add.");
       return;
     }
     fieldArray.append({
@@ -45,25 +50,34 @@ export function EditorTable() {
       quantity: 1,
       total: firstProduct.total,
     });
-  }, [isEdit, currentRow, fieldArray, products]);
+  }, [isEdit, currentRow, fieldArray, availableProducts]);
 
   const handleProductChange = React.useCallback((index: number, productId: string) => {
-    const product = products.find(p => p.id === productId);
+    const product = availableProducts.find(p => p.id === productId);
     if (!product) {
-      toast.error("No products available to add.");
+      toast.error("Selected product is not available.");
       return;
     }
 
-    const quantity = getValues(`items.${index}.quantity`) ?? 1;
-    const total = (product.total * quantity);
+    const currentQuantity = getValues(`items.${index}.quantity`) ?? 1;
+    const productStock = product.stock ?? 0;
+
+    // Adjust quantity if it exceeds new product's stock
+    let adjustedQuantity = currentQuantity;
+    if (currentQuantity > productStock) {
+      adjustedQuantity = productStock > 0 ? productStock : 1;
+      toast.warning(`Quantity adjusted to ${adjustedQuantity} based on available stock.`);
+    }
+
+    const total = (product.total * adjustedQuantity);
 
     fieldArray.update(index, {
       id: isEdit ? currentRow.id : crypto.randomUUID(),
       productId: product.id,
-      quantity,
+      quantity: adjustedQuantity,
       total,
     });
-  }, [products, fieldArray, isEdit, currentRow, getValues]);
+  }, [availableProducts, fieldArray, isEdit, currentRow, getValues]);
 
   return (
     <div className="rounded-xl border border-border bg-card shadow-sm">
@@ -93,7 +107,10 @@ export function EditorTable() {
                           className="h-10 w-full text-sm"
                           defaultValue={field.value}
                           placeholder="Select product"
-                          items={products.map(product => ({ label: product.title, value: product.id }))}
+                          items={availableProducts.map(product => ({
+                            label: `${product.title} (Stock: ${product.stock ?? 0})`,
+                            value: product.id,
+                          }))}
                           onValueChange={(value) => {
                             handleProductChange(index, value);
                           }}
@@ -108,32 +125,45 @@ export function EditorTable() {
                 <FormField
                   control={control}
                   name={`items.${index}.quantity`}
-                  render={({ field }) => (
-                    <FormItem className="space-y-1">
-                      <FormLabel className="sr-only">Quantity</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          className="h-10 w-full text-center"
-                          min={1}
-                          {...field}
-                          onChange={(e) => {
-                            const value = Number.parseInt(e.target.value) || 1;
-                            const total = fieldArray.fields[index].total;
-                            const newTotal = total * value;
-                            setValue(`items.${index}.total`, newTotal, { shouldValidate: true, shouldDirty: true });
-                            field.onChange(value);
-                          }}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
+                  render={({ field }) => {
+                    const product = availableProducts.find(p => p.id === fieldArray.fields[index].productId);
+                    const maxStock = product?.stock ?? 0;
+
+                    return (
+                      <FormItem className="space-y-1">
+                        <FormLabel className="sr-only">Quantity</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            className="h-10 w-full text-center"
+                            min={1}
+                            max={maxStock}
+                            {...field}
+                            onChange={(e) => {
+                              const value = Number.parseInt(e.target.value) || 1;
+
+                              // Validate against stock
+                              if (value > maxStock) {
+                                toast.error(`Only ${maxStock} units available in stock.`);
+                                return;
+                              }
+
+                              const total = fieldArray.fields[index].total;
+                              const newTotal = total * value;
+                              setValue(`items.${index}.total`, newTotal, { shouldValidate: true, shouldDirty: true });
+                              field.onChange(value);
+                            }}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    );
+                  }}
                 />
               </TableCell>
 
               <TableCell className="align-top text-center font-medium">
                 <span className="inline-flex h-10 w-full items-center justify-center px-1">
-                  {products.find(p => p.id === field.productId)?.total ?? "-"}
+                  {availableProducts.find(p => p.id === field.productId)?.total ?? "-"}
                 </span>
               </TableCell>
 

@@ -66,7 +66,7 @@ export function ProductsMutateDrawer({
           taxAmount: 0,
           total: 0,
           currency: "BDT",
-          stock: 0,
+          stock: 1,
         },
   });
 
@@ -75,6 +75,21 @@ export function ProductsMutateDrawer({
     control: form.control,
     name: "taxPercentage",
   });
+  const status = useWatch({ control: form.control, name: "status" });
+  const stock = useWatch({ control: form.control, name: "stock" });
+
+  // Sync stock and status
+  useEffect(() => {
+    const currentStock = stock ?? 0;
+
+    if (status === "out-of-stock" && currentStock !== 0) {
+      form.setValue("stock", 0, { shouldDirty: true });
+    }
+
+    if (currentStock > 0 && status === "out-of-stock") {
+      form.setValue("status", "available", { shouldDirty: true });
+    }
+  }, [status, stock, form]);
 
   useEffect(() => {
     const b = typeof retailPrice === "number" ? retailPrice : 0;
@@ -250,6 +265,7 @@ export function ProductsMutateDrawer({
                       <Input
                         type="number"
                         {...field}
+                        disabled={status === "out-of-stock"}
                         onChange={e =>
                           field.onChange(Number.parseInt(e.target.value) || 0)}
                       />
