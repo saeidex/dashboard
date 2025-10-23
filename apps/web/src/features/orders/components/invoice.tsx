@@ -242,6 +242,29 @@ export const Invoice = ({
                   <TableCell>
                     <div className="min-w-40">
                       <div className="leading-tight font-medium">{item.product.title}</div>
+                      {item.product.dimension && (
+                        <div
+                          className={cn(
+                            "text-xs mt-0.5",
+                            !monochrome && "text-muted-foreground",
+                          )}
+                          data-invoice-muted={monochrome ? "" : undefined}
+                        >
+                          Dimensions:
+                          {" "}
+                          {item.product.dimension.length}
+                          {" "}
+                          ×
+                          {" "}
+                          {item.product.dimension.width}
+                          {" "}
+                          ×
+                          {" "}
+                          {item.product.dimension.height}
+                          {" "}
+                          {item.product.dimension.unit}
+                        </div>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell className="text-right w-12 tabular-nums">

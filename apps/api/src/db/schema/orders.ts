@@ -8,7 +8,7 @@ import type { Currency } from "./expenses"
 
 import { customers, selectCustomersSchema } from "./customers"
 import { currencySchema } from "./expenses"
-import { products, selectProductsSchema } from "./products"
+import { products, selectProductWithDimensionSchema } from "./products"
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -153,7 +153,7 @@ export type selectOrderWithItemsSchema = z.infer<typeof selectOrderWithItemsSche
  */
 export const selectOrderDetailsSchema = selectOrdersSchema.extend({
   items: z.array(selectOrderItemsSchema.extend({
-    product: selectProductsSchema,
+    product: selectProductWithDimensionSchema,
   })),
   customer: selectCustomersSchema,
 })

@@ -1,3 +1,3 @@
-import type { selectProductsSchema } from "@crm/api/schema";
+import type { selectProductWithDimensionSchema } from "@crm/api/schema";
 
-export type Product = selectProductsSchema;
+export type Product = selectProductWithDimensionSchema;

@@ -39,6 +39,7 @@ export function ProductsTable() {
   const { data: categories } = useSuspenseQuery(categoriesQueryOptions);
   // TODO: sync pagination state
   const { data } = useSuspenseQuery(createProductsQueryOptions(route.useSearch()));
+  const products = data as Product[];
 
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({});
@@ -70,8 +71,8 @@ export function ProductsTable() {
     ],
   });
 
-  const table = useReactTable({
-    data,
+  const table = useReactTable<Product>({
+    data: products,
     columns,
     state: {
       sorting,

@@ -1,5 +1,6 @@
 import { z } from "@hono/zod-openapi"
 import { createId } from "@paralleldrive/cuid2"
+import { relations } from "drizzle-orm"
 import { index, integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 
@@ -7,6 +8,7 @@ import type { Currency } from "./expenses"
 
 import { currencySchema } from "./expenses"
 import { productCategories } from "./product-categories"
+import { productDimensions, selectProductDimensionsSchema } from "./product-dimensions"
 
 export const products = sqliteTable("products", {
   id           : text().primaryKey().$defaultFn(createId),
@@ -14,6 +16,7 @@ export const products = sqliteTable("products", {
   status       : text().notNull(),
   label        : text(),
   categoryId   : text().references(() => productCategories.id).notNull(),
+  dimensionId  : integer().references(() => productDimensions.id),
   basePrice    : real().default(0).notNull(),
   taxPercentage: real().default(0).notNull(),
   taxAmount    : real().default(0).notNull(),
@@ -24,8 +27,16 @@ export const products = sqliteTable("products", {
   updatedAt    : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 }, table => [
   index("idx_products_category_id").on(table.categoryId),
+  index("idx_products_dimension_id").on(table.dimensionId),
   index("idx_products_status").on(table.status),
 ])
+
+export const productsRelations = relations(products, ({ one }) => ({
+  dimension: one(productDimensions, {
+    fields    : [products.dimensionId],
+    references: [productDimensions.id],
+  }),
+}))
 
 export const selectProductsSchema = createSelectSchema(products, {
   currency : currencySchema,
@@ -39,6 +50,7 @@ export const insertProductsSchema = createInsertSchema(products, {
   title        : schema => schema.min(3, "Title must be at least 3 characters long").max(255, "Title must be at most 255 characters long"),
   status       : schema => schema.min(3, "Status must be at least 3 characters long").max(50, "Status must be at most 50 characters long"),
   label        : schema => schema.max(100, "Label must be at most 100 characters long").optional(),
+  dimensionId  : schema => schema.optional(),
   stock        : schema => schema.min(0).optional(),
   basePrice    : schema => schema.min(0),
   taxPercentage: schema => schema.min(0).max(100).optional(),
@@ -53,3 +65,12 @@ export type insertProductsSchema = z.infer<typeof insertProductsSchema>
 
 export const patchProductsSchema = insertProductsSchema.partial()
 export type patchProductsSchema = z.infer<typeof patchProductsSchema>
+
+/**
+ * Product with dimension details
+ * @example data: { ...productData, dimension: Dimension | null }
+ */
+export const selectProductWithDimensionSchema = selectProductsSchema.extend({
+  dimension: selectProductDimensionsSchema.nullable(),
+})
+export type selectProductWithDimensionSchema = z.infer<typeof selectProductWithDimensionSchema>

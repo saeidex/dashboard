@@ -53,6 +53,9 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
     limit: pageSize,
     offset,
     orderBy: (p, { desc }) => [desc(p.createdAt)],
+    with: {
+      dimension: true,
+    },
   })
 
   return c.json(data, HttpStatusCodes.OK)
@@ -68,6 +71,9 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const { id } = c.req.valid("param")
   const row = await db.query.products.findFirst({
     where: (p, { eq }) => eq(p.id, id),
+    with: {
+      dimension: true,
+    },
   })
 
   if (!row) {

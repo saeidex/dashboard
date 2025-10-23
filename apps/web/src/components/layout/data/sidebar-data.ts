@@ -13,6 +13,7 @@ import {
   Monitor,
   Package,
   Palette,
+  Ruler,
   ServerOff,
   Settings,
   ShieldCheck,
@@ -139,6 +140,11 @@ export const sidebarData: SidebarData = {
           title: "Product Categories",
           url: "/categories",
           icon: Bookmark,
+        },
+        {
+          title: "Product Dimensions",
+          url: "/dimensions",
+          icon: Ruler,
         },
         {
           title: "Employees",

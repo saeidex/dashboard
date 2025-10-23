@@ -33,6 +33,7 @@ import {
 import type { Product } from "../data/schema";
 
 import { categoriesQueryOptions } from "../../product-categories/data/queries";
+import { dimensionsQueryOptions } from "../../product-dimensions/data/queries";
 import { labels, statuses } from "../data/data";
 import { createProduct, queryKeys, updateProduct } from "../data/queries";
 
@@ -51,6 +52,7 @@ export function ProductsMutateDrawer({
 }: ProductMutateDrawerProps) {
   const isUpdate = !!currentRow;
   const { data: categories } = useSuspenseQuery(categoriesQueryOptions);
+  const { data: dimensions } = useSuspenseQuery(dimensionsQueryOptions);
 
   const form = useForm<insertProductsSchema>({
     resolver: zodResolver(insertProductsSchema),
@@ -252,6 +254,37 @@ export function ProductsMutateDrawer({
                           field.onChange(Number.parseInt(e.target.value) || 0)}
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="dimensionId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Dimension</FormLabel>
+                    <div className="flex items-center gap-2">
+                      <SelectDropdown
+                        isControlled
+                        defaultValue={field.value?.toString() ?? ""}
+                        onValueChange={v => field.onChange(v ? Number.parseInt(v) : undefined)}
+                        placeholder="Select dimension"
+                        items={dimensions.map(d => ({
+                          value: d.id.toString(),
+                          label: `${d.length} x ${d.width} x ${d.height} ${d.unit}`,
+                        }))}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => field.onChange(undefined)}
+                        disabled={!field.value}
+                      >
+                        Clear
+                      </Button>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}

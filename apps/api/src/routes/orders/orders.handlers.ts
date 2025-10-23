@@ -3,6 +3,7 @@ import { and, eq } from "drizzle-orm"
 import * as HttpStatusCodes from "stoker/http-status-codes"
 import * as HttpStatusPhrases from "stoker/http-status-phrases"
 
+import type { DimensionUnit } from "@/api/db/schema"
 import type { AppRouteHandler } from "@/api/lib/types"
 
 import db from "@/api/db"
@@ -17,6 +18,38 @@ import type {
   RemoveRoute,
 } from "./orders.routes"
 
+function serializeDimension(dimension: any): {
+  id: number
+  name: string
+  length: number
+  width: number
+  height: number
+  unit: DimensionUnit
+  description: string | null
+  createdAt: string
+  updatedAt: string
+} | null {
+  if (!dimension)
+    return null
+  return {
+    ...dimension,
+    unit: dimension.unit as DimensionUnit,
+  }
+}
+
+function serializeOrderWithDetails(order: any) {
+  return {
+    ...order,
+    items: order.items.map((item: any) => ({
+      ...item,
+      product: {
+        ...item.product,
+        dimension: serializeDimension(item.product.dimension),
+      },
+    })),
+  }
+}
+
 export const list: AppRouteHandler<ListRoute> = async (c) => {
   const { pageIndex = 0, pageSize = 10 } = c.req.valid("query")
 
@@ -27,7 +60,11 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
       customer: true,
       items: {
         with: {
-          product: true,
+          product: {
+            with: {
+              dimension: true,
+            },
+          },
         },
       },
     },
@@ -36,7 +73,7 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
   const rowCount = await db.$count(orders)
 
   return c.json({
-    rows: data,
+    rows: data.map(serializeOrderWithDetails),
     pageCount: Math.ceil(rowCount / pageSize),
     rowCount,
   })
@@ -85,7 +122,11 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
       customer: true,
       items: {
         with: {
-          product: true,
+          product: {
+            with: {
+              dimension: true,
+            },
+          },
         },
       },
     },
@@ -98,7 +139,7 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
     )
   }
 
-  return c.json(order, HttpStatusCodes.OK)
+  return c.json(serializeOrderWithDetails(order), HttpStatusCodes.OK)
 }
 
 export const patch: AppRouteHandler<PatchRoute> = async (c) => {
