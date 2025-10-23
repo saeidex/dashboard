@@ -121,7 +121,7 @@ export function OrderExpandedPanel({ order }: OrderExpandedPanelProps) {
     {
       icon: ShoppingBag,
       label: "Subtotal",
-      value: `${currencySymbol}${formatAmount(order.basePrice)}`,
+      value: `${currencySymbol}${formatAmount(order.retailPrice)}`,
       hint: `${totalItemQuantity} item${totalItemQuantity === 1 ? "" : "s"} across ${uniqueItemCount} line${uniqueItemCount === 1 ? "" : "s"}`,
       accent: "bg-gradient-to-br from-primary/10 via-primary/0 to-transparent dark:from-primary/20",
     },

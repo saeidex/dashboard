@@ -61,7 +61,7 @@ export function ProductsMutateDrawer({
       : {
           title: "",
           status: "available",
-          basePrice: 0,
+          retailPrice: 0,
           taxPercentage: 0,
           taxAmount: 0,
           total: 0,
@@ -70,20 +70,20 @@ export function ProductsMutateDrawer({
         },
   });
 
-  const basePrice = useWatch({ control: form.control, name: "basePrice" });
+  const retailPrice = useWatch({ control: form.control, name: "retailPrice" });
   const taxPercentage = useWatch({
     control: form.control,
     name: "taxPercentage",
   });
 
   useEffect(() => {
-    const b = typeof basePrice === "number" ? basePrice : 0;
+    const b = typeof retailPrice === "number" ? retailPrice : 0;
     const tPct = typeof taxPercentage === "number" ? taxPercentage : 0;
     const taxAmt = +((b) * (tPct / 100)).toFixed(2);
     const total = +(b + taxAmt).toFixed(2);
     form.setValue("taxAmount", taxAmt, { shouldDirty: true });
     form.setValue("total", total, { shouldDirty: true });
-  }, [basePrice, taxPercentage, form]);
+  }, [retailPrice, taxPercentage, form]);
 
   const queryClient = useQueryClient();
   const search = route.useSearch();
@@ -295,10 +295,10 @@ export function ProductsMutateDrawer({
               <div className="grid gap-4 md:grid-cols-4">
                 <FormField
                   control={form.control}
-                  name="basePrice"
+                  name="retailPrice"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Base</FormLabel>
+                      <FormLabel>Retail Price</FormLabel>
                       <FormControl>
                         <Input
                           type="number"

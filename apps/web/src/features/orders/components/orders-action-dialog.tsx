@@ -67,7 +67,7 @@ export function OrdersActionDialog({
           currency: "BDT",
           notes: "",
           items: [],
-          basePrice: 0,
+          retailPrice: 0,
           tax: 0,
           shipping: 0,
           grandTotal: 0,
@@ -113,7 +113,7 @@ export function OrdersActionDialog({
             }
 
             const quantity = Number(item.quantity ?? 0);
-            const unitBasePrice = product.basePrice ?? product.total ?? 0;
+            const unitBasePrice = product.retailPrice ?? product.total ?? 0;
 
             const taxPerUnit
               = product.taxAmount
@@ -134,8 +134,8 @@ export function OrdersActionDialog({
           const shipping = Number(values.shipping ?? 0);
 
           const roundedBasePrice = roundToTwo(totalBasePrice);
-          if ((values.basePrice ?? 0) !== roundedBasePrice) {
-            setValue("basePrice", roundedBasePrice, { shouldDirty: true });
+          if ((values.retailPrice ?? 0) !== roundedBasePrice) {
+            setValue("retailPrice", roundedBasePrice, { shouldDirty: true });
           }
 
           const roundedTax = roundToTwo(totalTax);

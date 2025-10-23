@@ -131,12 +131,12 @@ export const productsColumns: ColumnDef<Product>[] = [
     },
   },
   {
-    accessorKey: "basePrice",
+    accessorKey: "retailPrice",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Base Price" />
+      <DataTableColumnHeader column={column} title="Retail Price" />
     ),
     cell: ({ cell }) => {
-      const base = cell.getValue<Product["basePrice"]>();
+      const base = cell.getValue<Product["retailPrice"]>();
       return (
         <span className="text-muted-foreground">
           ৳

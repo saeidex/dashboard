@@ -297,7 +297,7 @@ export const Invoice = ({
                 Items Subtotal
               </span>
               <span className="font-medium">
-                {formatCurrency(order.basePrice, order.currency)}
+                {formatCurrency(order.retailPrice, order.currency)}
               </span>
             </div>
             <div className="flex justify-between">
