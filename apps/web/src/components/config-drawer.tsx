@@ -5,6 +5,17 @@ import { CircleCheck, RotateCcw, Settings } from "lucide-react";
 
 import type { Collapsible } from "@/web/context/layout-provider";
 
+import {
+  IconColorBubblegum,
+  IconColorCaffeine,
+  IconColorCatppuccin,
+  IconColorCosmicNight,
+  IconColorCyberpunk,
+  IconColorElegantLuxury,
+  IconColorMono,
+  IconColorPastelDreams,
+  IconColorVioletBloom,
+} from "@/web/assets/custom/icon-color-theme";
 import { IconDir } from "@/web/assets/custom/icon-dir";
 import { IconLayoutCompact } from "@/web/assets/custom/icon-layout-compact";
 import { IconLayoutDefault } from "@/web/assets/custom/icon-layout-default";
@@ -25,6 +36,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/web/components/ui/sheet";
+import { useColorTheme } from "@/web/context/color-theme-provider";
 import { useDirection } from "@/web/context/direction-provider";
 import { useLayout } from "@/web/context/layout-provider";
 import { useTheme } from "@/web/context/theme-provider";
@@ -37,12 +49,14 @@ export function ConfigDrawer() {
   const { resetDir } = useDirection();
   const { resetTheme } = useTheme();
   const { resetLayout } = useLayout();
+  const { resetColorTheme } = useColorTheme();
 
   const handleReset = () => {
     setOpen(true);
     resetDir();
     resetTheme();
     resetLayout();
+    resetColorTheme();
   };
 
   return (
@@ -67,6 +81,7 @@ export function ConfigDrawer() {
         </SheetHeader>
         <div className="space-y-6 overflow-y-auto px-4">
           <ThemeConfig />
+          <ColorThemeConfig />
           <SidebarConfig />
           <LayoutConfig />
           <DirConfig />
@@ -211,6 +226,79 @@ function ThemeConfig() {
       </Radio>
       <div id="theme-description" className="sr-only">
         Choose between system preference, light mode, or dark mode
+      </div>
+    </div>
+  );
+}
+
+function ColorThemeConfig() {
+  const { defaultColorTheme, colorTheme, setColorTheme } = useColorTheme();
+  return (
+    <div>
+      <SectionTitle
+        title="Color"
+        showReset={colorTheme !== defaultColorTheme}
+        onReset={() => setColorTheme(defaultColorTheme)}
+      />
+      <Radio
+        value={colorTheme}
+        onValueChange={setColorTheme}
+        className="grid w-full max-w-md grid-cols-3 gap-4"
+        aria-label="Select color theme"
+        aria-describedby="color-theme-description"
+      >
+        {[
+          {
+            value: "catppuccin",
+            label: "Catppuccin",
+            icon: IconColorCatppuccin,
+          },
+          {
+            value: "bubblegum",
+            label: "Bubblegum",
+            icon: IconColorBubblegum,
+          },
+          {
+            value: "caffeine",
+            label: "Caffeine",
+            icon: IconColorCaffeine,
+          },
+          {
+            value: "cosmic-night",
+            label: "Cosmic Night",
+            icon: IconColorCosmicNight,
+          },
+          {
+            value: "violet-bloom",
+            label: "Violet Bloom",
+            icon: IconColorVioletBloom,
+          },
+          {
+            value: "elegant-luxury",
+            label: "Elegant Luxury",
+            icon: IconColorElegantLuxury,
+          },
+          {
+            value: "mono",
+            label: "Mono",
+            icon: IconColorMono,
+          },
+          {
+            value: "cyberpunk",
+            label: "Cyberpunk",
+            icon: IconColorCyberpunk,
+          },
+          {
+            value: "pastel-dreams",
+            label: "Pastel Dreams",
+            icon: IconColorPastelDreams,
+          },
+        ].map(item => (
+          <RadioGroupItem key={item.value} item={item} />
+        ))}
+      </Radio>
+      <div id="color-theme-description" className="sr-only">
+        Choose between purple, blue, green, orange, red, or zinc color themes
       </div>
     </div>
   );
