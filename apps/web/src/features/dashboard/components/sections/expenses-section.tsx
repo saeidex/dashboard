@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import {
-  Area,
-  AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
@@ -31,7 +31,7 @@ export function ExpensesSection() {
   const totalAmount = categories.reduce((sum, c) => sum + c.amount, 0);
   const avgPerCategory
     = categories.length > 0 ? expensesTotal / categories.length : 0;
-  const [months, setMonths] = useState<3 | 6 | 12>(6);
+  const [months, setMonths] = useState<3 | 6 | 12 | 18>(3);
   const trend = useExpensesTrend(months);
   const maxY = useMemo(
     () => (trend.length ? Math.max(...trend.map(d => d.total)) : 0),
@@ -98,17 +98,18 @@ export function ExpensesSection() {
                 <CardTitle>Expenses Trend</CardTitle>
                 <CardDescription>
                   Last
+                  {" "}
                   {months}
                   {" "}
                   months
                 </CardDescription>
               </div>
               <div className="flex gap-1">
-                {[3, 6, 12].map(m => (
+                {[3, 6, 12, 18].map(m => (
                   <Button
                     variant="ghost"
                     key={m}
-                    onClick={() => setMonths(m as 3 | 6 | 12)}
+                    onClick={() => setMonths(m as 3 | 6 | 12 | 18)}
                     className={`rounded border px-2 py-1 text-xs font-medium transition-colors ${months === m ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
                     aria-label={`Show last ${m} months`}
                   >
@@ -129,30 +130,10 @@ export function ExpensesSection() {
               : (
                   <div className="h-48">
                     <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart
+                      <BarChart
                         data={trend}
                         margin={{ left: 4, right: 4, top: 10, bottom: 0 }}
                       >
-                        <defs>
-                          <linearGradient
-                            id="expenseFill"
-                            x1="0"
-                            y1="0"
-                            x2="0"
-                            y2="1"
-                          >
-                            <stop
-                              offset="5%"
-                              stopColor="hsl(var(--primary))"
-                              stopOpacity={0.4}
-                            />
-                            <stop
-                              offset="95%"
-                              stopColor="hsl(var(--primary))"
-                              stopOpacity={0}
-                            />
-                          </linearGradient>
-                        </defs>
                         <CartesianGrid
                           strokeDasharray="3 3"
                           className="stroke-muted"
@@ -176,12 +157,12 @@ export function ExpensesSection() {
                           domain={[0, maxY]}
                         />
                         <Tooltip
-                          cursor={{
-                            stroke: "hsl(var(--primary))",
-                            strokeWidth: 1,
-                            strokeDasharray: "4 4",
+                          cursor={{ className: "fill-black/10" }}
+                          contentStyle={{
+                            color: "var(--popover-foreground)",
+                            backgroundColor: "var(--popover)",
+                            fontSize: 12,
                           }}
-                          contentStyle={{ fontSize: 12 }}
                           formatter={(value: number) => [
                             `৳${
                               Number(value).toLocaleString(undefined, {
@@ -190,15 +171,13 @@ export function ExpensesSection() {
                             "Expenses",
                           ]}
                         />
-                        <Area
-                          type="monotone"
+                        <Bar
                           dataKey="total"
-                          stroke="hsl(var(--primary))"
-                          fill="url(#expenseFill)"
-                          strokeWidth={2}
-                          isAnimationActive={false}
+                          fill="currentColor"
+                          radius={[4, 4, 0, 0]}
+                          className="fill-primary"
                         />
-                      </AreaChart>
+                      </BarChart>
                     </ResponsiveContainer>
                   </div>
                 )}

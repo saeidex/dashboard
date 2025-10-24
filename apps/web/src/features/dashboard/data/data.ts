@@ -126,16 +126,29 @@ export function getMonthlySalesSeries(orders: ProjectedOrder[], limitMonths = 12
     const key = monthKey(o.createdAt);
     grouped[key] = (grouped[key] ?? 0) + o.totals.grandTotal;
   }
-  const entries = Object.entries(grouped).sort((a, b) =>
-    a[0].localeCompare(b[0]),
-  );
-  const sliced = entries.slice(-limitMonths);
-  return sliced.map(([k, total]) => {
+  // Determine the range: end at latest order month or current month if empty
+  const keys = Object.keys(grouped).sort();
+  const endDate = keys.length
+    ? new Date(`${keys[keys.length - 1]}-01`)
+    : new Date();
+  // Build an array of the last `limitMonths` month keys
+  const months: string[] = [];
+  const cursor = new Date(endDate);
+  for (let i = 0; i < limitMonths; i++) {
+    const k
+      = `${cursor.getFullYear()
+      }-${
+        String(cursor.getMonth() + 1).padStart(2, "0")}`;
+    months.push(k);
+    cursor.setMonth(cursor.getMonth() - 1);
+  }
+  months.reverse();
+  return months.map((k) => {
     const date = new Date(`${k}-01`);
     return {
       key: k,
       monthLabel: date.toLocaleString(undefined, { month: "short" }),
-      total,
+      total: grouped[k] ?? 0,
     };
   });
 }
