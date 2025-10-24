@@ -1,20 +1,24 @@
 import type { OrderStatus, PaymentStatus } from "@crm/api/schema";
 
-type ProjectedOrderItem = {
+import { expensesQueryOptions } from "../../accounts/expenses/data/queries";
+import { createOrdersQueryOptions } from "../../orders/data/queries";
+import { createProductsQueryOptions } from "../../products/data/queries";
+
+export type ProjectedOrderItem = {
   productId: string;
   quantity: number;
   unitPrice: number;
   tax: number;
 };
 
-type ProjectedOrderTotals = {
+export type ProjectedOrderTotals = {
   itemsTotal: number;
   itemsTaxTotal: number;
   shipping: number;
   grandTotal: number;
 };
 
-type ProjectedOrder = {
+export type ProjectedOrder = {
   id: string;
   createdAt: Date;
   status: OrderStatus;
@@ -24,7 +28,7 @@ type ProjectedOrder = {
   items: ProjectedOrderItem[];
 };
 
-type ProjectedProduct = {
+export type ProjectedProduct = {
   id: string;
   name: string;
   pricingTotal: number;
@@ -33,16 +37,18 @@ type ProjectedProduct = {
   createdAt: Date;
 };
 
-type ProjectedExpense = {
+export type ProjectedExpense = {
   id: string;
   category: string;
   amount: number;
   createdAt: Date;
 };
 
-export const projectedProducts: ProjectedProduct[] = [];
-export const projectedOrders: ProjectedOrder[] = [];
-export const projectedExpenses: ProjectedExpense[] = [];
+// Query options for fetching dashboard data
+export const dashboardProductsQueryOptions = createProductsQueryOptions({ page: 1, pageSize: 100 });
+export const dashboardOrdersQueryOptions = createOrdersQueryOptions({ pageIndex: 0, pageSize: 100 });
+export const dashboardExpensesQueryOptions = expensesQueryOptions;
+
 export const sum = (vals: number[]) => vals.reduce((a, b) => a + b, 0);
 
 function monthKey(d: Date) {
@@ -55,9 +61,13 @@ function pctChange(current: number, prev: number) {
   return ((current - prev) / prev) * 100;
 }
 
-export function computeKpis() {
+export function computeKpis(
+  products: ProjectedProduct[],
+  orders: ProjectedOrder[],
+  expenses: ProjectedExpense[],
+) {
   const orderByMonth: Record<string, { sales: number; orders: number }> = {};
-  for (const o of projectedOrders) {
+  for (const o of orders) {
     const key = monthKey(o.createdAt);
     if (!orderByMonth[key])
       orderByMonth[key] = { sales: 0, orders: 0 };
@@ -65,7 +75,7 @@ export function computeKpis() {
     orderByMonth[key].orders += 1;
   }
   const expenseByMonth: Record<string, number> = {};
-  for (const e of projectedExpenses) {
+  for (const e of expenses) {
     const key = monthKey(e.createdAt);
     expenseByMonth[key] = (expenseByMonth[key] ?? 0) + e.amount;
   }
@@ -76,11 +86,11 @@ export function computeKpis() {
   const latest = months[months.length - 1];
   const prev = months[months.length - 2];
 
-  const salesTotal = sum(projectedOrders.map(o => o.totals.grandTotal));
-  const ordersCount = projectedOrders.length;
-  const expensesTotal = sum(projectedExpenses.map(e => e.amount));
+  const salesTotal = sum(orders.map(o => o.totals.grandTotal));
+  const ordersCount = orders.length;
+  const expensesTotal = sum(expenses.map(e => e.amount));
   const inventoryValue = sum(
-    projectedProducts.map(p => p.pricingTotal * p.stock),
+    products.map(p => p.pricingTotal * p.stock),
   );
 
   const latestSales = latest ? (orderByMonth[latest]?.sales ?? 0) : 0;
@@ -110,9 +120,9 @@ export function computeKpis() {
   };
 }
 
-export function getMonthlySalesSeries(limitMonths = 12) {
+export function getMonthlySalesSeries(orders: ProjectedOrder[], limitMonths = 12) {
   const grouped: Record<string, number> = {};
-  for (const o of projectedOrders) {
+  for (const o of orders) {
     const key = monthKey(o.createdAt);
     grouped[key] = (grouped[key] ?? 0) + o.totals.grandTotal;
   }
@@ -130,9 +140,9 @@ export function getMonthlySalesSeries(limitMonths = 12) {
   });
 }
 
-export function getMonthlyExpensesSeries(limitMonths = 12) {
+export function getMonthlyExpensesSeries(expenses: ProjectedExpense[], limitMonths = 12) {
   const grouped: Record<string, number> = {};
-  for (const e of projectedExpenses) {
+  for (const e of expenses) {
     const key = monthKey(e.createdAt);
     grouped[key] = (grouped[key] ?? 0) + e.amount;
   }
@@ -172,22 +182,22 @@ export function groupCounts<T extends string | number>(
   }, {});
 }
 
-export function getOrderStatusDistribution() {
-  return groupCounts(projectedOrders.map(o => o.status));
+export function getOrderStatusDistribution(orders: ProjectedOrder[]) {
+  return groupCounts(orders.map(o => o.status));
 }
 
-export function getPaymentStatusDistribution() {
-  return groupCounts(projectedOrders.map(o => o.paymentStatus));
+export function getPaymentStatusDistribution(orders: ProjectedOrder[]) {
+  return groupCounts(orders.map(o => o.paymentStatus));
 }
 
-export function getTopProducts(limit = 10) {
+export function getTopProducts(products: ProjectedProduct[], orders: ProjectedOrder[], limit = 10) {
   const agg: Record<
     string,
     { quantity: number; revenue: number; name: string }
   > = {};
-  for (const order of projectedOrders) {
+  for (const order of orders) {
     for (const item of order.items) {
-      const product = projectedProducts.find(p => p.id === item.productId);
+      const product = products.find(p => p.id === item.productId);
       if (!product)
         continue;
       const key = item.productId;
@@ -204,16 +214,16 @@ export function getTopProducts(limit = 10) {
     .slice(0, limit);
 }
 
-export function getLowStock(threshold = 10) {
-  return projectedProducts
+export function getLowStock(products: ProjectedProduct[], threshold = 10) {
+  return products
     .filter(p => p.stock <= threshold)
     .sort((a, b) => a.stock - b.stock)
     .slice(0, 15);
 }
 
-export function getExpenseCategoryDistribution() {
+export function getExpenseCategoryDistribution(expenses: ProjectedExpense[]) {
   const counts: Record<string, { amount: number; count: number }> = {};
-  for (const e of projectedExpenses) {
+  for (const e of expenses) {
     if (!counts[e.category])
       counts[e.category] = { amount: 0, count: 0 };
     counts[e.category].amount += e.amount;

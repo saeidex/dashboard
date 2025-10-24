@@ -5,14 +5,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/web/components/ui/card";
-import { useProductsData } from "@/web/hooks/use-dashboard-data";
+import { useDashboardKpis, useProductsData } from "@/web/hooks/use-dashboard-data";
 
-import { computeKpis } from "../../data/data";
 import { Metric } from "../matric";
 
 export function ProductsSection() {
   const { top, lowStock } = useProductsData();
-  const { inventoryValue } = computeKpis();
+  const { inventoryValue } = useDashboardKpis();
   const totalProducts = top.length;
   const lowStockCount = lowStock.length;
   const stockOuts = lowStock.filter(p => p.stock === 0).length;

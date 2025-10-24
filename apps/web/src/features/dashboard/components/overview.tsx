@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import {
   Bar,
   BarChart,
@@ -8,10 +7,10 @@ import {
   YAxis,
 } from "recharts";
 
-import { getMonthlySalesSeries } from "../data/data";
+import { useSalesTrend } from "@/web/hooks/use-dashboard-data";
 
 export function Overview({ months = 12 }: { months?: number }) {
-  const data = useMemo(() => getMonthlySalesSeries(months), [months]);
+  const data = useSalesTrend(months);
   return (
     <ResponsiveContainer width="100%" height={350}>
       <BarChart data={data}>
