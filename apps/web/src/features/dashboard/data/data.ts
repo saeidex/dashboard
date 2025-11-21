@@ -19,7 +19,7 @@ export type ProjectedOrderTotals = {
 };
 
 export type ProjectedOrder = {
-  id: string;
+  id: number;
   createdAt: Date;
   status: OrderStatus;
   paymentStatus: PaymentStatus;

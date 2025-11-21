@@ -49,16 +49,16 @@ export function EditorTable() {
       productId: firstProduct.id,
       quantity: 1,
       retailPricePerUnit: firstProduct.retailPrice ?? firstProduct.total ?? 0,
-      taxPerUnit        : firstProduct.taxAmount
+      taxPerUnit: firstProduct.taxAmount
         ?? (typeof firstProduct.taxPercentage === "number"
           ? (firstProduct.taxPercentage / 100) * (firstProduct.retailPrice ?? firstProduct.total ?? 0)
           : 0),
-      totalRetailPrice  : firstProduct.retailPrice ?? firstProduct.total ?? 0,
-      totalTax          : firstProduct.taxAmount
+      totalRetailPrice: firstProduct.retailPrice ?? firstProduct.total ?? 0,
+      totalTax: firstProduct.taxAmount
         ?? (typeof firstProduct.taxPercentage === "number"
           ? (firstProduct.taxPercentage / 100) * (firstProduct.retailPrice ?? firstProduct.total ?? 0)
           : 0),
-      grandTotal        : firstProduct.total ?? (firstProduct.retailPrice ?? 0) + (firstProduct.taxAmount ?? 0),
+      grandTotal: firstProduct.total ?? (firstProduct.retailPrice ?? 0) + (firstProduct.taxAmount ?? 0),
     });
   }, [isEdit, currentRow, fieldArray, availableProducts]);
 
@@ -96,9 +96,9 @@ export function EditorTable() {
       quantity: adjustedQuantity,
       retailPricePerUnit: unitBasePrice,
       taxPerUnit,
-      totalRetailPrice  : lineBasePrice,
-      totalTax          : lineTax,
-      grandTotal        : lineTotal,
+      totalRetailPrice: lineBasePrice,
+      totalTax: lineTax,
+      grandTotal: lineTotal,
     });
   }, [availableProducts, fieldArray, isEdit, currentRow, getValues]);
 

@@ -29,6 +29,7 @@
     "lint:ws": "pnpm dlx sherif@latest",
     "postinstall": "pnpm run lint:ws",
     "start:api": "pnpm -F @crm/api start",
+    "start:ngrok": "ngrok http 4173",
     "start:web": "pnpm -F @crm/web preview --host",
     "typecheck": "pnpm run -r --parallel typecheck",
     "ui-add": "pnpm -F @crm/web ui-add",

@@ -62,7 +62,7 @@ export function OrdersDialogs() {
               setTimeout(() => {
                 setCurrentRow(null);
               }, 500);
-              deleteMutation.mutate(currentRow.id);
+              deleteMutation.mutate(currentRow.id.toString());
             }}
             className="max-w-md"
             title={`Delete this order: ${currentRow.id} ?`}

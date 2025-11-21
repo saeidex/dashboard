@@ -95,7 +95,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
               <DropdownMenuRadioGroup
                 onValueChange={value =>
                   updateMutation.mutate({
-                    id: row.original.id,
+                    id: row.original.id.toString(),
                     order: {
                       ...row.original,
                       orderStatus: value as typeof orderStatusValues[number],
@@ -120,7 +120,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
               <DropdownMenuRadioGroup
                 onValueChange={value =>
                   updateMutation.mutate({
-                    id: row.original.id,
+                    id: row.original.id.toString(),
                     order: {
                       ...row.original,
                       paymentStatus: value as typeof paymentStatusValues[number],
@@ -145,7 +145,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
               <DropdownMenuRadioGroup
                 onValueChange={value =>
                   updateMutation.mutate({
-                    id: row.original.id,
+                    id: row.original.id.toString(),
                     order: {
                       ...row.original,
                       paymentMethod: value as typeof paymentMethodValues[number],
