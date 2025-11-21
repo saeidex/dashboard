@@ -1,4 +1,3 @@
-import { createId } from "@paralleldrive/cuid2"
 import { and, eq } from "drizzle-orm"
 import * as HttpStatusCodes from "stoker/http-status-codes"
 import * as HttpStatusPhrases from "stoker/http-status-phrases"
@@ -80,7 +79,6 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
 }
 
 export const create: AppRouteHandler<CreateRoute> = async (c) => {
-  const orderId = createId()
   const { items, ...payload } = c.req.valid("json")
 
   const customer = await db.query.customers.findFirst({
@@ -97,13 +95,13 @@ export const create: AppRouteHandler<CreateRoute> = async (c) => {
   const insertedOrder = await db.transaction(async (tx) => {
     const [insertedOrderBase] = await tx
       .insert(orders)
-      .values({ ...payload, id: orderId })
+      .values(payload)
       .returning()
 
     const insertedOrderItems = items.length
       ? await tx
           .insert(orderItems)
-          .values(items.map(item => ({ ...item, orderId })))
+          .values(items.map(item => ({ ...item, orderId: insertedOrderBase.id })))
           .returning()
       : []
 

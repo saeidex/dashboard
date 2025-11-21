@@ -43,9 +43,11 @@ export const Invoice = ({
     { label: "#", className: "w-8" },
     { label: "Item", className: "" },
     { label: "Qty", className: "text-right w-12" },
-    { label: "Unit", className: "text-right w-20" },
-    { label: "Tax", className: "text-right w-20" },
-    { label: "Total", className: "text-right w-24" },
+    { label: "Unit Price", className: "text-right w-24" },
+    { label: "Tax / Unit", className: "text-right w-24" },
+    { label: "Total Tax", className: "text-right w-24" },
+    { label: "Subtotal (no tax)", className: "text-right w-28" },
+    { label: "Total (with tax)", className: "text-right w-32" },
   ] as const;
 
   return (
@@ -270,16 +272,24 @@ export const Invoice = ({
                   <TableCell className="text-right w-12 tabular-nums">
                     {item.quantity}
                   </TableCell>
-                  <TableCell className="text-right w-20 tabular-nums">
-                    {formatCurrency(item.total, order.currency)}
+                  <TableCell className="text-right w-24 tabular-nums">
+                    {formatCurrency(item.retailPricePerUnit ?? 0, order.currency)}
                   </TableCell>
-                  <TableCell className="text-right w-20 tabular-nums">
-                    {order.tax === 0
-                      ? "—"
-                      : formatCurrency(order.tax, order.currency)}
+                  <TableCell className="text-right w-24 tabular-nums">
+                    {item.taxPerUnit && item.taxPerUnit > 0
+                      ? formatCurrency(item.taxPerUnit, order.currency)
+                      : "—"}
                   </TableCell>
-                  <TableCell className="text-right w-24 tabular-nums font-medium">
-                    {formatCurrency(order.grandTotal, order.currency)}
+                  <TableCell className="text-right w-24 tabular-nums">
+                    {item.totalTax && item.totalTax > 0
+                      ? formatCurrency(item.totalTax, order.currency)
+                      : "—"}
+                  </TableCell>
+                  <TableCell className="text-right w-28 tabular-nums">
+                    {formatCurrency(item.totalRetailPrice ?? 0, order.currency)}
+                  </TableCell>
+                  <TableCell className="text-right w-32 tabular-nums font-medium">
+                    {formatCurrency(item.grandTotal ?? (item.totalRetailPrice ?? 0) + (item.totalTax ?? 0), order.currency)}
                   </TableCell>
                 </TableRow>
               ))}

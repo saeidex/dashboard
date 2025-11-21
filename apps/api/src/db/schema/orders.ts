@@ -15,7 +15,7 @@ import { products, selectProductWithDimensionSchema } from "./products"
 /*                                  Tables                                    */
 
 export const orders = sqliteTable("orders", {
-  id           : text().primaryKey().$defaultFn(() => createId()),
+  id           : integer().primaryKey({autoIncrement: true}),
   customerId   : text().references(() => customers.id).notNull(),
   orderStatus  : text().$type<OrderStatus>().default("pending").notNull(),
   paymentStatus: text().$type<PaymentStatus>().default("unpaid").notNull(),
@@ -36,10 +36,14 @@ export const orders = sqliteTable("orders", {
 
 export const orderItems = sqliteTable("order_items", {
   id       : text().primaryKey().$defaultFn(() => createId()),
-  orderId  : text().notNull().references(() => orders.id, { onDelete: "cascade" }),
+  orderId  : integer().notNull().references(() => orders.id, { onDelete: "cascade" }),
   productId: text().notNull().references(() => products.id),
   quantity : integer().default(1).notNull(),
-  total    : real().default(0.0).notNull(),
+  retailPricePerUnit: real().default(0.0).notNull(),
+  taxPerUnit        : real().default(0.0).notNull(),
+  totalRetailPrice  : real().default(0.0).notNull(),
+  totalTax          : real().default(0.0).notNull(),
+  grandTotal        : real().default(0.0).notNull(),
   createdAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
   updatedAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 }, table => [
@@ -124,7 +128,11 @@ const insertOrderItemsSchema = createInsertSchema(orderItems, {
   id       : schema => schema.min(1, "Order Item ID is required"),
   productId: schema => schema.min(1, "Product ID is required"),
   quantity : schema => schema.min(1, "Quantity must be at least 1"),
-  total    : schema => schema.min(0, "Total must be a positive number"),
+  retailPricePerUnit: schema => schema.min(0, "Retail price per unit must be a positive number"),
+  taxPerUnit        : schema => schema.min(0, "Tax per unit must be a positive number"),
+  totalRetailPrice  : schema => schema.min(0, "Total retail price must be a positive number"),
+  totalTax          : schema => schema.min(0, "Total tax must be a positive number"),
+  grandTotal        : schema => schema.min(0, "Grand total must be a positive number"),
 }).omit({
   orderId  : true,
   createdAt: true,

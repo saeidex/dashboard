@@ -99,7 +99,7 @@ export function OrdersActionDialog({
           let itemsGrandTotal = 0;
 
           // Items level calculations
-          values.items?.forEach((item) => {
+          values.items?.forEach((item, index) => {
             if (!item)
               return;
 
@@ -128,6 +128,13 @@ export function OrdersActionDialog({
             totalBasePrice += lineBasePrice;
             totalTax += lineTax;
             itemsGrandTotal += lineTotal;
+
+            // Sync per-item pricing fields with computed values so they are submitted to the API
+            setValue(`items.${index}.retailPricePerUnit`, roundToTwo(unitBasePrice), { shouldDirty: true, shouldValidate: false });
+            setValue(`items.${index}.taxPerUnit`, roundToTwo(taxPerUnit), { shouldDirty: true, shouldValidate: false });
+            setValue(`items.${index}.totalRetailPrice`, roundToTwo(lineBasePrice), { shouldDirty: true, shouldValidate: false });
+            setValue(`items.${index}.totalTax`, roundToTwo(lineTax), { shouldDirty: true, shouldValidate: false });
+            setValue(`items.${index}.grandTotal`, roundToTwo(lineTotal), { shouldDirty: true, shouldValidate: false });
           });
 
           // Order level calculations
@@ -180,7 +187,7 @@ export function OrdersActionDialog({
       onOpenChange(false);
       queryclient.invalidateQueries({ queryKey: ["list-orders"] });
       if (currentRow) {
-        queryclient.invalidateQueries(queryKeys.LIST_ORDER(currentRow.id));
+        queryclient.invalidateQueries(queryKeys.LIST_ORDER(currentRow.id.toString()));
       }
     },
     onError: (error) => {
@@ -190,7 +197,7 @@ export function OrdersActionDialog({
 
   const onSubmit = (values: insertOrderWithItemsSchema) => {
     if (isEdit) {
-      updateMutation.mutate({ id: currentRow.id, order: values });
+      updateMutation.mutate({ id: currentRow.id.toString(), order: values });
     }
     else {
       createMutation.mutate(values);

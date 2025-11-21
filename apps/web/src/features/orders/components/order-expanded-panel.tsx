@@ -280,7 +280,7 @@ export function OrderExpandedPanel({ order }: OrderExpandedPanelProps) {
                         <div className="text-right">
                           <p className="text-sm font-semibold leading-tight text-foreground">
                             {currencySymbol}
-                            {formatAmount(item.total)}
+                            {formatAmount(item.grandTotal)}
                           </p>
                         </div>
                       </div>

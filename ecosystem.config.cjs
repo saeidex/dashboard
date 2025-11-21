@@ -3,24 +3,18 @@ module.exports = {
     {
       name: "crm-api",
       cwd: __dirname,
-      script: "pnpm",
-      args: "start:api",
-      env: {
-        NODE_ENV: "production",
-      },
+      script: "cmd",
+      args: "/c pnpm start:api",
       autorestart: true,
-      max_memory_restart: "512M",
+      max_memory_restart: "4096M",
     },
     {
       name: "crm-web",
       cwd: __dirname,
-      script: "pnpm",
-      args: "start:web",
-      env: {
-        NODE_ENV: "production",
-      },
+      script: "cmd",
+      args: "/c pnpm start:web",
       autorestart: true,
       max_memory_restart: "512M",
     },
   ],
-}
+};

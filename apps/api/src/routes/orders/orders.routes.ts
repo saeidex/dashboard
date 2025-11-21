@@ -17,7 +17,7 @@ import { notFoundSchema } from "@/api/lib/constants"
 const tags = ["Orders"]
 
 const OrderIdParamsSchema = z.object({
-  id: z.string().min(1, "Order ID is required").openapi({ example: createId() }),
+  id: z.coerce.number().min(1, "Order ID is required").openapi({ example: createId() }),
 })
 
 export const list = createRoute({

@@ -45,10 +45,20 @@ export function EditorTable() {
       return;
     }
     fieldArray.append({
-      id: isEdit ? currentRow.id : crypto.randomUUID(),
+      id: isEdit ? currentRow.id.toString() : crypto.randomUUID(),
       productId: firstProduct.id,
       quantity: 1,
-      total: firstProduct.total,
+      retailPricePerUnit: firstProduct.retailPrice ?? firstProduct.total ?? 0,
+      taxPerUnit        : firstProduct.taxAmount
+        ?? (typeof firstProduct.taxPercentage === "number"
+          ? (firstProduct.taxPercentage / 100) * (firstProduct.retailPrice ?? firstProduct.total ?? 0)
+          : 0),
+      totalRetailPrice  : firstProduct.retailPrice ?? firstProduct.total ?? 0,
+      totalTax          : firstProduct.taxAmount
+        ?? (typeof firstProduct.taxPercentage === "number"
+          ? (firstProduct.taxPercentage / 100) * (firstProduct.retailPrice ?? firstProduct.total ?? 0)
+          : 0),
+      grandTotal        : firstProduct.total ?? (firstProduct.retailPrice ?? 0) + (firstProduct.taxAmount ?? 0),
     });
   }, [isEdit, currentRow, fieldArray, availableProducts]);
 
@@ -69,13 +79,26 @@ export function EditorTable() {
       toast.warning(`Quantity adjusted to ${adjustedQuantity} based on available stock.`);
     }
 
-    const total = (product.total * adjustedQuantity);
+    const unitBasePrice = product.retailPrice ?? product.total ?? 0;
+    const taxPerUnit
+      = product.taxAmount
+        ?? (typeof product.taxPercentage === "number"
+          ? (product.taxPercentage / 100) * unitBasePrice
+          : 0);
+
+    const lineBasePrice = unitBasePrice * adjustedQuantity;
+    const lineTax = taxPerUnit * adjustedQuantity;
+    const lineTotal = lineBasePrice + lineTax;
 
     fieldArray.update(index, {
-      id: isEdit ? currentRow.id : crypto.randomUUID(),
+      id: isEdit ? currentRow.id.toString() : crypto.randomUUID(),
       productId: product.id,
       quantity: adjustedQuantity,
-      total,
+      retailPricePerUnit: unitBasePrice,
+      taxPerUnit,
+      totalRetailPrice  : lineBasePrice,
+      totalTax          : lineTax,
+      grandTotal        : lineTotal,
     });
   }, [availableProducts, fieldArray, isEdit, currentRow, getValues]);
 
@@ -148,9 +171,14 @@ export function EditorTable() {
                                 return;
                               }
 
-                              const total = fieldArray.fields[index].total;
-                              const newTotal = total * value;
-                              setValue(`items.${index}.total`, newTotal, { shouldValidate: true, shouldDirty: true });
+                              const unitPrice = fieldArray.fields[index].retailPricePerUnit ?? 0;
+                              const taxPerUnit = fieldArray.fields[index].taxPerUnit ?? 0;
+                              const newTotalRetail = unitPrice * value;
+                              const newTotalTax = taxPerUnit * value;
+                              setValue(`items.${index}.quantity`, value, { shouldValidate: true, shouldDirty: true });
+                              setValue(`items.${index}.totalRetailPrice`, newTotalRetail, { shouldValidate: true, shouldDirty: true });
+                              setValue(`items.${index}.totalTax`, newTotalTax, { shouldValidate: true, shouldDirty: true });
+                              setValue(`items.${index}.grandTotal`, newTotalRetail + newTotalTax, { shouldValidate: true, shouldDirty: true });
                               field.onChange(value);
                             }}
                           />
@@ -170,7 +198,7 @@ export function EditorTable() {
               <TableCell className="align-top text-right font-semibold">
                 <FormField
                   control={control}
-                  name={`items.${index}.total`}
+                  name={`items.${index}.grandTotal`}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="sr-only">Total</FormLabel>

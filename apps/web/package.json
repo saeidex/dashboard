@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
+    "start": "vite preview",
     "typecheck": "tsc -b --noEmit",
     "knip": "knip",
     "ui-add": "pnpm dlx shadcn@latest add && pnpm dlx prettier src --write --list-different",

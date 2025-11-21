@@ -31,7 +31,8 @@
     "start:api": "pnpm -F @crm/api start",
     "start:web": "pnpm -F @crm/web preview --host",
     "typecheck": "pnpm run -r --parallel typecheck",
-    "ui-add": "pnpm -F @crm/web ui-add"
+    "ui-add": "pnpm -F @crm/web ui-add",
+    "start": "pnpm --parallel start"
   },
   "devDependencies": {
     "@crm/eslint-config": "workspace:^",
