@@ -32,8 +32,8 @@ type NavGroup = {
 };
 
 type SidebarData = {
-  user: AuthUser;
-  teams: Team[];
+  user?: AuthUser;
+  teams?: Team[];
   navGroups: NavGroup[];
 };
 

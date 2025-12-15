@@ -86,35 +86,36 @@ export const productsColumns: ColumnDef<Product>[] = [
     cell: ProductCategoryName,
     filterFn: (row, id, value) => value.includes(row.getValue(id)),
   },
-  {
-    id: "dimensionId",
-    accessorFn: row => row.dimensionId,
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Dimension" />
-    ),
-    cell: ({ row }) => {
-      const product = row.original;
-      if (!product.dimension) {
-        return <span className="text-muted-foreground text-xs">-</span>;
-      }
-      const { length, width, height, unit } = product.dimension;
-      return (
-        <span className="font-mono text-xs">
-          {length}
-          {" "}
-          x
-          {" "}
-          {width}
-          {" "}
-          x
-          {" "}
-          {height}
-          {" "}
-          {unit}
-        </span>
-      );
-    },
-  },
+  // TODO:
+  //   {
+  //     id: "dimensionId",
+  //     accessorFn: row => row.dimensionId,
+  //     header: ({ column }) => (
+  //       <DataTableColumnHeader column={column} title="Size" />
+  //     ),
+  //     cell: ({ row }) => {
+  //       const product = row.original;
+  //       if (!product.dimension) {
+  //         return <span className="text-muted-foreground text-xs">-</span>;
+  //       }
+  //       const { length, width, height, unit } = product.dimension;
+  //       return (
+  //         <span className="font-mono text-xs">
+  //           {length}
+  //           {" "}
+  //           x
+  //           {" "}
+  //           {width}
+  //           {" "}
+  //           x
+  //           {" "}
+  //           {height}
+  //           {" "}
+  //           {unit}
+  //         </span>
+  //       );
+  //     },
+  //   },
   {
     accessorKey: "total",
     header: ({ column }) => (

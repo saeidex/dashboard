@@ -1,32 +1,26 @@
 import {
-  AudioWaveform,
   Bookmark,
   Bug,
-  Command,
   Construction,
-  DollarSign,
   FileX,
-  GalleryVerticalEnd,
   IdCard,
-  LayoutDashboard,
   Lock,
   Monitor,
   Package,
   Palette,
-  Ruler,
   ServerOff,
   Settings,
   ShieldCheck,
   Users,
   UsersRound,
   UserX,
-  WalletCards,
-  WalletMinimal,
 } from "lucide-react";
 
 import type { SidebarData } from "../types";
 
 const devOnlyPages = () => {
+  return [];
+
   if (import.meta.env.PROD) {
     return [];
   }
@@ -89,63 +83,63 @@ const devOnlyPages = () => {
 };
 
 export const sidebarData: SidebarData = {
-  user: {
-    id: "1",
-    name: "Example",
-    email: "example@mail.com",
-    image: "/avatars/example.jpg",
-    emailVerified: false,
-    role: "admin",
-    banned: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  teams: [
-    {
-      name: "Shadcn Admin",
-      logo: Command,
-      plan: "Vite + ShadcnUI",
-    },
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-  ],
+//   user: {
+//     id: "1",
+//     name: "Example",
+//     email: "example@mail.com",
+//     image: "/avatars/example.jpg",
+//     emailVerified: false,
+//     role: "admin",
+//     banned: false,
+//     createdAt: new Date(),
+//     updatedAt: new Date(),
+//   },
+//   teams: [
+//     {
+//       name: "Shadcn Admin",
+//       logo: Command,
+//       plan: "Vite + ShadcnUI",
+//     },
+//     {
+//       name: "Acme Inc",
+//       logo: GalleryVerticalEnd,
+//       plan: "Enterprise",
+//     },
+//     {
+//       name: "Acme Corp.",
+//       logo: AudioWaveform,
+//       plan: "Startup",
+//     },
+//   ],
   navGroups: [
     {
       title: "General",
       items: [
+        // {
+        //   title: "Dashboard",
+        //   url: "/",
+        //   icon: LayoutDashboard,
+        // },
+        // {
+        //   title: "Orders",
+        //   url: "/orders",
+        //   icon: DollarSign,
+        // },
         {
-          title: "Dashboard",
-          url: "/",
-          icon: LayoutDashboard,
-        },
-        {
-          title: "Orders",
-          url: "/orders",
-          icon: DollarSign,
-        },
-        {
-          title: "Products",
+          title: "Samples",
           url: "/products",
           icon: Package,
         },
         {
-          title: "Product Categories",
+          title: "Sample's Categories",
           url: "/categories",
           icon: Bookmark,
         },
-        {
-          title: "Product Dimensions",
-          url: "/dimensions",
-          icon: Ruler,
-        },
+        // {
+        //   title: "Sample Sizes",
+        //   url: "/dimensions",
+        //   icon: Ruler,
+        // },
         {
           title: "Employees",
           url: "/employees",
@@ -156,22 +150,22 @@ export const sidebarData: SidebarData = {
           url: "/customers",
           icon: UsersRound,
         },
-        {
-          title: "Accounts",
-          icon: WalletCards,
-          items: [
-            {
-              title: "Expenses",
-              url: "/accounts/expenses",
-              icon: WalletMinimal,
-            },
-            // {
-            //   title: 'Sales',
-            //   url: '/accounts/sales',
-            //   icon: Coins,
-            // },
-          ],
-        },
+        // {
+        //   title: "Accounts",
+        //   icon: WalletCards,
+        //   items: [
+        //     {
+        //       title: "Expenses",
+        //       url: "/accounts/expenses",
+        //       icon: WalletMinimal,
+        //     },
+        //     // {
+        //     //   title: 'Sales',
+        //     //   url: '/accounts/sales',
+        //     //   icon: Coins,
+        //     // },
+        //   ],
+        // },
         {
           title: "Software Users",
           url: "/users",
