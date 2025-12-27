@@ -1,9 +1,12 @@
+import { SizeIcon } from "@radix-ui/react-icons";
 import {
   Bookmark,
   Bug,
   Construction,
+  DollarSign,
   FileX,
   IdCard,
+  LayoutDashboard,
   Lock,
   Monitor,
   Package,
@@ -14,13 +17,13 @@ import {
   Users,
   UsersRound,
   UserX,
+  WalletCards,
+  WalletMinimal,
 } from "lucide-react";
 
 import type { SidebarData } from "../types";
 
 const devOnlyPages = () => {
-  return [];
-
   if (import.meta.env.PROD) {
     return [];
   }
@@ -115,16 +118,16 @@ export const sidebarData: SidebarData = {
     {
       title: "General",
       items: [
-        // {
-        //   title: "Dashboard",
-        //   url: "/",
-        //   icon: LayoutDashboard,
-        // },
-        // {
-        //   title: "Orders",
-        //   url: "/orders",
-        //   icon: DollarSign,
-        // },
+        {
+          title: "Dashboard",
+          url: "/",
+          icon: LayoutDashboard,
+        },
+        {
+          title: "Orders",
+          url: "/orders",
+          icon: DollarSign,
+        },
         {
           title: "Samples",
           url: "/products",
@@ -135,11 +138,11 @@ export const sidebarData: SidebarData = {
           url: "/categories",
           icon: Bookmark,
         },
-        // {
-        //   title: "Sample Sizes",
-        //   url: "/dimensions",
-        //   icon: Ruler,
-        // },
+        {
+          title: "Sample Sizes",
+          url: "/sizes",
+          icon: SizeIcon,
+        },
         {
           title: "Employees",
           url: "/employees",
@@ -150,22 +153,22 @@ export const sidebarData: SidebarData = {
           url: "/customers",
           icon: UsersRound,
         },
-        // {
-        //   title: "Accounts",
-        //   icon: WalletCards,
-        //   items: [
-        //     {
-        //       title: "Expenses",
-        //       url: "/accounts/expenses",
-        //       icon: WalletMinimal,
-        //     },
-        //     // {
-        //     //   title: 'Sales',
-        //     //   url: '/accounts/sales',
-        //     //   icon: Coins,
-        //     // },
-        //   ],
-        // },
+        {
+          title: "Accounts",
+          icon: WalletCards,
+          items: [
+            {
+              title: "Expenses",
+              url: "/accounts/expenses",
+              icon: WalletMinimal,
+            },
+            // {
+            //   title: 'Sales',
+            //   url: '/accounts/sales',
+            //   icon: Coins,
+            // },
+          ],
+        },
         {
           title: "Software Users",
           url: "/users",

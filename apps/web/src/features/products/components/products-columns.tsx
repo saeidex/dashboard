@@ -88,17 +88,17 @@ export const productsColumns: ColumnDef<Product>[] = [
   },
   // TODO:
   //   {
-  //     id: "dimensionId",
-  //     accessorFn: row => row.dimensionId,
+  //     id: "sizeId",
+  //     accessorFn: row => row.sizeId,
   //     header: ({ column }) => (
   //       <DataTableColumnHeader column={column} title="Size" />
   //     ),
   //     cell: ({ row }) => {
   //       const product = row.original;
-  //       if (!product.dimension) {
+  //       if (!product.size) {
   //         return <span className="text-muted-foreground text-xs">-</span>;
   //       }
-  //       const { length, width, height, unit } = product.dimension;
+  //       const { length, width, height, unit } = product.size;
   //       return (
   //         <span className="font-mono text-xs">
   //           {length}

@@ -4,96 +4,96 @@ import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers"
 import { createErrorSchema } from "stoker/openapi/schemas"
 
 import {
-  insertProductDimensionsSchema,
-  patchProductDimensionsSchema,
-  selectProductDimensionsSchema,
+  insertProductSizesSchema,
+  patchProductSizesSchema,
+  selectProductSizesSchema,
 } from "@/api/db/schema"
 import { notFoundSchema } from "@/api/lib/constants"
 
-const tags = ["Product Dimensions"]
+const tags = ["Product Sizes"]
 
-const ProductDimensionIdParamsSchema = z.object({
+const ProductSizeIdParamsSchema = z.object({
   id: z.coerce.number().nonnegative().openapi({ example: 1 }),
 })
 
 export const list = createRoute({
-  path: "/dimensions",
+  path: "/sizes",
   method: "get",
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      z.array(selectProductDimensionsSchema),
-      "List of product dimensions",
+      z.array(selectProductSizesSchema),
+      "List of product sizes",
     ),
   },
 })
 
 export const create = createRoute({
-  path: "/dimensions",
+  path: "/sizes",
   method: "post",
   request: {
     body: jsonContentRequired(
-      insertProductDimensionsSchema,
-      "Product dimension to create",
+      insertProductSizesSchema,
+      "Product size to create",
     ),
   },
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      selectProductDimensionsSchema,
-      "Created product dimension",
+      selectProductSizesSchema,
+      "Created product size",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(insertProductDimensionsSchema),
+      createErrorSchema(insertProductSizesSchema),
       "Validation error(s)",
     ),
   },
 })
 
 export const getOne = createRoute({
-  path: "/dimensions/{id}",
+  path: "/sizes/{id}",
   method: "get",
-  request: { params: ProductDimensionIdParamsSchema },
+  request: { params: ProductSizeIdParamsSchema },
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      selectProductDimensionsSchema,
-      "Requested product dimension",
+      selectProductSizesSchema,
+      "Requested product size",
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       notFoundSchema,
-      "Product dimension not found",
+      "Product size not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(ProductDimensionIdParamsSchema),
+      createErrorSchema(ProductSizeIdParamsSchema),
       "Invalid id error",
     ),
   },
 })
 
 export const patch = createRoute({
-  path: "/dimensions/{id}",
+  path: "/sizes/{id}",
   method: "patch",
   request: {
-    params: ProductDimensionIdParamsSchema,
+    params: ProductSizeIdParamsSchema,
     body: jsonContentRequired(
-      patchProductDimensionsSchema,
-      "Product dimension updates",
+      patchProductSizesSchema,
+      "Product size updates",
     ),
   },
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      selectProductDimensionsSchema,
-      "Updated product dimension",
+      selectProductSizesSchema,
+      "Updated product size",
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       notFoundSchema,
-      "Product dimension not found",
+      "Product size not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(patchProductDimensionsSchema).or(
-        createErrorSchema(ProductDimensionIdParamsSchema),
+      createErrorSchema(patchProductSizesSchema).or(
+        createErrorSchema(ProductSizeIdParamsSchema),
       ),
       "Validation error(s)",
     ),
@@ -101,18 +101,18 @@ export const patch = createRoute({
 })
 
 export const remove = createRoute({
-  path: "/dimensions/{id}",
+  path: "/sizes/{id}",
   method: "delete",
-  request: { params: ProductDimensionIdParamsSchema },
+  request: { params: ProductSizeIdParamsSchema },
   tags,
   responses: {
-    [HttpStatusCodes.NO_CONTENT]: { description: "Product dimension deleted" },
+    [HttpStatusCodes.NO_CONTENT]: { description: "Product size deleted" },
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       notFoundSchema,
-      "Product dimension not found",
+      "Product size not found",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(ProductDimensionIdParamsSchema),
+      createErrorSchema(ProductSizeIdParamsSchema),
       "Invalid id error",
     ),
   },

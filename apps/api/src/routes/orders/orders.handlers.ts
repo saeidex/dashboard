@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm"
 import * as HttpStatusCodes from "stoker/http-status-codes"
 import * as HttpStatusPhrases from "stoker/http-status-phrases"
 
-import type { DimensionUnit } from "@/api/db/schema"
+import type { SizeUnit } from "@/api/db/schema"
 import type { AppRouteHandler } from "@/api/lib/types"
 
 import db from "@/api/db"
@@ -18,22 +18,22 @@ import type {
   RemoveRoute,
 } from "./orders.routes"
 
-function serializeDimension(dimension: any): {
+function serializeSize(size: any): {
   id: number
   name: string
   length: number
   width: number
   height: number
-  unit: DimensionUnit
+  unit: SizeUnit
   description: string | null
   createdAt: string
   updatedAt: string
 } | null {
-  if (!dimension)
+  if (!size)
     return null
   return {
-    ...dimension,
-    unit: dimension.unit as DimensionUnit,
+    ...size,
+    unit: size.unit as SizeUnit,
   }
 }
 
@@ -44,7 +44,7 @@ function serializeOrderWithDetails(order: any) {
       ...item,
       product: {
         ...item.product,
-        dimension: serializeDimension(item.product.dimension),
+        size: serializeSize(item.product.size),
       },
     })),
   }
@@ -62,7 +62,7 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
         with: {
           product: {
             with: {
-              dimension: true,
+              size: true,
             },
           },
         },
@@ -124,7 +124,7 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
         with: {
           product: {
             with: {
-              dimension: true,
+              size: true,
             },
           },
         },

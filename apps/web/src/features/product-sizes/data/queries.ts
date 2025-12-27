@@ -1,4 +1,4 @@
-import type { insertProductDimensionsSchema, patchProductDimensionsSchema } from "@crm/api/schema";
+import type { insertProductSizesSchema, patchProductSizesSchema } from "@crm/api/schema";
 
 import { queryOptions } from "@tanstack/react-query";
 
@@ -6,23 +6,23 @@ import apiClient from "@/web/lib/api-client";
 import formatApiError from "@/web/lib/format-api-error";
 
 export const queryKeys = {
-  LIST_DIMENSIONS: { queryKey: ["list-dimensions"] },
-  LIST_DIMENSION: (id: number) => ({ queryKey: [`list-dimension-${id}`] }),
+  LIST_DIMENSIONS: { queryKey: ["list-sizes"] },
+  LIST_DIMENSION: (id: number) => ({ queryKey: [`list-size-${id}`] }),
 };
 
-export const dimensionsQueryOptions = queryOptions({
+export const sizesQueryOptions = queryOptions({
   ...queryKeys.LIST_DIMENSIONS,
   queryFn: async () => {
-    const response = await apiClient.api.dimensions.$get();
+    const response = await apiClient.api.sizes.$get();
     return response.json();
   },
 });
 
-export function createDimensionQueryOptions(id: number) {
+export function createSizeQueryOptions(id: number) {
   return queryOptions({
     ...queryKeys.LIST_DIMENSION(id),
     queryFn: async () => {
-      const response = await apiClient.api.dimensions[":id"].$get({
+      const response = await apiClient.api.sizes[":id"].$get({
         param: {
           id,
         },
@@ -40,9 +40,9 @@ export function createDimensionQueryOptions(id: number) {
   });
 }
 
-export async function createDimension(dimension: insertProductDimensionsSchema) {
-  const response = await apiClient.api.dimensions.$post({
-    json: dimension,
+export async function createSize(size: insertProductSizesSchema) {
+  const response = await apiClient.api.sizes.$post({
+    json: size,
   });
   const json = await response.json();
   if ("success" in json) {
@@ -52,8 +52,8 @@ export async function createDimension(dimension: insertProductDimensionsSchema) 
   return json;
 }
 
-export async function deleteDimension(id: number) {
-  const response = await apiClient.api.dimensions[":id"].$delete({
+export async function deleteSize(id: number) {
+  const response = await apiClient.api.sizes[":id"].$delete({
     param: {
       id,
     },
@@ -68,12 +68,12 @@ export async function deleteDimension(id: number) {
   }
 }
 
-export async function updateDimension({ id, dimension }: { id: number; dimension: patchProductDimensionsSchema }) {
-  const response = await apiClient.api.dimensions[":id"].$patch({
+export async function updateSize({ id, size }: { id: number; size: patchProductSizesSchema }) {
+  const response = await apiClient.api.sizes[":id"].$patch({
     param: {
       id,
     },
-    json: dimension,
+    json: size,
   });
   if (response.status !== 200) {
     const json = await response.json();

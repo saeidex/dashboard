@@ -1,1 +1,1 @@
-ALTER TABLE `products` ADD `dimension` text;
+ALTER TABLE `products` ADD `size` text;

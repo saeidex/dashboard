@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "8f02ebc5-7f77-4a9c-be12-2e2e914b7366",
-  "prevId": "c3909780-1d4f-4d6a-9871-d941428b9681",
+  "id": "ec2f58b9-5710-41b4-b0a9-e19cb658fa0f",
+  "prevId": "8f02ebc5-7f77-4a9c-be12-2e2e914b7366",
   "tables": {
     "accounts": {
       "name": "accounts",
@@ -794,8 +794,8 @@
           "autoincrement": false,
           "default": "'BDT'"
         },
-        "base_price": {
-          "name": "base_price",
+        "retail_price": {
+          "name": "retail_price",
           "type": "real",
           "primaryKey": false,
           "notNull": true,
@@ -942,6 +942,73 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
+    "product_sizes": {
+      "name": "product_sizes",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "length": {
+          "name": "length",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "width": {
+          "name": "width",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "height": {
+          "name": "height",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "unit": {
+          "name": "unit",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'M'"
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
     "products": {
       "name": "products",
       "columns": {
@@ -980,15 +1047,15 @@
           "notNull": true,
           "autoincrement": false
         },
-        "size": {
-          "name": "size",
-          "type": "text",
+        "size_id": {
+          "name": "size_id",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "base_price": {
-          "name": "base_price",
+        "retail_price": {
+          "name": "retail_price",
           "type": "real",
           "primaryKey": false,
           "notNull": true,
@@ -1058,6 +1125,13 @@
           ],
           "isUnique": false
         },
+        "idx_products_size_id": {
+          "name": "idx_products_size_id",
+          "columns": [
+            "size_id"
+          ],
+          "isUnique": false
+        },
         "idx_products_status": {
           "name": "idx_products_status",
           "columns": [
@@ -1079,6 +1153,19 @@
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
+        },
+        "products_size_id_product_sizes_id_fk": {
+          "name": "products_size_id_product_sizes_id_fk",
+          "tableFrom": "products",
+          "tableTo": "product_sizes",
+          "columnsFrom": [
+            "size_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1091,7 +1178,11 @@
   "_meta": {
     "schemas": {},
     "tables": {},
-    "columns": {}
+    "columns": {
+      "\"orders\".\"base_price\"": "\"orders\".\"retail_price\"",
+      "\"products\".\"size\"": "\"products\".\"size_id\"",
+      "\"products\".\"base_price\"": "\"products\".\"retail_price\""
+    }
   },
   "internal": {
     "indexes": {}

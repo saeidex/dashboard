@@ -22,11 +22,11 @@ import { Route as authOtpRouteImport } from './routes/(auth)/otp'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
+import { Route as AuthenticatedSizesIndexRouteImport } from './routes/_authenticated/sizes/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated/products/index'
 import { Route as AuthenticatedOrdersIndexRouteImport } from './routes/_authenticated/orders/index'
 import { Route as AuthenticatedEmployeesIndexRouteImport } from './routes/_authenticated/employees/index'
-import { Route as AuthenticatedDimensionsIndexRouteImport } from './routes/_authenticated/dimensions/index'
 import { Route as AuthenticatedCustomersIndexRouteImport } from './routes/_authenticated/customers/index'
 import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated/categories/index'
 import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
@@ -100,6 +100,11 @@ const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
   path: '/users/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSizesIndexRoute = AuthenticatedSizesIndexRouteImport.update({
+  id: '/sizes/',
+  path: '/sizes/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSettingsIndexRoute =
   AuthenticatedSettingsIndexRouteImport.update({
     id: '/',
@@ -122,12 +127,6 @@ const AuthenticatedEmployeesIndexRoute =
   AuthenticatedEmployeesIndexRouteImport.update({
     id: '/employees/',
     path: '/employees/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedDimensionsIndexRoute =
-  AuthenticatedDimensionsIndexRouteImport.update({
-    id: '/dimensions/',
-    path: '/dimensions/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedCustomersIndexRoute =
@@ -190,11 +189,11 @@ export interface FileRoutesByFullPath {
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/categories': typeof AuthenticatedCategoriesIndexRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
-  '/dimensions': typeof AuthenticatedDimensionsIndexRoute
   '/employees': typeof AuthenticatedEmployeesIndexRoute
   '/orders': typeof AuthenticatedOrdersIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
+  '/sizes': typeof AuthenticatedSizesIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/accounts/expenses': typeof AuthenticatedAccountsExpensesIndexRoute
 }
@@ -215,11 +214,11 @@ export interface FileRoutesByTo {
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/categories': typeof AuthenticatedCategoriesIndexRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
-  '/dimensions': typeof AuthenticatedDimensionsIndexRoute
   '/employees': typeof AuthenticatedEmployeesIndexRoute
   '/orders': typeof AuthenticatedOrdersIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
+  '/sizes': typeof AuthenticatedSizesIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/accounts/expenses': typeof AuthenticatedAccountsExpensesIndexRoute
 }
@@ -243,11 +242,11 @@ export interface FileRoutesById {
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/_authenticated/categories/': typeof AuthenticatedCategoriesIndexRoute
   '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
-  '/_authenticated/dimensions/': typeof AuthenticatedDimensionsIndexRoute
   '/_authenticated/employees/': typeof AuthenticatedEmployeesIndexRoute
   '/_authenticated/orders/': typeof AuthenticatedOrdersIndexRoute
   '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
+  '/_authenticated/sizes/': typeof AuthenticatedSizesIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
   '/_authenticated/accounts/expenses/': typeof AuthenticatedAccountsExpensesIndexRoute
 }
@@ -271,11 +270,11 @@ export interface FileRouteTypes {
     | '/settings/display'
     | '/categories'
     | '/customers'
-    | '/dimensions'
     | '/employees'
     | '/orders'
     | '/products'
     | '/settings/'
+    | '/sizes'
     | '/users'
     | '/accounts/expenses'
   fileRoutesByTo: FileRoutesByTo
@@ -296,11 +295,11 @@ export interface FileRouteTypes {
     | '/settings/display'
     | '/categories'
     | '/customers'
-    | '/dimensions'
     | '/employees'
     | '/orders'
     | '/products'
     | '/settings'
+    | '/sizes'
     | '/users'
     | '/accounts/expenses'
   id:
@@ -323,11 +322,11 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/display'
     | '/_authenticated/categories/'
     | '/_authenticated/customers/'
-    | '/_authenticated/dimensions/'
     | '/_authenticated/employees/'
     | '/_authenticated/orders/'
     | '/_authenticated/products/'
     | '/_authenticated/settings/'
+    | '/_authenticated/sizes/'
     | '/_authenticated/users/'
     | '/_authenticated/accounts/expenses/'
   fileRoutesById: FileRoutesById
@@ -438,6 +437,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsersIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/sizes/': {
+      id: '/_authenticated/sizes/'
+      path: '/sizes'
+      fullPath: '/sizes'
+      preLoaderRoute: typeof AuthenticatedSizesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/settings/': {
       id: '/_authenticated/settings/'
       path: '/'
@@ -464,13 +470,6 @@ declare module '@tanstack/react-router' {
       path: '/employees'
       fullPath: '/employees'
       preLoaderRoute: typeof AuthenticatedEmployeesIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/dimensions/': {
-      id: '/_authenticated/dimensions/'
-      path: '/dimensions'
-      fullPath: '/dimensions'
-      preLoaderRoute: typeof AuthenticatedDimensionsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/customers/': {
@@ -550,10 +549,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedOrdersIdRoute: typeof AuthenticatedOrdersIdRoute
   AuthenticatedCategoriesIndexRoute: typeof AuthenticatedCategoriesIndexRoute
   AuthenticatedCustomersIndexRoute: typeof AuthenticatedCustomersIndexRoute
-  AuthenticatedDimensionsIndexRoute: typeof AuthenticatedDimensionsIndexRoute
   AuthenticatedEmployeesIndexRoute: typeof AuthenticatedEmployeesIndexRoute
   AuthenticatedOrdersIndexRoute: typeof AuthenticatedOrdersIndexRoute
   AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
+  AuthenticatedSizesIndexRoute: typeof AuthenticatedSizesIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedAccountsExpensesIndexRoute: typeof AuthenticatedAccountsExpensesIndexRoute
 }
@@ -565,10 +564,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedOrdersIdRoute: AuthenticatedOrdersIdRoute,
   AuthenticatedCategoriesIndexRoute: AuthenticatedCategoriesIndexRoute,
   AuthenticatedCustomersIndexRoute: AuthenticatedCustomersIndexRoute,
-  AuthenticatedDimensionsIndexRoute: AuthenticatedDimensionsIndexRoute,
   AuthenticatedEmployeesIndexRoute: AuthenticatedEmployeesIndexRoute,
   AuthenticatedOrdersIndexRoute: AuthenticatedOrdersIndexRoute,
   AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
+  AuthenticatedSizesIndexRoute: AuthenticatedSizesIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
   AuthenticatedAccountsExpensesIndexRoute:
     AuthenticatedAccountsExpensesIndexRoute,
