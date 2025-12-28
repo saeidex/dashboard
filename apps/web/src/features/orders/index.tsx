@@ -1,5 +1,4 @@
-import { BookmarkFilledIcon } from "@radix-ui/react-icons";
-import { useQueries, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { Bookmark } from "lucide-react";
 

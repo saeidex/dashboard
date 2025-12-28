@@ -1,10 +1,6 @@
-import { BoxIcon } from "@radix-ui/react-icons";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { Bookmark, BookmarkPlus, Box, Package, Plus } from "lucide-react";
+import { BookmarkPlus, Package, Plus } from "lucide-react";
 
-import { Header } from "@/web/components/layout/header";
-import { Main } from "@/web/components/layout/main";
 import { Button } from "@/web/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/web/components/ui/empty";
 

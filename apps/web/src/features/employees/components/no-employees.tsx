@@ -1,4 +1,4 @@
-import { IdCard, Plus, UserRound } from "lucide-react";
+import { IdCard, Plus } from "lucide-react";
 
 import { Button } from "@/web/components/ui/button";
 import {
