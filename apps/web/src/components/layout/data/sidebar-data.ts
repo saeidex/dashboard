@@ -124,6 +124,11 @@ export const sidebarData: SidebarData = {
           icon: LayoutDashboard,
         },
         {
+          title: "Customers",
+          url: "/customers",
+          icon: UsersRound,
+        },
+        {
           title: "Orders",
           url: "/orders",
           icon: DollarSign,
@@ -147,11 +152,6 @@ export const sidebarData: SidebarData = {
           title: "Employees",
           url: "/employees",
           icon: IdCard,
-        },
-        {
-          title: "Customers",
-          url: "/customers",
-          icon: UsersRound,
         },
         {
           title: "Accounts",

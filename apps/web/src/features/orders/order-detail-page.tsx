@@ -12,14 +12,14 @@ import { OrdersDialogs } from "./components/orders-dialogs";
 import { OrdersProvider, useOrders } from "./components/orders-provider";
 import { createOrderQueryOptions } from "./data/queries";
 
-const route = getRouteApi("/_authenticated/orders/$id");
+const route = getRouteApi("/_authenticated/orders/$customerId/$id");
 
 const PrimaryButtons = () => {
   const { setOpen, setCurrentRow } = useOrders();
   const { printOrder, downloadOrderPdf } = useOrderPrint();
 
-  const { id } = route.useParams();
-  const { data: order } = useSuspenseQuery(createOrderQueryOptions(id));
+  const params = route.useParams();
+  const { data: order } = useSuspenseQuery(createOrderQueryOptions(params.id));
 
   const handlePrint = () => printOrder(order);
 

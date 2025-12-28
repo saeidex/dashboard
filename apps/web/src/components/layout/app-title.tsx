@@ -18,7 +18,7 @@ export function AppTitle() {
       <SidebarMenuItem>
         <SidebarMenuButton
           size="lg"
-          className="gap-0 py-0 hover:bg-transparent active:bg-transparent"
+          className="gap-0 py-0 hover:bg-background hover:text-foreground"
           asChild
         >
           <div>

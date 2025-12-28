@@ -28,7 +28,7 @@ export function OrdersDialogs() {
   return (
     <>
       <OrdersActionDialog
-        key="user-add"
+        key="order-add"
         open={open === "add"}
         onOpenChange={() => setOpen("add")}
       />
@@ -36,7 +36,7 @@ export function OrdersDialogs() {
       {currentRow && (
         <>
           <OrdersActionDialog
-            key={`user-edit-${currentRow.id}`}
+            key={`order-edit-${currentRow.id}`}
             open={open === "edit"}
             onOpenChange={() => {
               setOpen("edit");

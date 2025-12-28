@@ -24,13 +24,6 @@ import {
   FormMessage,
 } from "@/web/components/ui/form";
 import { Input } from "@/web/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/web/components/ui/select";
 import { Textarea } from "@/web/components/ui/textarea";
 
 import type { Size } from "../data/schema";
@@ -178,7 +171,7 @@ export function SizesActionDialog({
                   <FormItem>
                     <FormLabel>Unit *</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="M"/>
+                      <Input {...field} placeholder="M" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

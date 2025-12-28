@@ -57,8 +57,11 @@ export const ordersColumns: ColumnDef<Order>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Order ID" />
     ),
-    cell: ({ cell }) => (
-      <OrderDetailsPageNavigatorButton id={cell.getValue<Order["id"]>()} />
+    cell: ({ cell, row }) => (
+      <OrderDetailsPageNavigatorButton
+        id={cell.getValue<Order["id"]>()}
+        customerId={row.original.customerId}
+      />
     ),
     meta: {
       className: cn(

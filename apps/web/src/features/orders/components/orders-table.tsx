@@ -39,7 +39,7 @@ import { DataTableBulkActions } from "./data-table-bulk-actions";
 import { OrderExpandedPanel } from "./order-expanded-panel";
 import { ordersColumns as columns } from "./orders-columns";
 
-const route = getRouteApi("/_authenticated/orders/");
+const route = getRouteApi("/_authenticated/orders/$customerId");
 
 export function OrdersTable() {
   // Local UI-only states
@@ -52,9 +52,13 @@ export function OrdersTable() {
   ]);
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const navigate = route.useNavigate();
+  const params = route.useParams();
   const search = route.useSearch();
 
-  const { data: { rows: data, rowCount, pageCount } } = useSuspenseQuery(createOrdersQueryOptions(search));
+  const { data: { rows: data, rowCount, pageCount } } = useSuspenseQuery(createOrdersQueryOptions({
+    ...search,
+    customerId: params.customerId,
+  }));
 
   // Local state management for table (uncomment to use local-only state, not synced with URL)
   // const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>([])

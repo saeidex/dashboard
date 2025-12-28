@@ -32,7 +32,7 @@ type DataTableRowActionsProps = {
   row: Row<Order>;
 };
 
-const route = getRouteApi("/_authenticated/orders/");
+const route = getRouteApi("/_authenticated/orders/$customerId");
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const { setOpen, setCurrentRow } = useOrders();

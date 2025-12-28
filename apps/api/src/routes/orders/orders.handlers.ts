@@ -1,5 +1,5 @@
 import { createId } from "@paralleldrive/cuid2"
-import { and, eq } from "drizzle-orm"
+import { and, eq, sql } from "drizzle-orm"
 import * as HttpStatusCodes from "stoker/http-status-codes"
 import * as HttpStatusPhrases from "stoker/http-status-phrases"
 
@@ -51,9 +51,12 @@ function serializeOrderWithDetails(order: any) {
 }
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
-  const { pageIndex = 0, pageSize = 10 } = c.req.valid("query")
+  const { pageIndex = 0, pageSize = 10, customerId } = c.req.valid("query")
 
   const data = await db.query.orders.findMany({
+    where: (orders, { eq, and }) => {
+      return customerId ? and(eq(orders.customerId, customerId)) : undefined
+    },
     limit: pageSize,
     offset: pageIndex * pageSize,
     with: {
@@ -70,7 +73,15 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
     },
   })
 
-  const rowCount = await db.$count(orders)
+  const rowCount = await db
+    .select({
+      count: sql<number>`count(*)`.mapWith(Number),
+    })
+    .from(orders)
+    .where(and(
+      customerId ? eq(orders.customerId, customerId) : undefined,
+    ))
+    .then(res => res[0]?.count ?? 0)
 
   return c.json({
     rows: data.map(serializeOrderWithDetails),
