@@ -14,17 +14,13 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useQuery } from "@tanstack/react-query";
-import { Bookmark, BookmarkX, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import { Button } from "@/web/components/ui/button";
 import { Card, CardContent } from "@/web/components/ui/card";
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/web/components/ui/empty";
 
 import type { Category } from "../data/schema";
 
 import { categoriesQueryOptions } from "../data/queries";
-import { useCategories } from "./categories-provider";
 import { CategoryActions } from "./category-actions";
 
 type SortableCategoryCardProps = {
@@ -79,29 +75,6 @@ function SortableCategoryCard({ category }: SortableCategoryCardProps) {
   );
 }
 
-export function NoCategories() {
-  const { setOpen } = useCategories();
-  return (
-    <Empty className="from-muted/50 to-background h-full bg-gradient-to-b from-30%">
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <BookmarkX />
-        </EmptyMedia>
-        <EmptyTitle>No Categories</EmptyTitle>
-        <EmptyDescription>
-          There no categories. Try adding a new category.
-        </EmptyDescription>
-      </EmptyHeader>
-      <EmptyContent>
-        <Button onClick={() => setOpen("create")} variant="outline" className="hover:text-foreground" size="sm">
-          <Plus />
-          Add Category
-        </Button>
-      </EmptyContent>
-    </Empty>
-  );
-}
-
 export const CategoriesGrid = () => {
   const { data: productCategories } = useQuery(categoriesQueryOptions);
   const [items, setItems] = useState<Category[]>([]);
@@ -148,10 +121,6 @@ export const CategoriesGrid = () => {
       });
     }
   };
-
-  if (!productCategories || productCategories.length === 0) {
-    return <NoCategories />;
-  }
 
   return (
     <DndContext

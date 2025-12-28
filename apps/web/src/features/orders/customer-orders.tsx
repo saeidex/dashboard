@@ -1,14 +1,17 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { getRouteApi, notFound } from "@tanstack/react-router";
+import { getRouteApi } from "@tanstack/react-router";
 
 import { Header } from "@/web/components/layout/header";
 import { Main } from "@/web/components/layout/main";
 
 import { customersQueryOptions } from "../customers/data/queries";
+import { createProductsQueryOptions } from "../products/data/queries";
+import { NoOrders } from "./components/no-orders";
 import { OrdersDialogs } from "./components/orders-dialogs";
 import { OrdersPrimaryButtons } from "./components/orders-primary-buttons";
 import { OrdersProvider } from "./components/orders-provider";
 import { OrdersTable } from "./components/orders-table";
+import { createOrdersQueryOptions } from "./data/queries";
 
 const Route = getRouteApi("/_authenticated/orders/$customerId");
 
@@ -16,10 +19,30 @@ export const CustomerOrders = () => {
   const params = Route.useParams();
 
   const { data: customers } = useSuspenseQuery(customersQueryOptions);
+  const { data: orders } = useSuspenseQuery(createOrdersQueryOptions({ customerId: params.customerId }));
+  const { data: products } = useSuspenseQuery(createProductsQueryOptions());
+
   const customer = customers.find(c => c.id === params.customerId);
 
   if (!customer) {
-    throw notFound();
+    return <NoOrders reason="no-customers" />;
+  }
+
+  if (!products || products.length === 0) {
+    return (
+      <OrdersProvider>
+        <NoOrders reason="no-products" />
+      </OrdersProvider>
+    );
+  }
+
+  if (!orders || orders.rows.length === 0) {
+    return (
+      <OrdersProvider>
+        <NoOrders reason="no-orders" />
+        <OrdersDialogs />
+      </OrdersProvider>
+    );
   }
 
   return (

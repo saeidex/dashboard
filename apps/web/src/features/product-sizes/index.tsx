@@ -1,12 +1,27 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+
 import { Header } from "@/web/components/layout/header";
 import { Main } from "@/web/components/layout/main";
 
+import { categoriesQueryOptions } from "../product-categories/data/queries";
+import { NoSizes } from "./components/no-sizes";
 import { SizesDialogs } from "./components/sizes-dialogs";
 import { SizesGrid } from "./components/sizes-grid";
 import { SizesPrimaryButtons } from "./components/sizes-primary-buttons";
 import { SizesProvider } from "./components/sizes-provider";
 
 export function ProductSizes() {
+  const { data: sizes } = useSuspenseQuery(categoriesQueryOptions);
+
+  if (!sizes || sizes.length === 0) {
+    return (
+      <SizesProvider>
+        <NoSizes />
+        <SizesDialogs />
+      </SizesProvider>
+    );
+  }
+
   return (
     <SizesProvider>
       <Header fixed hideBreadcrumbs />

@@ -274,7 +274,7 @@ export function ProductsMutateDrawer({
                   </FormItem>
                 )}
               />
-              {/*
+
               <FormField
                 control={form.control}
                 name="sizeId"
@@ -289,7 +289,7 @@ export function ProductsMutateDrawer({
                         placeholder="Select size"
                         items={sizes.map(d => ({
                           value: d.id.toString(),
-                          label: `${d.length} x ${d.width} x ${d.height} ${d.unit}`,
+                          label: d.unit,
                         }))}
                       />
                       <Button
@@ -305,7 +305,7 @@ export function ProductsMutateDrawer({
                     <FormMessage />
                   </FormItem>
                 )}
-              /> */}
+              />
             </div>
             <div className="space-y-4 rounded-md border p-4">
               <h4 className="font-medium">Pricing Breakdown</h4>

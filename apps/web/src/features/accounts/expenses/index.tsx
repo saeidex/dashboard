@@ -1,3 +1,5 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+
 import { Header } from "@/web/components/layout/header";
 import { Main } from "@/web/components/layout/main";
 
@@ -5,8 +7,21 @@ import { ExpensesDialogs } from "./components/expenses-dialogs";
 import { ExpensesPrimaryButtons } from "./components/expenses-primary-buttons";
 import { ExpensesProvider } from "./components/expenses-provider";
 import { ExpensesTable } from "./components/expenses-table";
+import { NoExpenses } from "./components/no-expenses";
+import { expensesQueryOptions } from "./data/queries";
 
 export const Expenses = () => {
+  const { data: expenses } = useSuspenseQuery(expensesQueryOptions);
+
+  if (!expenses || expenses.length === 0) {
+    return (
+      <ExpensesProvider>
+        <NoExpenses />
+        <ExpensesDialogs />
+      </ExpensesProvider>
+    );
+  }
+
   return (
     <ExpensesProvider>
       <Header fixed hideBreadcrumbs />

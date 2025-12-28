@@ -1,3 +1,5 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+
 import { Header } from "@/web/components/layout/header";
 import { Main } from "@/web/components/layout/main";
 
@@ -5,8 +7,21 @@ import { EmployeesDialogs } from "./components/employees-dialogs";
 import { EmployeesPrimaryButtons } from "./components/employees-primary-buttons";
 import { EmployeesProvider } from "./components/employees-provider";
 import { EmployeesTable } from "./components/employees-table";
+import { NoEmployees } from "./components/no-employees";
+import { employeesQueryOptions } from "./data/queries";
 
 export function Employees() {
+  const { data: employees } = useSuspenseQuery(employeesQueryOptions);
+
+  if (!employees || employees.length === 0) {
+    return (
+      <EmployeesProvider>
+        <NoEmployees />
+        <EmployeesDialogs />
+      </EmployeesProvider>
+    );
+  }
+
   return (
     <EmployeesProvider>
       <Header fixed hideBreadcrumbs />

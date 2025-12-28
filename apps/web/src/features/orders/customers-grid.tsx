@@ -1,49 +1,16 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, UserCog2, UserRound } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
-import { Button } from "@/web/components/ui/button";
 import { Card, CardContent } from "@/web/components/ui/card";
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@/web/components/ui/empty";
 
 import { customersQueryOptions } from "../customers/data/queries";
-
-export function NoCustomers() {
-  return (
-    <Empty className="from-muted/50 to-background h-full bg-gradient-to-b from-30%">
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <UserRound />
-        </EmptyMedia>
-        <EmptyTitle>No Customers</EmptyTitle>
-        <EmptyDescription>
-          There no customers. Try adding a new customer.
-        </EmptyDescription>
-      </EmptyHeader>
-      <EmptyContent>
-        <Link to="/customers">
-          <Button variant="outline" size="sm">
-            <UserCog2 />
-            Manage Customers
-          </Button>
-        </Link>
-      </EmptyContent>
-    </Empty>
-  );
-}
 
 export function CustomersGrid() {
   const { data: customers } = useSuspenseQuery(customersQueryOptions);
 
   if (!customers || customers.length === 0) {
-    return <NoCustomers />;
+    return null;
   }
 
   return (
