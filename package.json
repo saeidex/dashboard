@@ -2,7 +2,7 @@
   "name": "crm",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@10.16.1",
+  "packageManager": "pnpm@10.26.2+sha512.0e308ff2005fc7410366f154f625f6631ab2b16b1d2e70238444dd6ae9d630a8482d92a451144debc492416896ed16f7b114a86ec68b8404b2443869e68ffda6",
   "license": "MIT",
   "scripts": {
     "build": "pnpm run -r build",
@@ -29,15 +29,18 @@
     "lint:ws": "pnpm dlx sherif@latest",
     "postinstall": "pnpm run lint:ws",
     "start:api": "pnpm -F @crm/api start",
-    "start:ngrok": "ngrok http 4173",
     "start:web": "pnpm -F @crm/web preview --host",
     "typecheck": "pnpm run -r --parallel typecheck",
-    "ui-add": "pnpm -F @crm/web ui-add",
-    "start": "pnpm --parallel start"
+    "ui-add": "pnpm -F @crm/web ui-add"
   },
   "devDependencies": {
     "@crm/eslint-config": "workspace:^",
     "eslint": "^9.36.0",
     "typescript": "^5.9.2"
+  },
+    "pnpm": {
+    "overrides": {
+      "vite": "npm:rolldown-vite@7.1.19"
+    }
   }
 }

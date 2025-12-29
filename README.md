@@ -1,10 +1,10 @@
 بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيمِ
 
-<p dir="rtl">Universal Packaging and Accessories CRM</p>
+<p dir="rtl">Dashboards</p>
 
 ## Template Author
 
-Crafted with 🤍 by [@satnaing](https://github.com/satnaing)
+[@satnaing](https://github.com/satnaing)
 
 ## License
 
@@ -12,7 +12,7 @@ Licensed under the [MIT License](https://choosealicense.com/licenses/mit/)
 
 ## Run on a single PC (without Docker)
 
-When you are the only person using the CRM on your own computer, you can keep everything lightweight and skip containers entirely. The API serves the SQLite database from the local filesystem and the web client ships a static build that runs in a browser.
+When you are the only person using the dashboard on your own computer, you can keep everything lightweight and skip containers entirely. The API serves the SQLite database from the local filesystem and the web client ships a static build that runs in a browser.
 
 👉 For a full walkthrough that covers prerequisite installs, directory layout, PM2 boot configuration, updates, and backups, read [`docs/self-hosting-guide.md`](./docs/self-hosting-guide.md).
 
