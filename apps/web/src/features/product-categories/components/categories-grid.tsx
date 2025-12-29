@@ -122,10 +122,6 @@ export const CategoriesGrid = () => {
     }
   };
 
-  if (!productCategories || productCategories.length === 0) {
-    return <p className="text-muted-foreground">No categories found.</p>;
-  }
-
   return (
     <DndContext
       sensors={sensors}

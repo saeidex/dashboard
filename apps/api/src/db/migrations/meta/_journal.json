@@ -26,29 +26,8 @@
     {
       "idx": 3,
       "version": "6",
-      "when": 1763716691164,
-      "tag": "0003_great_blue_marvel",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1763726305788,
-      "tag": "0004_slippery_multiple_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "6",
-      "when": 1763731425786,
-      "tag": "0005_burly_power_pack",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "6",
-      "when": 1763731532814,
-      "tag": "0006_fluffy_justin_hammer",
+      "when": 1766833050937,
+      "tag": "0003_faithful_wallop",
       "breakpoints": true
     }
   ]

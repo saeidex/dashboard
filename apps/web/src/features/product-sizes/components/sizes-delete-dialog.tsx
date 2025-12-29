@@ -14,28 +14,28 @@ import {
   AlertDialogTitle,
 } from "@/web/components/ui/alert-dialog";
 
-import type { Dimension } from "../data/schema";
+import type { Size } from "../data/schema";
 
-import { deleteDimension, queryKeys } from "../data/queries";
+import { deleteSize, queryKeys } from "../data/queries";
 
-type DimensionsDeleteDialogProps = {
-  currentRow: Dimension;
+type SizesDeleteDialogProps = {
+  currentRow: Size;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
-export function DimensionsDeleteDialog({
+export function SizesDeleteDialog({
   currentRow,
   open,
   onOpenChange,
-}: DimensionsDeleteDialogProps) {
+}: SizesDeleteDialogProps) {
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
-    mutationFn: deleteDimension,
+    mutationFn: deleteSize,
     onSuccess: () => {
       queryClient.invalidateQueries(queryKeys.LIST_DIMENSIONS);
-      toast.success("Dimension deleted successfully");
+      toast.success("Size deleted successfully");
       onOpenChange(false);
     },
   });
@@ -47,7 +47,7 @@ export function DimensionsDeleteDialog({
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete the
-            dimension
+            size
             {" "}
             {currentRow.length}
             {" "}

@@ -1,3 +1,5 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+
 import { Header } from "@/web/components/layout/header";
 import { Main } from "@/web/components/layout/main";
 
@@ -5,8 +7,21 @@ import { CustomersDialogs } from "./components/customers-dialogs";
 import { CustomersPrimaryButtons } from "./components/customers-primary-buttons";
 import { CustomersProvider } from "./components/customers-provider";
 import { CustomersTable } from "./components/customers-table";
+import { NoCustomers } from "./components/no-customers";
+import { customersQueryOptions } from "./data/queries";
 
 export const Customers = () => {
+  const { data: customers } = useSuspenseQuery(customersQueryOptions);
+
+  if (!customers || customers.length === 0) {
+    return (
+      <CustomersProvider>
+        <NoCustomers />
+        <CustomersDialogs />
+      </CustomersProvider>
+    );
+  }
+
   return (
     <CustomersProvider>
       <Header fixed hideBreadcrumbs />

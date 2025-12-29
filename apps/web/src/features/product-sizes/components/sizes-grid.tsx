@@ -19,16 +19,16 @@ import { useMemo, useState } from "react";
 import { Badge } from "@/web/components/ui/badge";
 import { Card, CardContent } from "@/web/components/ui/card";
 
-import type { Dimension } from "../data/schema";
+import type { Size } from "../data/schema";
 
-import { dimensionsQueryOptions } from "../data/queries";
-import { DimensionsActions } from "./dimensions-actions";
+import { sizesQueryOptions } from "../data/queries";
+import { SizesActions } from "./sizes-actions";
 
-type SortableDimensionCardProps = {
-  dimension: Dimension;
+type SortableSizeCardProps = {
+  size: Size;
 };
 
-function SortableDimensionCard({ dimension }: SortableDimensionCardProps) {
+function SortableSizeCard({ size }: SortableSizeCardProps) {
   const {
     attributes,
     listeners,
@@ -36,7 +36,7 @@ function SortableDimensionCard({ dimension }: SortableDimensionCardProps) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: dimension.id });
+  } = useSortable({ id: size.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -56,28 +56,28 @@ function SortableDimensionCard({ dimension }: SortableDimensionCardProps) {
           <div className="space-y-4">
             <div className="flex items-start justify-between gap-3">
               <Badge variant="secondary" className="text-xs font-medium">
-                {dimension.unit}
+                {size.unit}
               </Badge>
               <div className="opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                <DimensionsActions dimension={dimension} />
+                <SizesActions size={size} />
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="text-xl font-semibold text-foreground">
-                {dimension.length}
+                {size.length}
                 {" "}
                 ×
                 {" "}
-                {dimension.width}
+                {size.width}
                 {" "}
                 ×
                 {" "}
-                {dimension.height}
+                {size.height}
               </div>
-              {dimension.description && (
+              {size.description && (
                 <p className="line-clamp-2 text-sm text-muted-foreground">
-                  {dimension.description}
+                  {size.description}
                 </p>
               )}
             </div>
@@ -88,9 +88,9 @@ function SortableDimensionCard({ dimension }: SortableDimensionCardProps) {
   );
 }
 
-export function DimensionsGrid() {
-  const { data: dimensions } = useQuery(dimensionsQueryOptions);
-  const [items, setItems] = useState<Dimension[]>([]);
+export function SizesGrid() {
+  const { data: sizes } = useQuery(sizesQueryOptions);
+  const [items, setItems] = useState<Size[]>([]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -105,21 +105,21 @@ export function DimensionsGrid() {
 
   // Update items when data changes or initialize
   const displayItems = useMemo(() => {
-    if (!dimensions)
+    if (!sizes)
       return [];
     if (items.length === 0)
-      return dimensions;
+      return sizes;
 
     // If the data changed (e.g., new item added), merge it
     const itemIds = new Set(items.map(i => i.id));
-    const newItems = dimensions.filter(dim => !itemIds.has(dim.id));
+    const newItems = sizes.filter(dim => !itemIds.has(dim.id));
 
     if (newItems.length > 0) {
       return [...items, ...newItems];
     }
 
     return items;
-  }, [dimensions, items]);
+  }, [sizes, items]);
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
@@ -135,10 +135,10 @@ export function DimensionsGrid() {
     }
   };
 
-  if (!dimensions || dimensions.length === 0) {
+  if (!sizes || sizes.length === 0) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">No dimensions found</p>
+        <p className="text-muted-foreground">No sizes found</p>
       </div>
     );
   }
@@ -151,8 +151,8 @@ export function DimensionsGrid() {
     >
       <SortableContext items={displayItems.map(item => item.id)}>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {displayItems.map(dimension => (
-            <SortableDimensionCard key={dimension.id} dimension={dimension} />
+          {displayItems.map(size => (
+            <SortableSizeCard key={size.id} size={size} />
           ))}
         </div>
       </SortableContext>

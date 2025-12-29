@@ -250,19 +250,19 @@ export function OrderExpandedPanel({ order }: OrderExpandedPanelProps) {
                             </p>
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            Dimension:
+                            Size:
                             {" "}
-                            {item.product.dimension?.length}
-                            {" "}
-                            ×
-                            {" "}
-                            {item.product.dimension?.width}
+                            {item.product.size?.length}
                             {" "}
                             ×
                             {" "}
-                            {item.product.dimension?.height}
+                            {item.product.size?.width}
                             {" "}
-                            {item.product.dimension?.unit}
+                            ×
+                            {" "}
+                            {item.product.size?.height}
+                            {" "}
+                            {item.product.size?.unit}
                           </div>
                           <div className="flex flex-wrap items-center gap-1.5 text-[0.7rem] text-muted-foreground">
                             <Badge variant="outline" className="bg-muted/40 text-[0.65rem] uppercase tracking-wide">

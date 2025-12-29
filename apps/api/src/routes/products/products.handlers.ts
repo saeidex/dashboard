@@ -54,7 +54,7 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
     offset,
     orderBy: (p, { desc }) => [desc(p.createdAt)],
     with: {
-      dimension: true,
+      size: true,
     },
   })
 
@@ -72,7 +72,7 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const row = await db.query.products.findFirst({
     where: (p, { eq }) => eq(p.id, id),
     with: {
-      dimension: true,
+      size: true,
     },
   })
 

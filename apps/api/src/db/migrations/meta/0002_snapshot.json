@@ -980,8 +980,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "dimension": {
-          "name": "dimension",
+        "size": {
+          "name": "size",
           "type": "text",
           "primaryKey": false,
           "notNull": false,

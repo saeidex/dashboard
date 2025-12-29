@@ -18,7 +18,7 @@ export function AppTitle() {
       <SidebarMenuItem>
         <SidebarMenuButton
           size="lg"
-          className="gap-0 py-0 hover:bg-transparent active:bg-transparent"
+          className="gap-0 py-0 hover:bg-background hover:text-foreground"
           asChild
         >
           <div>
@@ -27,8 +27,8 @@ export function AppTitle() {
               onClick={() => setOpenMobile(false)}
               className="grid flex-1 text-start text-sm leading-tight"
             >
-              <span className="truncate font-bold">Universal</span>
-              <span className="truncate text-xs">Packaging & Accessories</span>
+              <span className="truncate font-bold">Takumitex</span>
+              <span className="truncate text-xs">Sourcing Hub</span>
             </Link>
             <ToggleSidebar />
           </div>

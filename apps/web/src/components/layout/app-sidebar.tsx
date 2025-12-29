@@ -1,3 +1,5 @@
+import { redirect } from "@tanstack/react-router";
+
 import {
   Sidebar,
   SidebarContent,
@@ -19,6 +21,10 @@ export function AppSidebar() {
   const { collapsible, variant } = useLayout();
   const { display } = useSettingsStore();
   const user = useAuthStore(state => state.user);
+
+  if (!user) {
+    throw redirect({ to: "/sign-in" });
+  }
 
   const filteredNavGroups = sidebarData.navGroups
     .map((group) => {
@@ -43,7 +49,7 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user ?? sidebarData.user} />
+        <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

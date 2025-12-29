@@ -1,8 +1,9 @@
-import { and, eq } from "drizzle-orm"
+import { createId } from "@paralleldrive/cuid2"
+import { and, eq, sql } from "drizzle-orm"
 import * as HttpStatusCodes from "stoker/http-status-codes"
 import * as HttpStatusPhrases from "stoker/http-status-phrases"
 
-import type { DimensionUnit } from "@/api/db/schema"
+import type { SizeUnit } from "@/api/db/schema"
 import type { AppRouteHandler } from "@/api/lib/types"
 
 import db from "@/api/db"
@@ -17,22 +18,22 @@ import type {
   RemoveRoute,
 } from "./orders.routes"
 
-function serializeDimension(dimension: any): {
+function serializeSize(size: any): {
   id: number
   name: string
   length: number
   width: number
   height: number
-  unit: DimensionUnit
+  unit: SizeUnit
   description: string | null
   createdAt: string
   updatedAt: string
 } | null {
-  if (!dimension)
+  if (!size)
     return null
   return {
-    ...dimension,
-    unit: dimension.unit as DimensionUnit,
+    ...size,
+    unit: size.unit as SizeUnit,
   }
 }
 
@@ -43,16 +44,19 @@ function serializeOrderWithDetails(order: any) {
       ...item,
       product: {
         ...item.product,
-        dimension: serializeDimension(item.product.dimension),
+        size: serializeSize(item.product.size),
       },
     })),
   }
 }
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
-  const { pageIndex = 0, pageSize = 10 } = c.req.valid("query")
+  const { pageIndex = 0, pageSize = 10, customerId } = c.req.valid("query")
 
   const data = await db.query.orders.findMany({
+    where: (orders, { eq, and }) => {
+      return customerId ? and(eq(orders.customerId, customerId)) : undefined
+    },
     limit: pageSize,
     offset: pageIndex * pageSize,
     with: {
@@ -61,7 +65,7 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
         with: {
           product: {
             with: {
-              dimension: true,
+              size: true,
             },
           },
         },
@@ -69,7 +73,15 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
     },
   })
 
-  const rowCount = await db.$count(orders)
+  const rowCount = await db
+    .select({
+      count: sql<number>`count(*)`.mapWith(Number),
+    })
+    .from(orders)
+    .where(and(
+      customerId ? eq(orders.customerId, customerId) : undefined,
+    ))
+    .then(res => res[0]?.count ?? 0)
 
   return c.json({
     rows: data.map(serializeOrderWithDetails),
@@ -122,7 +134,7 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
         with: {
           product: {
             with: {
-              dimension: true,
+              size: true,
             },
           },
         },

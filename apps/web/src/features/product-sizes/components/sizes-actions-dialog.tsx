@@ -1,6 +1,6 @@
 "use client";
 
-import { insertProductDimensionsSchema } from "@crm/api/schema";
+import { insertProductSizesSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -24,39 +24,29 @@ import {
   FormMessage,
 } from "@/web/components/ui/form";
 import { Input } from "@/web/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/web/components/ui/select";
 import { Textarea } from "@/web/components/ui/textarea";
 
-import type { Dimension } from "../data/schema";
+import type { Size } from "../data/schema";
 
-import { createDimension, queryKeys, updateDimension } from "../data/queries";
+import { createSize, queryKeys, updateSize } from "../data/queries";
 
-type DimensionActionDialogProps = {
-  currentRow?: Dimension;
+type SizeActionDialogProps = {
+  currentRow?: Size;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
-export function DimensionsActionDialog({
+export function SizesActionDialog({
   currentRow,
   open,
   onOpenChange,
-}: DimensionActionDialogProps) {
+}: SizeActionDialogProps) {
   const isEdit = !!currentRow;
-  const form = useForm<insertProductDimensionsSchema>({
-    resolver: zodResolver(insertProductDimensionsSchema),
+  const form = useForm<insertProductSizesSchema>({
+    resolver: zodResolver(insertProductSizesSchema),
     defaultValues: isEdit
       ? currentRow
       : {
-          length: 0,
-          width: 0,
-          height: 0,
           unit: "MM",
           description: "",
         },
@@ -65,22 +55,22 @@ export function DimensionsActionDialog({
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
-    mutationFn: createDimension,
+    mutationFn: createSize,
     onSuccess: () => {
       onOpenChange(false);
       form.reset();
       queryClient.invalidateQueries(queryKeys.LIST_DIMENSIONS);
-      toast.success(`Dimension created successfully`);
+      toast.success(`Size created successfully`);
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: updateDimension,
+    mutationFn: updateSize,
     onSuccess: () => {
       onOpenChange(false);
       form.reset();
       queryClient.invalidateQueries(queryKeys.LIST_DIMENSIONS);
-      toast.success(`Dimension updated successfully`);
+      toast.success(`Size updated successfully`);
     },
   });
 
@@ -92,22 +82,22 @@ export function DimensionsActionDialog({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="text-start">
           <DialogTitle>
-            {isEdit ? "Edit Dimension" : "Add New Dimension"}
+            {isEdit ? "Edit Size" : "Add New Size"}
           </DialogTitle>
           <DialogDescription>
             {isEdit
-              ? "Update the dimension here. "
-              : "Create new dimension here. "}
+              ? "Update the size here. "
+              : "Create new size here. "}
             Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <div className="h-fit w-[calc(100%+0.75rem)] max-h-[60vh] overflow-y-auto py-1 pe-3">
           <Form {...form}>
             <form
-              id="dimension-form"
+              id="size-form"
               onSubmit={form.handleSubmit((data) => {
                 isEdit
-                  ? updateMutation.mutate({ id: currentRow.id, dimension: data })
+                  ? updateMutation.mutate({ id: currentRow.id, size: data })
                   : createMutation.mutate(data);
               })}
               className="space-y-4 px-0.5"
@@ -118,13 +108,13 @@ export function DimensionsActionDialog({
                   name="length"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Length *</FormLabel>
+                      <FormLabel>Length</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           type="number"
-                          step="0.01"
-                          onChange={e => field.onChange(Number.parseFloat(e.target.value))}
+                          step={0.01}
+                          value={field.value ?? 0}
                           placeholder="0"
                         />
                       </FormControl>
@@ -138,13 +128,13 @@ export function DimensionsActionDialog({
                   name="width"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Width *</FormLabel>
+                      <FormLabel>Width</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           type="number"
-                          step="0.01"
-                          onChange={e => field.onChange(Number.parseFloat(e.target.value))}
+                          step={0.01}
+                          value={field.value ?? 0}
                           placeholder="0"
                         />
                       </FormControl>
@@ -158,13 +148,13 @@ export function DimensionsActionDialog({
                   name="height"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Height *</FormLabel>
+                      <FormLabel>Height</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           type="number"
-                          step="0.01"
-                          onChange={e => field.onChange(Number.parseFloat(e.target.value))}
+                          step={0.01}
+                          value={field.value ?? 0}
                           placeholder="0"
                         />
                       </FormControl>
@@ -180,20 +170,9 @@ export function DimensionsActionDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Unit *</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select unit" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="MM">MM (Millimeter)</SelectItem>
-                        <SelectItem value="CM">CM (Centimeter)</SelectItem>
-                        <SelectItem value="M">M (Meter)</SelectItem>
-                        <SelectItem value="IN">IN (Inch)</SelectItem>
-                        <SelectItem value="FT">FT (Feet)</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <Input {...field} placeholder="M" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -222,7 +201,7 @@ export function DimensionsActionDialog({
         <DialogFooter>
           <Button
             type="submit"
-            form="dimension-form"
+            form="size-form"
             disabled={createMutation.isPending || updateMutation.isPending}
           >
             {createMutation.isPending || updateMutation.isPending

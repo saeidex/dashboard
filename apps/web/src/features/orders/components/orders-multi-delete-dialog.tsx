@@ -23,7 +23,7 @@ type OrdersMultiDeleteDialogProps<TData> = {
 
 const CONFIRM_WORD = "DELETE";
 
-const route = getRouteApi("/_authenticated/orders/");
+const route = getRouteApi("/_authenticated/orders/$customerId");
 
 export function OrdersMultiDeleteDialog<TData>({
   open,

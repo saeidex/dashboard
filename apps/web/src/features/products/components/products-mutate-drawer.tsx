@@ -33,7 +33,7 @@ import {
 import type { Product } from "../data/schema";
 
 import { categoriesQueryOptions } from "../../product-categories/data/queries";
-import { dimensionsQueryOptions } from "../../product-dimensions/data/queries";
+import { sizesQueryOptions } from "../../product-sizes/data/queries";
 import { labels, statuses } from "../data/data";
 import { createProduct, queryKeys, updateProduct } from "../data/queries";
 
@@ -52,7 +52,7 @@ export function ProductsMutateDrawer({
 }: ProductMutateDrawerProps) {
   const isUpdate = !!currentRow;
   const { data: categories } = useSuspenseQuery(categoriesQueryOptions);
-  const { data: dimensions } = useSuspenseQuery(dimensionsQueryOptions);
+  const { data: sizes } = useSuspenseQuery(sizesQueryOptions);
 
   const form = useForm<insertProductsSchema>({
     resolver: zodResolver(insertProductsSchema),
@@ -274,21 +274,22 @@ export function ProductsMutateDrawer({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
-                name="dimensionId"
+                name="sizeId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Dimension</FormLabel>
+                    <FormLabel>Size</FormLabel>
                     <div className="flex items-center gap-2">
                       <SelectDropdown
                         isControlled
                         defaultValue={field.value?.toString() ?? ""}
                         onValueChange={v => field.onChange(v ? Number.parseInt(v) : undefined)}
-                        placeholder="Select dimension"
-                        items={dimensions.map(d => ({
+                        placeholder="Select size"
+                        items={sizes.map(d => ({
                           value: d.id.toString(),
-                          label: `${d.length} x ${d.width} x ${d.height} ${d.unit}`,
+                          label: d.unit,
                         }))}
                       />
                       <Button

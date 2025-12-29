@@ -9,24 +9,24 @@ import {
   DropdownMenuTrigger,
 } from "@/web/components/ui/dropdown-menu";
 
-import type { Dimension } from "../data/schema";
+import type { Size } from "../data/schema";
 
-import { useDimensions } from "./dimensions-provider";
+import { useSizes } from "./sizes-provider";
 
-type DimensionsActionsProps = {
-  dimension: Dimension;
+type SizesActionsProps = {
+  size: Size;
 };
 
-export function DimensionsActions({ dimension }: DimensionsActionsProps) {
-  const { setCurrentRow, setDialogType } = useDimensions();
+export function SizesActions({ size }: SizesActionsProps) {
+  const { setCurrentRow, setDialogType } = useSizes();
 
   const handleEdit = () => {
-    setCurrentRow(dimension);
+    setCurrentRow(size);
     setDialogType("update");
   };
 
   const handleDelete = () => {
-    setCurrentRow(dimension);
+    setCurrentRow(size);
     setDialogType("delete");
   };
 

@@ -3,6 +3,7 @@
 import { insertOrderWithItemsSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { notFound, useParams } from "@tanstack/react-router";
 import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -25,7 +26,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/web/components/ui/form";
-import { Input } from "@/web/components/ui/input";
+import { Textarea } from "@/web/components/ui/textarea";
 
 import type { Order } from "../data/schema";
 
@@ -50,6 +51,7 @@ export function OrdersActionDialog({
   open,
   onOpenChange,
 }: OrderActionDialogProps) {
+  const params = useParams({ from: "/_authenticated/orders/$customerId" });
   const { data: customers } = useSuspenseQuery(customersQueryOptions);
   const { data: products } = useSuspenseQuery(createProductsQueryOptions());
   const productsById = React.useMemo(() => new Map(products.map(product => [product.id, product])), [products]);
@@ -60,7 +62,7 @@ export function OrdersActionDialog({
     defaultValues: isEdit
       ? currentRow
       : {
-          customerId: "",
+          customerId: params.customerId,
           orderStatus: "pending",
           paymentStatus: "unpaid",
           paymentMethod: "cash",
@@ -204,6 +206,11 @@ export function OrdersActionDialog({
     }
   };
 
+  const customer = customers.find(c => c.id === params.customerId);
+  if (!customer) {
+    throw notFound();
+  }
+
   return (
     <Dialog
       open={open}
@@ -228,30 +235,13 @@ export function OrdersActionDialog({
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-4 px-0.5"
               >
-                <FormField
-                  control={form.control}
-                  name="customerId"
-                  render={({ field }) => (
-                    <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                      <FormLabel className="col-span-2 text-end">
-                        Customer
-                      </FormLabel>
-                      <SelectDropdown
-                        {...field}
-                        defaultValue={field.value}
-                        onValueChange={field.onChange}
-                        placeholder="Select customer"
-                        className="col-span-4"
-                        items={customers.map(v => ({
-                          label: v.name,
-                          value: v.id,
-                        }))}
-                        disabled={!customers.length}
-                      />
-                      <FormMessage className="col-span-4 col-start-3" />
-                    </FormItem>
-                  )}
-                />
+                <div className="grid grid-cols-6 items-center w-full space-y-0 gap-x-4 gap-y-1">
+                  <span className="col-span-2">
+                    Customer
+                  </span>
+                  <span>{customer.name}</span>
+                </div>
+
                 <FormField
                   control={form.control}
                   name="orderStatus"
@@ -331,7 +321,7 @@ export function OrdersActionDialog({
                     <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
                       <FormLabel className="col-span-2 text-end">Notes</FormLabel>
                       <FormControl>
-                        <Input
+                        <Textarea
                           {...field}
                           value={field.value ?? ""}
                           placeholder="Additional notes"

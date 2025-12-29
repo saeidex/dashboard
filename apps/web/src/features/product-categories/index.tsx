@@ -1,3 +1,5 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+
 import { Header } from "@/web/components/layout/header";
 import { Main } from "@/web/components/layout/main";
 
@@ -5,8 +7,21 @@ import { CategoriesDialogs } from "./components/categories-dialogs";
 import { CategoriesGrid } from "./components/categories-grid";
 import { CategoriesPrimaryButtons } from "./components/categories-primary-button";
 import { CategoriesProvider } from "./components/categories-provider";
+import { NoCategories } from "./components/no-categories";
+import { categoriesQueryOptions } from "./data/queries";
 
 export function ProductCagories() {
+  const { data: categories } = useSuspenseQuery(categoriesQueryOptions);
+
+  if (!categories || categories.length === 0) {
+    return (
+      <CategoriesProvider>
+        <NoCategories />
+        <CategoriesDialogs />
+      </CategoriesProvider>
+    );
+  }
+
   return (
     <CategoriesProvider>
       <Header fixed hideBreadcrumbs />

@@ -1,11 +1,11 @@
 "use client";
 
-import { DimensionsActionDialog } from "./dimensions-actions-dialog";
-import { DimensionsDeleteDialog } from "./dimensions-delete-dialog";
-import { useDimensions } from "./dimensions-provider";
+import { SizesActionDialog } from "./sizes-actions-dialog";
+import { SizesDeleteDialog } from "./sizes-delete-dialog";
+import { useSizes } from "./sizes-provider";
 
-export function DimensionsDialogs() {
-  const { open, setOpen, currentRow, setCurrentRow } = useDimensions();
+export function SizesDialogs() {
+  const { open, setOpen, currentRow, setCurrentRow } = useSizes();
 
   const isCreateDialogOpen = open === "create";
   const isUpdateDialogOpen = open === "update";
@@ -18,7 +18,7 @@ export function DimensionsDialogs() {
 
   return (
     <>
-      <DimensionsActionDialog
+      <SizesActionDialog
         key="create"
         open={isCreateDialogOpen}
         onOpenChange={handleClose}
@@ -26,14 +26,14 @@ export function DimensionsDialogs() {
 
       {currentRow && (
         <>
-          <DimensionsActionDialog
+          <SizesActionDialog
             key={`update-${currentRow.id}`}
             open={isUpdateDialogOpen}
             onOpenChange={handleClose}
             currentRow={currentRow}
           />
 
-          <DimensionsDeleteDialog
+          <SizesDeleteDialog
             key={`delete-${currentRow.id}`}
             open={isDeleteDialogOpen}
             onOpenChange={handleClose}

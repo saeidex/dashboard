@@ -1,19 +1,16 @@
+import { SizeIcon } from "@radix-ui/react-icons";
 import {
-  AudioWaveform,
   Bookmark,
   Bug,
-  Command,
   Construction,
   DollarSign,
   FileX,
-  GalleryVerticalEnd,
   IdCard,
   LayoutDashboard,
   Lock,
   Monitor,
   Package,
   Palette,
-  Ruler,
   ServerOff,
   Settings,
   ShieldCheck,
@@ -89,34 +86,34 @@ const devOnlyPages = () => {
 };
 
 export const sidebarData: SidebarData = {
-  user: {
-    id: "1",
-    name: "Example",
-    email: "example@mail.com",
-    image: "/avatars/example.jpg",
-    emailVerified: false,
-    role: "admin",
-    banned: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  teams: [
-    {
-      name: "Shadcn Admin",
-      logo: Command,
-      plan: "Vite + ShadcnUI",
-    },
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-  ],
+//   user: {
+//     id: "1",
+//     name: "Example",
+//     email: "example@mail.com",
+//     image: "/avatars/example.jpg",
+//     emailVerified: false,
+//     role: "admin",
+//     banned: false,
+//     createdAt: new Date(),
+//     updatedAt: new Date(),
+//   },
+//   teams: [
+//     {
+//       name: "Shadcn Admin",
+//       logo: Command,
+//       plan: "Vite + ShadcnUI",
+//     },
+//     {
+//       name: "Acme Inc",
+//       logo: GalleryVerticalEnd,
+//       plan: "Enterprise",
+//     },
+//     {
+//       name: "Acme Corp.",
+//       logo: AudioWaveform,
+//       plan: "Startup",
+//     },
+//   ],
   navGroups: [
     {
       title: "General",
@@ -127,34 +124,34 @@ export const sidebarData: SidebarData = {
           icon: LayoutDashboard,
         },
         {
+          title: "Customers",
+          url: "/customers",
+          icon: UsersRound,
+        },
+        {
           title: "Orders",
           url: "/orders",
           icon: DollarSign,
         },
         {
-          title: "Products",
+          title: "Samples",
           url: "/products",
           icon: Package,
         },
         {
-          title: "Product Categories",
+          title: "Sample's Categories",
           url: "/categories",
           icon: Bookmark,
         },
         {
-          title: "Product Dimensions",
-          url: "/dimensions",
-          icon: Ruler,
+          title: "Sample Sizes",
+          url: "/sizes",
+          icon: SizeIcon,
         },
         {
           title: "Employees",
           url: "/employees",
           icon: IdCard,
-        },
-        {
-          title: "Customers",
-          url: "/customers",
-          icon: UsersRound,
         },
         {
           title: "Accounts",

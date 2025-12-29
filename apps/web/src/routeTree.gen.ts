@@ -22,18 +22,20 @@ import { Route as authOtpRouteImport } from './routes/(auth)/otp'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
+import { Route as AuthenticatedSizesIndexRouteImport } from './routes/_authenticated/sizes/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated/products/index'
 import { Route as AuthenticatedOrdersIndexRouteImport } from './routes/_authenticated/orders/index'
 import { Route as AuthenticatedEmployeesIndexRouteImport } from './routes/_authenticated/employees/index'
-import { Route as AuthenticatedDimensionsIndexRouteImport } from './routes/_authenticated/dimensions/index'
 import { Route as AuthenticatedCustomersIndexRouteImport } from './routes/_authenticated/customers/index'
 import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated/categories/index'
 import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
-import { Route as AuthenticatedOrdersIdRouteImport } from './routes/_authenticated/orders/$id'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
+import { Route as AuthenticatedOrdersCustomerIdRouteRouteImport } from './routes/_authenticated/orders/$customerId.route'
+import { Route as AuthenticatedOrdersCustomerIdIndexRouteImport } from './routes/_authenticated/orders/$customerId.index'
 import { Route as AuthenticatedAccountsExpensesIndexRouteImport } from './routes/_authenticated/accounts/expenses/index'
+import { Route as AuthenticatedOrdersCustomerIdIdRouteImport } from './routes/_authenticated/orders/$customerId.$id'
 
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
@@ -100,6 +102,11 @@ const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
   path: '/users/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSizesIndexRoute = AuthenticatedSizesIndexRouteImport.update({
+  id: '/sizes/',
+  path: '/sizes/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSettingsIndexRoute =
   AuthenticatedSettingsIndexRouteImport.update({
     id: '/',
@@ -122,12 +129,6 @@ const AuthenticatedEmployeesIndexRoute =
   AuthenticatedEmployeesIndexRouteImport.update({
     id: '/employees/',
     path: '/employees/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedDimensionsIndexRoute =
-  AuthenticatedDimensionsIndexRouteImport.update({
-    id: '/dimensions/',
-    path: '/dimensions/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedCustomersIndexRoute =
@@ -154,22 +155,35 @@ const AuthenticatedSettingsAppearanceRoute =
     path: '/appearance',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
-const AuthenticatedOrdersIdRoute = AuthenticatedOrdersIdRouteImport.update({
-  id: '/orders/$id',
-  path: '/orders/$id',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedErrorsErrorRoute =
   AuthenticatedErrorsErrorRouteImport.update({
     id: '/errors/$error',
     path: '/errors/$error',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedOrdersCustomerIdRouteRoute =
+  AuthenticatedOrdersCustomerIdRouteRouteImport.update({
+    id: '/orders/$customerId',
+    path: '/orders/$customerId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedOrdersCustomerIdIndexRoute =
+  AuthenticatedOrdersCustomerIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedOrdersCustomerIdRouteRoute,
+  } as any)
 const AuthenticatedAccountsExpensesIndexRoute =
   AuthenticatedAccountsExpensesIndexRouteImport.update({
     id: '/accounts/expenses/',
     path: '/accounts/expenses/',
     getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedOrdersCustomerIdIdRoute =
+  AuthenticatedOrdersCustomerIdIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedOrdersCustomerIdRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -184,19 +198,21 @@ export interface FileRoutesByFullPath {
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
+  '/orders/$customerId': typeof AuthenticatedOrdersCustomerIdRouteRouteWithChildren
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
-  '/orders/$id': typeof AuthenticatedOrdersIdRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/categories': typeof AuthenticatedCategoriesIndexRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
-  '/dimensions': typeof AuthenticatedDimensionsIndexRoute
   '/employees': typeof AuthenticatedEmployeesIndexRoute
   '/orders': typeof AuthenticatedOrdersIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
+  '/sizes': typeof AuthenticatedSizesIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/orders/$customerId/$id': typeof AuthenticatedOrdersCustomerIdIdRoute
   '/accounts/expenses': typeof AuthenticatedAccountsExpensesIndexRoute
+  '/orders/$customerId/': typeof AuthenticatedOrdersCustomerIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
@@ -210,18 +226,19 @@ export interface FileRoutesByTo {
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
-  '/orders/$id': typeof AuthenticatedOrdersIdRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/categories': typeof AuthenticatedCategoriesIndexRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
-  '/dimensions': typeof AuthenticatedDimensionsIndexRoute
   '/employees': typeof AuthenticatedEmployeesIndexRoute
   '/orders': typeof AuthenticatedOrdersIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
+  '/sizes': typeof AuthenticatedSizesIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/orders/$customerId/$id': typeof AuthenticatedOrdersCustomerIdIdRoute
   '/accounts/expenses': typeof AuthenticatedAccountsExpensesIndexRoute
+  '/orders/$customerId': typeof AuthenticatedOrdersCustomerIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -237,19 +254,21 @@ export interface FileRoutesById {
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/orders/$customerId': typeof AuthenticatedOrdersCustomerIdRouteRouteWithChildren
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
-  '/_authenticated/orders/$id': typeof AuthenticatedOrdersIdRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/_authenticated/categories/': typeof AuthenticatedCategoriesIndexRoute
   '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
-  '/_authenticated/dimensions/': typeof AuthenticatedDimensionsIndexRoute
   '/_authenticated/employees/': typeof AuthenticatedEmployeesIndexRoute
   '/_authenticated/orders/': typeof AuthenticatedOrdersIndexRoute
   '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
+  '/_authenticated/sizes/': typeof AuthenticatedSizesIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/orders/$customerId/$id': typeof AuthenticatedOrdersCustomerIdIdRoute
   '/_authenticated/accounts/expenses/': typeof AuthenticatedAccountsExpensesIndexRoute
+  '/_authenticated/orders/$customerId/': typeof AuthenticatedOrdersCustomerIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -265,19 +284,21 @@ export interface FileRouteTypes {
     | '/500'
     | '/503'
     | '/'
+    | '/orders/$customerId'
     | '/errors/$error'
-    | '/orders/$id'
     | '/settings/appearance'
     | '/settings/display'
     | '/categories'
     | '/customers'
-    | '/dimensions'
     | '/employees'
     | '/orders'
     | '/products'
     | '/settings/'
+    | '/sizes'
     | '/users'
+    | '/orders/$customerId/$id'
     | '/accounts/expenses'
+    | '/orders/$customerId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/onboarding'
@@ -291,18 +312,19 @@ export interface FileRouteTypes {
     | '/503'
     | '/'
     | '/errors/$error'
-    | '/orders/$id'
     | '/settings/appearance'
     | '/settings/display'
     | '/categories'
     | '/customers'
-    | '/dimensions'
     | '/employees'
     | '/orders'
     | '/products'
     | '/settings'
+    | '/sizes'
     | '/users'
+    | '/orders/$customerId/$id'
     | '/accounts/expenses'
+    | '/orders/$customerId'
   id:
     | '__root__'
     | '/_authenticated'
@@ -317,19 +339,21 @@ export interface FileRouteTypes {
     | '/(errors)/500'
     | '/(errors)/503'
     | '/_authenticated/'
+    | '/_authenticated/orders/$customerId'
     | '/_authenticated/errors/$error'
-    | '/_authenticated/orders/$id'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
     | '/_authenticated/categories/'
     | '/_authenticated/customers/'
-    | '/_authenticated/dimensions/'
     | '/_authenticated/employees/'
     | '/_authenticated/orders/'
     | '/_authenticated/products/'
     | '/_authenticated/settings/'
+    | '/_authenticated/sizes/'
     | '/_authenticated/users/'
+    | '/_authenticated/orders/$customerId/$id'
     | '/_authenticated/accounts/expenses/'
+    | '/_authenticated/orders/$customerId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -438,6 +462,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsersIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/sizes/': {
+      id: '/_authenticated/sizes/'
+      path: '/sizes'
+      fullPath: '/sizes'
+      preLoaderRoute: typeof AuthenticatedSizesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/settings/': {
       id: '/_authenticated/settings/'
       path: '/'
@@ -464,13 +495,6 @@ declare module '@tanstack/react-router' {
       path: '/employees'
       fullPath: '/employees'
       preLoaderRoute: typeof AuthenticatedEmployeesIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/dimensions/': {
-      id: '/_authenticated/dimensions/'
-      path: '/dimensions'
-      fullPath: '/dimensions'
-      preLoaderRoute: typeof AuthenticatedDimensionsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/customers/': {
@@ -501,13 +525,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsAppearanceRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
-    '/_authenticated/orders/$id': {
-      id: '/_authenticated/orders/$id'
-      path: '/orders/$id'
-      fullPath: '/orders/$id'
-      preLoaderRoute: typeof AuthenticatedOrdersIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/errors/$error': {
       id: '/_authenticated/errors/$error'
       path: '/errors/$error'
@@ -515,12 +532,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/orders/$customerId': {
+      id: '/_authenticated/orders/$customerId'
+      path: '/orders/$customerId'
+      fullPath: '/orders/$customerId'
+      preLoaderRoute: typeof AuthenticatedOrdersCustomerIdRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/orders/$customerId/': {
+      id: '/_authenticated/orders/$customerId/'
+      path: '/'
+      fullPath: '/orders/$customerId/'
+      preLoaderRoute: typeof AuthenticatedOrdersCustomerIdIndexRouteImport
+      parentRoute: typeof AuthenticatedOrdersCustomerIdRouteRoute
+    }
     '/_authenticated/accounts/expenses/': {
       id: '/_authenticated/accounts/expenses/'
       path: '/accounts/expenses'
       fullPath: '/accounts/expenses'
       preLoaderRoute: typeof AuthenticatedAccountsExpensesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/orders/$customerId/$id': {
+      id: '/_authenticated/orders/$customerId/$id'
+      path: '/$id'
+      fullPath: '/orders/$customerId/$id'
+      preLoaderRoute: typeof AuthenticatedOrdersCustomerIdIdRouteImport
+      parentRoute: typeof AuthenticatedOrdersCustomerIdRouteRoute
     }
   }
 }
@@ -543,17 +581,34 @@ const AuthenticatedSettingsRouteRouteWithChildren =
     AuthenticatedSettingsRouteRouteChildren,
   )
 
+interface AuthenticatedOrdersCustomerIdRouteRouteChildren {
+  AuthenticatedOrdersCustomerIdIdRoute: typeof AuthenticatedOrdersCustomerIdIdRoute
+  AuthenticatedOrdersCustomerIdIndexRoute: typeof AuthenticatedOrdersCustomerIdIndexRoute
+}
+
+const AuthenticatedOrdersCustomerIdRouteRouteChildren: AuthenticatedOrdersCustomerIdRouteRouteChildren =
+  {
+    AuthenticatedOrdersCustomerIdIdRoute: AuthenticatedOrdersCustomerIdIdRoute,
+    AuthenticatedOrdersCustomerIdIndexRoute:
+      AuthenticatedOrdersCustomerIdIndexRoute,
+  }
+
+const AuthenticatedOrdersCustomerIdRouteRouteWithChildren =
+  AuthenticatedOrdersCustomerIdRouteRoute._addFileChildren(
+    AuthenticatedOrdersCustomerIdRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedOrdersCustomerIdRouteRoute: typeof AuthenticatedOrdersCustomerIdRouteRouteWithChildren
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
-  AuthenticatedOrdersIdRoute: typeof AuthenticatedOrdersIdRoute
   AuthenticatedCategoriesIndexRoute: typeof AuthenticatedCategoriesIndexRoute
   AuthenticatedCustomersIndexRoute: typeof AuthenticatedCustomersIndexRoute
-  AuthenticatedDimensionsIndexRoute: typeof AuthenticatedDimensionsIndexRoute
   AuthenticatedEmployeesIndexRoute: typeof AuthenticatedEmployeesIndexRoute
   AuthenticatedOrdersIndexRoute: typeof AuthenticatedOrdersIndexRoute
   AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
+  AuthenticatedSizesIndexRoute: typeof AuthenticatedSizesIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedAccountsExpensesIndexRoute: typeof AuthenticatedAccountsExpensesIndexRoute
 }
@@ -561,14 +616,15 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedOrdersCustomerIdRouteRoute:
+    AuthenticatedOrdersCustomerIdRouteRouteWithChildren,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
-  AuthenticatedOrdersIdRoute: AuthenticatedOrdersIdRoute,
   AuthenticatedCategoriesIndexRoute: AuthenticatedCategoriesIndexRoute,
   AuthenticatedCustomersIndexRoute: AuthenticatedCustomersIndexRoute,
-  AuthenticatedDimensionsIndexRoute: AuthenticatedDimensionsIndexRoute,
   AuthenticatedEmployeesIndexRoute: AuthenticatedEmployeesIndexRoute,
   AuthenticatedOrdersIndexRoute: AuthenticatedOrdersIndexRoute,
   AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
+  AuthenticatedSizesIndexRoute: AuthenticatedSizesIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
   AuthenticatedAccountsExpensesIndexRoute:
     AuthenticatedAccountsExpensesIndexRoute,
