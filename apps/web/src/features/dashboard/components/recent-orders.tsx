@@ -17,7 +17,7 @@ type RecentOrdersProps = {
 export function RecentOrders({ limit = 6, type }: RecentOrdersProps) {
   const { data: { rows: orders } } = useSuspenseQuery(
     {
-      ...createOrdersQueryOptions({ pageSize: 1000 }),
+      ...createOrdersQueryOptions({ pageIndex: 0, pageSize: 1000 }),
       staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
     },

@@ -4,16 +4,17 @@
   "version": "2.1.0",
   "scripts": {
     "clean": "git clean -xdf node_modules",
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "pnpm with-env vite",
+    "build": "tsc -b &&  pnpm with-env vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "preview": "vite preview",
-    "start": "vite preview",
+    "preview": "pnpm with-env vite preview",
+    "start": "pnpm with-env vite preview",
     "typecheck": "tsc -b --noEmit",
     "knip": "knip",
     "ui-add": "pnpm dlx shadcn@latest add && pnpm dlx prettier src --write --list-different",
-    "scan": "pnpm dlx react-scan@latest http://localhost:5173"
+    "scan": "pnpm dlx react-scan@latest http://localhost:5173",
+    "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
     "@crm/api": "workspace:^",
@@ -85,6 +86,7 @@
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react-swc": "^4.1.0",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9.36.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.21",
