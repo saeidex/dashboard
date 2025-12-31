@@ -1,6 +1,6 @@
 # Color Themes
 
-This CRM application now supports multiple color themes! Users can customize the appearance of the application by choosing from various color schemes.
+This takumitex application now supports multiple color themes! Users can customize the appearance of the application by choosing from various color schemes.
 
 ## Available Color Themes
 

@@ -1,4 +1,4 @@
-import type { PaymentStatus } from "@crm/api/schema";
+import type { PaymentStatus } from "@takumitex/api/schema";
 
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { useSuspenseQuery } from "@tanstack/react-query";

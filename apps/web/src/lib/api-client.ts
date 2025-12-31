@@ -1,3 +1,3 @@
-import apiClient from "@crm/api-client";
+import apiClient from "@takumitex/api-client";
 
 export default apiClient("/");

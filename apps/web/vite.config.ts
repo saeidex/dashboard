@@ -35,13 +35,13 @@ export default defineConfig({
       clientFiles: ["./src/components/**/*.{ts,tsx}"],
     },
     allowedHosts: [
-      "colacobiotic-commentatorially-sharan.ngrok-free.dev"
-    ]
+      "colacobiotic-commentatorially-sharan.ngrok-free.dev",
+    ],
   },
   preview: {
     allowedHosts: [
-      "colacobiotic-commentatorially-sharan.ngrok-free.dev"
-    ]
+      "colacobiotic-commentatorially-sharan.ngrok-free.dev",
+    ],
   },
   build: {
     // outDir: path.join(__dirname, "../api/public"),

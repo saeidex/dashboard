@@ -1,4 +1,4 @@
-import type { EmployeeStatus, Position, Shift } from "@crm/api/schema";
+import type { EmployeeStatus, Position, Shift } from "@takumitex/api/schema";
 
 export const callTypes = new Map<EmployeeStatus, string>([
   ["active", "bg-teal-100/30 text-teal-900 dark:text-teal-200 border-teal-200"],

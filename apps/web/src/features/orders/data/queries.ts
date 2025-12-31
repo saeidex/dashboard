@@ -1,4 +1,4 @@
-import type { insertOrderWithItemsSchema, orderListQueryParamsSchema, patchOrderWithItemsSchema } from "@crm/api/schema";
+import type { insertOrderWithItemsSchema, orderListQueryParamsSchema, patchOrderWithItemsSchema } from "@takumitex/api/schema";
 
 import { keepPreviousData, queryOptions } from "@tanstack/react-query";
 

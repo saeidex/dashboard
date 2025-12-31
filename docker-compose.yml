@@ -34,7 +34,7 @@ services:
 
 networks:
   default:
-    name: crm-network
+    name: takumitex-network
     driver: bridge
 
 volumes:

@@ -1,5 +1,5 @@
 {
-  "name": "@crm/api-client",
+  "name": "@takumitex/api-client",
   "type": "module",
   "version": "1.0.0",
   "main": "./dist/index.js",
@@ -11,8 +11,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@crm/api": "workspace:^",
-    "@crm/eslint-config": "workspace:^",
+    "@takumitex/api": "workspace:^",
+    "@takumitex/eslint-config": "workspace:^",
     "@types/node": "^24.5.2",
     "hono": "^4.9.8"
   },

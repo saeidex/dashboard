@@ -1,5 +1,5 @@
 {
-  "name": "@crm/eslint-config",
+  "name": "@takumitex/eslint-config",
   "type": "module",
   "version": "1.0.0",
   "exports": {

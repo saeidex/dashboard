@@ -2,7 +2,7 @@ import {
   employeeStatusSchema,
   positionSchema,
   shiftSchema,
-} from "@crm/api/schema";
+} from "@takumitex/api/schema";
 import { createFileRoute } from "@tanstack/react-router";
 import z from "zod";
 

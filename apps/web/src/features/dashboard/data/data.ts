@@ -1,4 +1,4 @@
-import type { OrderStatus, PaymentStatus } from "@crm/api/schema";
+import type { OrderStatus, PaymentStatus } from "@takumitex/api/schema";
 
 import { expensesQueryOptions } from "../../accounts/expenses/data/queries";
 import { createOrdersQueryOptions } from "../../orders/data/queries";

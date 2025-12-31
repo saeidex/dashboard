@@ -1,4 +1,4 @@
-import type { router } from "@crm/api/routes";
+import type { router } from "@takumitex/api/routes";
 
 import { hc } from "hono/client";
 

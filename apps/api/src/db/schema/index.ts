@@ -6,7 +6,7 @@ import type { NoUndefined } from "@/api/lib/types"
 
 import { users } from "./auth"
 
-export type userRoleSchema = NoUndefined<Parameters<typeof auth.api.createUser>[0]["body"]["role"]>
+export type userRoleSchema = NoUndefined<Parameters<typeof auth.api.createUser>[number]>["body"]["role"]
 export const userRoleSchema = z.union([z.literal("user"), z.literal("admin"), z.array(z.literal("admin").or(z.literal("user")))])
 
 export const selectUsersSchema = createSelectSchema(users, {

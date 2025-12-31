@@ -1,7 +1,7 @@
 "use client";
 
-import { insertProductSizesSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { insertProductSizesSchema } from "@takumitex/api/schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";

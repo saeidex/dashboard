@@ -1,4 +1,4 @@
-import type { insertOrderWithItemsSchema } from "@crm/api/schema";
+import type { insertOrderWithItemsSchema } from "@takumitex/api/schema";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Plus, X } from "lucide-react";

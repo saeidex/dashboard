@@ -1,4 +1,4 @@
-import createConfig from "@crm/eslint-config/create-config";
+import createConfig from "@takumitex/eslint-config/create-config";
 import pluginQuery from "@tanstack/eslint-plugin-query";
 import pluginRouter from "@tanstack/eslint-plugin-router";
 

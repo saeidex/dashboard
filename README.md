@@ -2,14 +2,6 @@
 
 <p dir="rtl">Dashboards</p>
 
-## Template Author
-
-[@satnaing](https://github.com/satnaing)
-
-## License
-
-Licensed under the [MIT License](https://choosealicense.com/licenses/mit/)
-
 ## Run on a single PC (without Docker)
 
 When you are the only person using the dashboard on your own computer, you can keep everything lightweight and skip containers entirely. The API serves the SQLite database from the local filesystem and the web client ships a static build that runs in a browser.
@@ -43,8 +35,8 @@ pnpm build
 	pm2 save
 	```
 
-	- `crm-api` runs `pnpm start:api` → `node ./apps/api/dist/src/index.js`
-	- `crm-web` runs `pnpm start:web` → `vite preview --host 0.0.0.0 --port 4173`
+	- `takumitex-api` runs `pnpm start:api` → `node ./apps/api/dist/src/index.js`
+	- `takumitex-web` runs `pnpm start:web` → `vite preview --host 0.0.0.0 --port 4173`
 
 3. (Optional) Auto-start on Windows login so the services boot with the PC:
 
@@ -58,9 +50,9 @@ pnpm build
 
 	```bash
 	pm2 status          # show process health
-	pm2 logs crm-api    # tail API logs
-	pm2 restart crm-web # restart the web server after a new build
-	pm2 delete crm-api  # remove a process from the list
+	pm2 logs takumitex-api    # tail API logs
+	pm2 restart takumitex-web # restart the web server after a new build
+	pm2 delete takumitex-api  # remove a process from the list
 	```
 
 If you prefer to stop PM2 from launching at boot, run `pm2 uninstall pm2-windows-startup` and `pm2 delete all`.
@@ -120,3 +112,7 @@ After the services start you can browse the UI at [http://localhost:4173](http:/
 - Rebuild the images after dependency updates: `docker compose build --no-cache`
 - Tail logs for a specific service: `docker compose logs -f api`
 - Tear everything down (and remove volumes): `docker compose down -v`
+
+## References
+
+Template: [@satnaing](https://github.com/satnaing)

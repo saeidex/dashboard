@@ -14,15 +14,15 @@ const router = createRouter().openapi(
     path: "/",
     responses: {
       [HttpStatusCodes.OK]: jsonContent(
-        createMessageObjectSchema("CRM API"),
-        "CRM API Index",
+        createMessageObjectSchema("takumitex API"),
+        "takumitex API Index",
       ),
     },
   }),
   (c) => {
     return c.json(
       {
-        message: "CRM API",
+        message: "takumitex API",
       },
       HttpStatusCodes.OK,
     )

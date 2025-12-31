@@ -1,7 +1,7 @@
 "use client";
 
-import { EXPENSE_CATEGORIES, insertExpensesSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { EXPENSE_CATEGORIES, insertExpensesSchema } from "@takumitex/api/schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";

@@ -1,3 +1,3 @@
-import config from "@crm/eslint-config";
+import config from "@takumitex/eslint-config";
 
 export default config;

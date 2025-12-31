@@ -1,4 +1,4 @@
-import type { insertEmployeesSchema, patchEmployeesSchema } from "@crm/api/schema";
+import type { insertEmployeesSchema, patchEmployeesSchema } from "@takumitex/api/schema";
 
 import { queryOptions } from "@tanstack/react-query";
 

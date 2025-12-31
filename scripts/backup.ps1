@@ -1,6 +1,6 @@
 param(
   [string]$Source = (Join-Path $PSScriptRoot "../apps/api/dev.db"),
-  [string]$Destination = $env:CRM_BACKUP_DIR,
+  [string]$Destination = $env:takumitex_BACKUP_DIR,
   [int]$RetentionDays
 )
 
@@ -29,13 +29,13 @@ Copy-Item -LiteralPath $resolvedSource -Destination $targetFile -Force
 Write-Output "Backup created at $targetFile"
 
 if (-not $PSBoundParameters.ContainsKey('RetentionDays')) {
-  if ($env:CRM_BACKUP_RETENTION_DAYS) {
+  if ($env:takumitex_BACKUP_RETENTION_DAYS) {
     $parsedRetention = 0
-    if ([int]::TryParse($env:CRM_BACKUP_RETENTION_DAYS, [ref]$parsedRetention)) {
+    if ([int]::TryParse($env:takumitex_BACKUP_RETENTION_DAYS, [ref]$parsedRetention)) {
       $RetentionDays = $parsedRetention
     }
     else {
-      Write-Warning "Unable to parse CRM_BACKUP_RETENTION_DAYS='$env:CRM_BACKUP_RETENTION_DAYS'. Using default (30 days)."
+      Write-Warning "Unable to parse takumitex_BACKUP_RETENTION_DAYS='$env:takumitex_BACKUP_RETENTION_DAYS'. Using default (30 days)."
       $RetentionDays = 30
     }
   }

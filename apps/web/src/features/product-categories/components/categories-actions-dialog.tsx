@@ -1,7 +1,7 @@
 "use client";
 
-import { insertProductCategoriesSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { insertProductCategoriesSchema } from "@takumitex/api/schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ImagePlus } from "lucide-react";
 import React from "react";

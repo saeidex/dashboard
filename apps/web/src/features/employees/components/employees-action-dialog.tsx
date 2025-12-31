@@ -1,7 +1,7 @@
 "use client";
 
-import { insertEmployeesSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { insertEmployeesSchema } from "@takumitex/api/schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";

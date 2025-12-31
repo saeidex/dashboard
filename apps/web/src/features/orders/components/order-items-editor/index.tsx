@@ -1,4 +1,4 @@
-import type { insertOrderWithItemsSchema } from "@crm/api/schema";
+import type { insertOrderWithItemsSchema } from "@takumitex/api/schema";
 
 import { useFormContext, useWatch } from "react-hook-form";
 

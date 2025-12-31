@@ -1,7 +1,7 @@
 "use client";
 
-import { insertProductsSchema } from "@crm/api/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { insertProductsSchema } from "@takumitex/api/schema";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useEffect } from "react";

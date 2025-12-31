@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "crm-api",
+      name: "takumitex-api",
       cwd: __dirname,
       script: "cmd",
       args: "/c pnpm start:api",
@@ -9,7 +9,7 @@ module.exports = {
       max_memory_restart: "512M",
     },
     {
-      name: "crm-web",
+      name: "takumitex-web",
       cwd: __dirname,
       script: "cmd",
       args: "/c pnpm start:web",

@@ -62,7 +62,7 @@ type UseTableUrlStateReturn = {
   // Helpers
   ensurePageInRange: (
     pageCount: number,
-    opts?: { resetTo?: "first" | "last" }
+    opts?: { resetTo?: "first" | "last" },
   ) => void;
 };
 

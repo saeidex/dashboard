@@ -10,18 +10,18 @@ export default function configureOpenAPI(app: AppOpenAPI) {
     openapi: "3.0.0",
     info: {
       version: packageJSON.version,
-      title: "Universal Packaging & Accessories CRM API",
-      description: "API documentation for Universal Packaging & Accessories CRM",
+      title: "Universal Packaging & Accessories takumitex API",
+      description: "API documentation for Universal Packaging & Accessories takumitex",
     },
   })
 
   app.get(
     "/reference",
     Scalar({
-      pageTitle: "Universal Packaging & Accessories CRM API Reference",
+      pageTitle: "Universal Packaging & Accessories takumitex API Reference",
       sources: [
         {
-          title: "Universal Packaging & Accessories CRM API",
+          title: "Universal Packaging & Accessories takumitex API",
           url: `${BASE_PATH}/doc`,
         },
         {

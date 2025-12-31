@@ -1,3 +1,3 @@
-import type { selectOrderDetailsSchema } from "@crm/api/schema";
+import type { selectOrderDetailsSchema } from "@takumitex/api/schema";
 
 export type Order = selectOrderDetailsSchema;

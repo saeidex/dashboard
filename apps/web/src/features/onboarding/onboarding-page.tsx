@@ -167,7 +167,7 @@ export function OnboardingPage() {
     <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Welcome to CRM</CardTitle>
+          <CardTitle className="text-2xl font-bold">Welcome to takumitex</CardTitle>
           <CardDescription>
             Let's set up your admin account to get started
           </CardDescription>

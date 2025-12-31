@@ -1,4 +1,4 @@
-import type { ErrorSchema } from "@crm/api-client";
+import type { ErrorSchema } from "@takumitex/api-client";
 
 export default function formatApiError(apiError: ErrorSchema) {
   return apiError

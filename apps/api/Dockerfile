@@ -13,9 +13,9 @@ COPY apps/api/package.json apps/api/
 COPY apps/web/package.json apps/web/
 COPY packages/api-client/package.json packages/api-client/
 COPY packages/eslint-config/package.json packages/eslint-config/
-RUN pnpm install --frozen-lockfile --filter @crm/api...
+RUN pnpm install --frozen-lockfile --filter @takumitex/api...
 COPY . .
-RUN pnpm -F @crm/api build
+RUN pnpm -F @takumitex/api build
 
 FROM base AS production
 ENV NODE_ENV=production
@@ -29,7 +29,7 @@ COPY apps/api/package.json apps/api/
 COPY apps/web/package.json apps/web/
 COPY packages/api-client/package.json packages/api-client/
 COPY packages/eslint-config/package.json packages/eslint-config/
-RUN pnpm install --prod --frozen-lockfile --filter @crm/api...
+RUN pnpm install --prod --frozen-lockfile --filter @takumitex/api...
 COPY apps/api/dev.db /seed/prod.db
 COPY --from=build /app/apps/api/dist ./apps/api/dist
 WORKDIR /app/apps/api

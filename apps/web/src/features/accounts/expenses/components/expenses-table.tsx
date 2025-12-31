@@ -1,6 +1,6 @@
 import type { SortingState, VisibilityState } from "@tanstack/react-table";
 
-import { EXPENSE_CATEGORIES } from "@crm/api/schema";
+import { EXPENSE_CATEGORIES } from "@takumitex/api/schema";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import {

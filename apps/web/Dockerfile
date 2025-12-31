@@ -15,9 +15,9 @@ COPY apps/web/package.json apps/web/
 COPY apps/api/package.json apps/api/
 COPY packages/api-client/package.json packages/api-client/
 COPY packages/eslint-config/package.json packages/eslint-config/
-RUN pnpm install --frozen-lockfile --filter @crm/web...
+RUN pnpm install --frozen-lockfile --filter @takumitex/web...
 COPY . .
-RUN pnpm -F @crm/web build
+RUN pnpm -F @takumitex/web build
 
 FROM nginx:1.27-alpine AS production
 COPY --from=build /app/apps/web/dist /usr/share/nginx/html

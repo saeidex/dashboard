@@ -5,3 +5,4 @@ commitizen:
   update_changelog_on_bump: true
   version_provider: npm
   version_scheme: semver
+  changelog_file: README.md

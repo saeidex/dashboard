@@ -16,7 +16,7 @@ export const adminOptions: AdminOptions = {
 }
 
 export const auth = betterAuth({
-  appName: "@crm/api",
+  appName: "@takumitex/api",
   database: drizzleAdapter(db, {
     provider: "sqlite",
     usePlural: true,

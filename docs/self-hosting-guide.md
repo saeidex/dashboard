@@ -1,8 +1,8 @@
 بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيمِ
 
-<p dir="rtl">CRM Self-Hosting Guidebook (Single Windows PC + PM2)</p>
+<p dir="rtl">takumitex Self-Hosting Guidebook (Single Windows PC + PM2)</p>
 
-This guide walks through every step required to run the Universal Packaging and Accessories CRM on a single Windows computer. It covers installing prerequisites, fetching the repository, preparing the build, configuring the process manager, and operating the stack day to day. Follow the sections in order for a smooth setup.
+This guide walks through every step required to run the Universal Packaging and Accessories takumitex on a single Windows computer. It covers installing prerequisites, fetching the repository, preparing the build, configuring the process manager, and operating the stack day to day. Follow the sections in order for a smooth setup.
 
 ## 1. System prerequisites
 
@@ -29,21 +29,21 @@ This guide walks through every step required to run the Universal Packaging and 
 
 ## 3. Choose where the project will live
 
-Pick a permanent folder so the database file remains stable between reboots. A common choice is `C:\crm`.
+Pick a permanent folder so the database file remains stable between reboots. A common choice is `C:\takumitex`.
 
 ```powershell
-New-Item -ItemType Directory -Path C:\crm
-Set-Location C:\crm
+New-Item -ItemType Directory -Path C:\takumitex
+Set-Location C:\takumitex
 ```
 
-You can substitute another drive if preferred (e.g., `D:\Projects\crm`). Make sure the path does not contain spaces to keep scripts simple.
+You can substitute another drive if preferred (e.g., `D:\Projects\takumitex`). Make sure the path does not contain spaces to keep scripts simple.
 
 ## 4. Download the repository
 
 Option A – **Clone with Git** (recommended for receiving updates):
 ```powershell
-git clone https://github.com/saeidex/crm.git
-Set-Location .\crm
+git clone https://github.com/saeidex/takumitex.git
+Set-Location .\takumitex
 ```
 
 Option B – **Download as ZIP**:
@@ -54,7 +54,7 @@ Option B – **Download as ZIP**:
 
 ## 5. Install dependencies
 
-From the project root (`C:\crm\crm` if you cloned inside `C:\crm`):
+From the project root (`C:\takumitex\takumitex` if you cloned inside `C:\takumitex`):
 ```powershell
 pnpm install
 ```
@@ -92,8 +92,8 @@ Re-run this command whenever you update the source code.
 
 The repository ships with `ecosystem.config.cjs` in the root directory. It starts two apps:
 
-- `crm-api` → `pnpm start:api` (`node ./apps/api/dist/src/index.js`)
-- `crm-web` → `pnpm start:web` (serves the web bundle via Vite preview)
+- `takumitex-api` → `pnpm start:api` (`node ./apps/api/dist/src/index.js`)
+- `takumitex-web` → `pnpm start:web` (serves the web bundle via Vite preview)
 
 Open the file if you want to tweak names or ports. By default the web client listens on `127.0.0.1:4173` and the API on `127.0.0.1:9999`.
 
@@ -139,11 +139,11 @@ pm2 resurrect
   ```
 - Tail API logs:
   ```powershell
-  pm2 logs crm-api
+  pm2 logs takumitex-api
   ```
 - Restart after code changes (post-`pnpm build`):
   ```powershell
-  pm2 restart crm-api crm-web
+  pm2 restart takumitex-api takumitex-web
   ```
 - Stop everything temporarily:
   ```powershell
@@ -172,14 +172,14 @@ When you pull new code from Git or copy updated files:
    ```
 4. Restart running services:
    ```powershell
-   pm2 restart crm-api crm-web
+   pm2 restart takumitex-api takumitex-web
    ```
 
 ## 14. Backing up your data
 
 The SQLite database used in production mode is stored in `apps\api\dev.db` by default. Copy this file periodically to a safe location:
 ```powershell
-Copy-Item apps\api\dev.db D:\Backups\crm\dev-$(Get-Date -Format yyyyMMdd).db
+Copy-Item apps\api\dev.db D:\Backups\takumitex\dev-$(Get-Date -Format yyyyMMdd).db
 ```
 
 If you ever switch to Docker or an external LibSQL/Turso database, update the backup strategy accordingly.
@@ -190,11 +190,11 @@ PM2 can run scheduled jobs using cron syntax. The repository includes `scripts/b
 
 1. Pick a backup folder (defaults to `./backups` relative to the repo). Optionally set an environment variable so the script writes somewhere else:
    ```powershell
-   $env:CRM_BACKUP_DIR = "D:\Backups\crm"
+   $env:takumitex_BACKUP_DIR = "D:\Backups\takumitex"
    ```
    To persist this across sessions, run:
    ```powershell
-   setx CRM_BACKUP_DIR "D:\Backups\crm"
+   setx takumitex_BACKUP_DIR "D:\Backups\takumitex"
    ```
 
 2. Test the script once to confirm it works:
@@ -205,13 +205,13 @@ PM2 can run scheduled jobs using cron syntax. The repository includes `scripts/b
 
 3. (Optional) Configure retention. By default the script keeps 30 days of backups. To keep a different number of days (or disable cleanup by setting `0`), set the variable:
    ```powershell
-   $env:CRM_BACKUP_RETENTION_DAYS = "14"
-   setx CRM_BACKUP_RETENTION_DAYS "14"
+   $env:takumitex_BACKUP_RETENTION_DAYS = "14"
+   setx takumitex_BACKUP_RETENTION_DAYS "14"
    ```
 
 4. Register a PM2 cron job that runs the script every day at 2:00 AM:
    ```powershell
-   pm2 start .\scripts\backup.ps1 --name crm-backup --interpreter pwsh --cron "0 2 * * *" --no-autorestart
+   pm2 start .\scripts\backup.ps1 --name takumitex-backup --interpreter pwsh --cron "0 2 * * *" --no-autorestart
    pm2 save
    ```
 
@@ -220,7 +220,7 @@ PM2 can run scheduled jobs using cron syntax. The repository includes `scripts/b
 
 5. Verify the schedule:
    ```powershell
-   pm2 describe crm-backup
+   pm2 describe takumitex-backup
    ```
    The output should list the cron expression and the next run time. Backups appear regularly in your chosen directory. Combine this with an external drive or cloud sync for off-site storage.
 
@@ -232,4 +232,4 @@ PM2 can run scheduled jobs using cron syntax. The repository includes `scripts/b
 
 ---
 
-You now have a repeatable process for running the CRM continuously on your PC. Bookmark this guide so you can revisit any section when updating or troubleshooting your installation.
+You now have a repeatable process for running the takumitex continuously on your PC. Bookmark this guide so you can revisit any section when updating or troubleshooting your installation.
