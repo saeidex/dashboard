@@ -7,7 +7,7 @@ import { z } from "zod"
 function resolveDefaultDatabaseUrl(nodeEnv = "development") {
   switch (nodeEnv) {
     case "production":
-      return "file:/data/prod.db"
+      return "file:./prod.db"
     case "test":
       return "file:./test.db"
     default:
@@ -53,7 +53,7 @@ const EnvSchema = z.object({
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]),
   DATABASE_URL: DatabaseUrlSchema.optional().default(() => resolveDefaultDatabaseUrl(process.env.NODE_ENV)),
   DATABASE_AUTH_TOKEN: z.string().optional(),
-  TRUSTED_ORIGINS: z.string().default("http://localhost:5173").transform(val => val.split(",").map(s => s.trim())),
+  TRUSTED_ORIGINS: z.string().default("http://localhost:4173,http://localhost:5173").transform(val => val.split(",").map(s => s.trim())),
   BETTER_AUTH_SECRET: z.string().min(1, "BETTER_AUTH_SECRET is required"),
   BETTER_AUTH_URL: z.url().default("http://localhost:9999"),
 }).superRefine((input, ctx) => {

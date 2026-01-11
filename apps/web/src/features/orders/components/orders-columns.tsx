@@ -59,7 +59,7 @@ export const ordersColumns: ColumnDef<Order>[] = [
     ),
     cell: ({ cell, row }) => (
       <OrderDetailsPageNavigatorButton
-        id={cell.getValue<Order["id"]>()}
+        id={cell.getValue<Order["id"]>().toString()}
         customerId={row.original.customerId}
       />
     ),

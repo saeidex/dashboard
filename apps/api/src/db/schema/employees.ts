@@ -12,19 +12,17 @@ export const employeeStatusSchema = z.union([
 export type EmployeeStatus = z.infer<typeof employeeStatusSchema>
 
 export const positionSchema = z.union([
-  z.literal("Commercial Manager"),
-  z.literal("Manager"),
-  z.literal("Production Manager"),
-  z.literal("Corrugation Operator"),
-  z.literal("Crease Operator"),
-  z.literal("Pasting Operator"),
-  z.literal("Printing Master"),
-  z.literal("Stitching Operator"),
-  z.literal("Flexo Operator"),
-  z.literal("Cutting Man"),
-  z.literal("Delivery Man"),
-  z.literal("Helper"),
-]).default("Helper")
+  z.literal("Sourcing Manager"),
+  z.literal("Merchandiser"),
+  z.literal("Quality Assurance Manager"),
+  z.literal("Sample Coordinator"),
+  z.literal("Logistics Coordinator"),
+  z.literal("Fabric Technologist"),
+  z.literal("Compliance Officer"),
+  z.literal("Production Planner"),
+  z.literal("Pattern Master"),
+  z.literal("Supply Chain Executive"),
+]).default("Sourcing Manager")
 export type Position = z.infer<typeof positionSchema>
 
 export const shiftSchema = z.union([
@@ -41,7 +39,7 @@ export const employees = sqliteTable("employees", {
   employeeId : text().notNull(),
   email      : text().notNull(),
   phoneNumber: text().notNull(),
-  position   : text().$type<Position>().$default(() => "Helper").notNull(),
+  position   : text().$type<Position>().$default(() => "Sourcing Manager").notNull(),
   shift      : text().$type<Shift>().$default(() => "Day").notNull(),
   status     : text().$type<EmployeeStatus>().$default(() => "active").notNull(),
   salary     : integer({ mode: "number" }).notNull(),

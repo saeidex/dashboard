@@ -133,3 +133,6 @@ dist
 backups/
 certs/
 *.pem
+
+.env*
+apps/api/data/prod.db

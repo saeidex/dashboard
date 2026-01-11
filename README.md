@@ -2,14 +2,8 @@
 
 <p dir="rtl">Dashboards</p>
 
-## Run on a single PC (without Docker)
-
-When you are the only person using the dashboard on your own computer, you can keep everything lightweight and skip containers entirely. The API serves the SQLite database from the local filesystem and the web client ships a static build that runs in a browser.
-
-👉 For a full walkthrough that covers prerequisite installs, directory layout, PM2 boot configuration, updates, and backups, read [`docs/self-hosting-guide.md`](./docs/self-hosting-guide.md).
-
 ## References
-
+Self Hosting: [`docs/self-hosting-guide.md`](./docs/self-hosting-guide.md)
 Template: [@satnaing](https://github.com/satnaing)
 
 # Changelog

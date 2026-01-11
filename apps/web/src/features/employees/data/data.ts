@@ -11,30 +11,28 @@ export const callTypes = new Map<EmployeeStatus, string>([
 ]);
 
 export const positions: {
-  label: string;
+  label: Capitalize<Position>;
   value: Position;
 }[] = [
-  { label: "Commercial Manager", value: "Commercial Manager" },
-  { label: "Manager", value: "Manager" },
-  { label: "Production Manager", value: "Production Manager" },
-  { label: "Corrugation Operator", value: "Corrugation Operator" },
-  { label: "Crease Operator", value: "Crease Operator" },
-  { label: "Pasting Operator", value: "Pasting Operator" },
-  { label: "Printing Master", value: "Printing Master" },
-  { label: "Stitching Operator", value: "Stitching Operator" },
-  { label: "Flexo Operator", value: "Flexo Operator" },
-  { label: "Cutting Man", value: "Cutting Man" },
-  { label: "Delivery Man", value: "Delivery Man" },
-  { label: "Helper", value: "Helper" },
+  { label: "Sourcing Manager", value: "Sourcing Manager" },
+  { label: "Merchandiser", value: "Merchandiser" },
+  { label: "Quality Assurance Manager", value: "Quality Assurance Manager" },
+  { label: "Sample Coordinator", value: "Sample Coordinator" },
+  { label: "Logistics Coordinator", value: "Logistics Coordinator" },
+  { label: "Fabric Technologist", value: "Fabric Technologist" },
+  { label: "Compliance Officer", value: "Compliance Officer" },
+  { label: "Production Planner", value: "Production Planner" },
+  { label: "Pattern Master", value: "Pattern Master" },
+  { label: "Supply Chain Executive", value: "Supply Chain Executive" },
 ];
 
-export const shifts: { label: string; value: Shift }[] = [
+export const shifts: { label: Capitalize<Shift>; value: Shift }[] = [
   { label: "Day", value: "Day" },
   { label: "Evening", value: "Evening" },
   { label: "Night", value: "Night" },
 ];
 
-export const statuses: { label: string; value: EmployeeStatus }[] = [
+export const statuses: { label: Capitalize<string>; value: EmployeeStatus }[] = [
   { label: "Active", value: "active" },
   { label: "Inactive", value: "inactive" },
   { label: "On Leave", value: "on-leave" },

@@ -163,7 +163,7 @@ export function ExpensesSection() {
                             backgroundColor: "var(--popover)",
                             fontSize: 12,
                           }}
-                          formatter={(value: number) => [
+                          formatter={(value?: number) => [
                             `৳${
                               Number(value).toLocaleString(undefined, {
                                 maximumFractionDigits: 0,

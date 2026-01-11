@@ -66,7 +66,7 @@ export function EmployeesActionDialog({
           employeeId: "EMP-1001",
           email: "",
           phoneNumber: "",
-          position: "Helper",
+          position: "Sourcing Manager",
           shift: "Day",
           salary: 10000,
           status: "active",
@@ -133,7 +133,7 @@ export function EmployeesActionDialog({
             Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
-        <div className="h-[26.25rem] w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3">
+        <div className="h-105 w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3">
           <Form {...form}>
             <form
               id="employee-form"
@@ -291,10 +291,10 @@ export function EmployeesActionDialog({
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="50000"
                         step={100}
                         min={0}
                         {...field}
+                        value={Number(field.value)}
                         className="col-span-4"
                       />
                     </FormControl>
@@ -333,7 +333,7 @@ export function EmployeesActionDialog({
                           <Button
                             variant="outline"
                             className={cn(
-                              "w-[240px] pl-3 text-left font-normal",
+                              "w-60 pl-3 text-left font-normal",
                               !field.value && "text-muted-foreground",
                             )}
                           >
