@@ -45,9 +45,9 @@ const CONFIG = {
   productsPerCategory: 8,
   employees: 30,
   factories: 10,
-  ordersPerCustomer: { min: 1, max: 5 },
-  itemsPerOrder: { min: 1, max: 4 },
-  paymentsPerOrder: { min: 0, max: 2 },
+  ordersPerCustomer: { min: 1, max: 30 },
+  itemsPerOrder: { min: 1, max: 10 },
+  paymentsPerOrder: { min: 0, max: 4 },
 }
 
 /* -------------------------------------------------------------------------- */

@@ -127,7 +127,7 @@ export async function seedOrders(
       ]) as schema.ProductionStage
 
       // Assign a factory (80% chance)
-      const factoryId = faker.helpers.maybe(() => faker.helpers.arrayElement(factoryIds), { probability: 0.8 }) || null
+      const factoryId = faker.helpers.maybe(() => faker.helpers.arrayElement(factoryIds), { probability: 1 }) || null
 
       // Generate timeline dates based on order created date
       const orderConfirmDate = new Date(createdAt)
@@ -200,26 +200,29 @@ export async function seedOrders(
     }
   }
 
-  // Insert orders first
-  const insertedOrders = await database
-    .insert(schema.orders)
-    .values(orders)
-    .returning()
+  const insertedOrders: any[] = []
+  const allOrderItems: any[] = []
 
-  // Prepare order items with correct orderId
-  const finalOrderItems = insertedOrders.flatMap((order, index) => {
-    const items = orderItemsByOrderIndex[index]
-    if (!items)
-      return []
-    return items.map(item => ({
-      ...item,
-      orderId: order.id,
-    }))
-  })
+  let currentOrderIdx = 0
+  for (const orderData of orders) {
+    const [insertedOrder] = await database
+      .insert(schema.orders)
+      .values(orderData)
+      .returning()
+
+    if (insertedOrder) {
+      insertedOrders.push(insertedOrder)
+      const items = orderItemsByOrderIndex[currentOrderIdx]
+      if (items) {
+        allOrderItems.push(...items.map(item => ({ ...item, orderId: insertedOrder.id })))
+      }
+    }
+    currentOrderIdx++
+  }
 
   // Insert order items
-  if (finalOrderItems.length > 0) {
-    await database.insert(schema.orderItems).values(finalOrderItems).onConflictDoNothing()
+  if (allOrderItems.length > 0) {
+    await database.insert(schema.orderItems).values(allOrderItems)
   }
 
   return insertedOrders
