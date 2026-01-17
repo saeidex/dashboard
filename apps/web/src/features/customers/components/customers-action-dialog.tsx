@@ -103,9 +103,13 @@ export function CustomersActionDialog({
     >
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="text-start">
-          <DialogTitle>{isEdit ? "Edit Customer" : "Add New Customer"}</DialogTitle>
+          <DialogTitle>
+            {isEdit ? "Edit Customer" : "Add New Customer"}
+          </DialogTitle>
           <DialogDescription>
-            {isEdit ? "Update the customer here. " : "Create new customer here. "}
+            {isEdit
+              ? "Update the customer here. "
+              : "Create new customer here. "}
             Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
@@ -116,23 +120,24 @@ export function CustomersActionDialog({
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-4 px-0.5"
             >
-              {isEdit
-                && (
-                  <FormField
-                    name="id"
-                    render={({ field }) => (
-                      <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                        <FormLabel className="col-span-2 text-end">Customer ID</FormLabel>
-                        <FormControl>
-                          <span className="col-span-4 select-all rounded-md border border-input bg-muted/50 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                            {field.value}
-                          </span>
-                        </FormControl>
-                        <FormMessage className="col-span-4 col-start-3" />
-                      </FormItem>
-                    )}
-                  />
-                )}
+              {isEdit && (
+                <FormField
+                  name="id"
+                  render={({ field }) => (
+                    <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
+                      <FormLabel className="col-span-2 text-end">
+                        Customer ID
+                      </FormLabel>
+                      <FormControl>
+                        <span className="col-span-4 select-all rounded-md border border-input bg-muted/50 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                          {field.value}
+                        </span>
+                      </FormControl>
+                      <FormMessage className="col-span-4 col-start-3" />
+                    </FormItem>
+                  )}
+                />
+              )}
               <FormField
                 control={form.control}
                 name="name"
@@ -266,10 +271,7 @@ export function CustomersActionDialog({
           </Form>
         </div>
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => form.reset()}
-          >
+          <Button variant="outline" onClick={() => form.reset()}>
             Reset
           </Button>
           <Button

@@ -218,9 +218,7 @@ export function UsersActionDialog({
                 name="name"
                 render={({ field }) => (
                   <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                    <FormLabel className="col-span-2 text-end">
-                      Name
-                    </FormLabel>
+                    <FormLabel className="col-span-2 text-end">Name</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Hazrat Ali"
@@ -291,29 +289,27 @@ export function UsersActionDialog({
                 )}
               />
 
-              {
-                !isEdit && (
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                        <FormLabel className="col-span-2 text-end">
-                          Password
-                        </FormLabel>
-                        <FormControl>
-                          <PasswordInput
-                            placeholder="e.g., S3cur3P@ssw0rd"
-                            className="col-span-4"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="col-span-4 col-start-3" />
-                      </FormItem>
-                    )}
-                  />
-                )
-              }
+              {!isEdit && (
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
+                      <FormLabel className="col-span-2 text-end">
+                        Password
+                      </FormLabel>
+                      <FormControl>
+                        <PasswordInput
+                          placeholder="e.g., S3cur3P@ssw0rd"
+                          className="col-span-4"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="col-span-4 col-start-3" />
+                    </FormItem>
+                  )}
+                />
+              )}
 
               {!isEdit && (
                 <FormField

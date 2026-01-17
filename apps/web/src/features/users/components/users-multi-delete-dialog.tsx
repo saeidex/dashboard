@@ -45,23 +45,26 @@ export function UsersMultiDeleteDialog<TData>({
 
     onOpenChange(false);
 
-    toast.promise(async () => {
-      for (const row of selectedRows) {
-        const user = row.original as { id: string };
-        await deleteMutation.mutateAsync(user.id);
-      }
-    }, {
-      loading: "Deleting users...",
-      success: () => {
-        table.resetRowSelection();
-        queryClient.invalidateQueries(queryKeys.LIST_USERS);
-
-        return `Deleted ${selectedRows.length} ${
-          selectedRows.length > 1 ? "users" : "user"
-        }`;
+    toast.promise(
+      async () => {
+        for (const row of selectedRows) {
+          const user = row.original as { id: string };
+          await deleteMutation.mutateAsync(user.id);
+        }
       },
-      error: "Error",
-    });
+      {
+        loading: "Deleting users...",
+        success: () => {
+          table.resetRowSelection();
+          queryClient.invalidateQueries(queryKeys.LIST_USERS);
+
+          return `Deleted ${selectedRows.length} ${
+            selectedRows.length > 1 ? "users" : "user"
+          }`;
+        },
+        error: "Error",
+      },
+    );
   };
 
   return (

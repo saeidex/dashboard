@@ -1,6 +1,10 @@
 import type { Table } from "@tanstack/react-table";
 
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { ArrowUpDown, CircleArrowUp, Download, Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -50,37 +54,49 @@ export function DataTableBulkActions<TData>({
 
   const handleBulkStatusChange = (status: string) => {
     const selectedProducts = selectedRows.map(row => row.original as Product);
-    toast.promise(async () => {
-      for (const product of selectedProducts) {
-        await updateMutation.mutateAsync({ id: product.id, product: { status } });
-      }
-    }, {
-      loading: "Updating status...",
-      success: () => {
-        table.resetRowSelection();
-        queryClient.invalidateQueries(queryKeys.LIST_PRODUCTS(search));
-        return `Status updated to "${status}" for ${selectedProducts.length} task${selectedProducts.length > 1 ? "s" : ""}.`;
+    toast.promise(
+      async () => {
+        for (const product of selectedProducts) {
+          await updateMutation.mutateAsync({
+            id: product.id,
+            product: { status },
+          });
+        }
       },
-      error: "Error",
-    });
+      {
+        loading: "Updating status...",
+        success: () => {
+          table.resetRowSelection();
+          queryClient.invalidateQueries(queryKeys.LIST_PRODUCTS(search));
+          return `Status updated to "${status}" for ${selectedProducts.length} task${selectedProducts.length > 1 ? "s" : ""}.`;
+        },
+        error: "Error",
+      },
+    );
     table.resetRowSelection();
   };
 
   const handleBulkCategoryChange = (categoryId: string) => {
     const selectedProducts = selectedRows.map(row => row.original as Product);
-    toast.promise(async () => {
-      for (const product of selectedProducts) {
-        await updateMutation.mutateAsync({ id: product.id, product: { categoryId } });
-      }
-    }, {
-      loading: "Updating category...",
-      success: () => {
-        table.resetRowSelection();
-        queryClient.invalidateQueries(queryKeys.LIST_PRODUCTS(search));
-        return `Category updated for ${selectedProducts.length} task${selectedProducts.length > 1 ? "s" : ""}.`;
+    toast.promise(
+      async () => {
+        for (const product of selectedProducts) {
+          await updateMutation.mutateAsync({
+            id: product.id,
+            product: { categoryId },
+          });
+        }
       },
-      error: "Error",
-    });
+      {
+        loading: "Updating category...",
+        success: () => {
+          table.resetRowSelection();
+          queryClient.invalidateQueries(queryKeys.LIST_PRODUCTS(search));
+          return `Category updated for ${selectedProducts.length} task${selectedProducts.length > 1 ? "s" : ""}.`;
+        },
+        error: "Error",
+      },
+    );
     table.resetRowSelection();
   };
 

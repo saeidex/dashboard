@@ -14,15 +14,9 @@ type SizesContextType = {
   setCurrentRow: React.Dispatch<React.SetStateAction<Size | null>>;
 };
 
-const SizesContext = React.createContext<SizesContextType | null>(
-  null,
-);
+const SizesContext = React.createContext<SizesContextType | null>(null);
 
-export function SizesProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function SizesProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<SizesDialogType>(null);
   const [currentRow, setCurrentRow] = useState<Size | null>(null);
 
@@ -37,11 +31,7 @@ export function SizesProvider({
     [open, setOpen, currentRow, setCurrentRow],
   );
 
-  return (
-    <SizesContext value={values}>
-      {children}
-    </SizesContext>
-  );
+  return <SizesContext value={values}>{children}</SizesContext>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

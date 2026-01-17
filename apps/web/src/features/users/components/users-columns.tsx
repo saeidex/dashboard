@@ -46,7 +46,9 @@ export const usersColumns: ColumnDef<User>[] = [
       <DataTableColumnHeader column={column} title="User ID" />
     ),
     cell: ({ cell }) => (
-      <LongText className="max-w-36 ps-3">{cell.getValue<User["id"]>()}</LongText>
+      <LongText className="max-w-36 ps-3">
+        {cell.getValue<User["id"]>()}
+      </LongText>
     ),
     meta: {
       className: cn(
@@ -62,7 +64,11 @@ export const usersColumns: ColumnDef<User>[] = [
       <DataTableColumnHeader column={column} title="Name" />
     ),
     cell: ({ cell }) => {
-      return <LongText className="max-w-36">{cell.getValue<User["name"]>()}</LongText>;
+      return (
+        <LongText className="max-w-36">
+          {cell.getValue<User["name"]>()}
+        </LongText>
+      );
     },
     meta: { className: "w-36" },
   },
@@ -133,7 +139,9 @@ export const usersColumns: ColumnDef<User>[] = [
       <DataTableColumnHeader column={column} title="Registered At" />
     ),
     cell: ({ cell }) => {
-      return formatDistanceToNow(new Date(cell.getValue<User["createdAt"]>()), { addSuffix: true });
+      return formatDistanceToNow(new Date(cell.getValue<User["createdAt"]>()), {
+        addSuffix: true,
+      });
     },
     meta: { className: "w-36" },
   },

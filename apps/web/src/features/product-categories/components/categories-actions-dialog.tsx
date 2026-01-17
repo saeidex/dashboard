@@ -76,7 +76,6 @@ export function CategoriesActionDialog({
       try {
         reader.readAsDataURL(acceptedFiles[0]);
       }
-      // eslint-disable-next-line unused-imports/no-unused-vars
       catch (error) {
         form.resetField("image");
       }
@@ -118,10 +117,7 @@ export function CategoriesActionDialog({
   const preview = typeof imageValue === "string" ? imageValue : null;
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-    >
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="text-start">
           <DialogTitle>
@@ -215,7 +211,8 @@ export function CategoriesActionDialog({
                         Upload your image
                         <span
                           className={
-                            form.formState.errors.image || fileRejections.length !== 0
+                            form.formState.errors.image
+                            || fileRejections.length !== 0
                               ? "text-destructive"
                               : "text-muted-foreground"
                           }
@@ -251,7 +248,8 @@ export function CategoriesActionDialog({
                     <FormMessage>
                       {fileRejections.length !== 0 && (
                         <p>
-                          Image must be less than 1MB and of type png, jpg, or jpeg
+                          Image must be less than 1MB and of type png, jpg, or
+                          jpeg
                         </p>
                       )}
                     </FormMessage>

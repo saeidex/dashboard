@@ -58,9 +58,7 @@ export function DataTableRowActions<TData>({
         >
           Edit
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => createMutation.mutate(row.original)}
-        >
+        <DropdownMenuItem onClick={() => createMutation.mutate(row.original)}>
           Make a copy
         </DropdownMenuItem>
         <DropdownMenuSeparator />

@@ -1,4 +1,11 @@
-import { createContext, use, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  use,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import { getCookie, removeCookie, setCookie } from "@/web/lib/cookies";
 
@@ -76,23 +83,29 @@ export function ThemeProvider({
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, [theme, resolvedTheme]);
 
-  const setTheme = useCallback((theme: Theme) => {
-    setCookie(storageKey, theme, THEME_COOKIE_MAX_AGE);
-    _setTheme(theme);
-  }, [_setTheme, storageKey]);
+  const setTheme = useCallback(
+    (theme: Theme) => {
+      setCookie(storageKey, theme, THEME_COOKIE_MAX_AGE);
+      _setTheme(theme);
+    },
+    [_setTheme, storageKey],
+  );
 
   const resetTheme = useCallback(() => {
     removeCookie(storageKey);
     _setTheme(DEFAULT_THEME);
   }, [_setTheme, storageKey]);
 
-  const contextValue = useMemo(() => ({
-    defaultTheme,
-    resolvedTheme,
-    resetTheme,
-    theme,
-    setTheme,
-  }), [defaultTheme, resolvedTheme, resetTheme, theme, setTheme]);
+  const contextValue = useMemo(
+    () => ({
+      defaultTheme,
+      resolvedTheme,
+      resetTheme,
+      theme,
+      setTheme,
+    }),
+    [defaultTheme, resolvedTheme, resetTheme, theme, setTheme],
+  );
 
   return (
     <ThemeContext value={contextValue} {...props}>

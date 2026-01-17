@@ -6,8 +6,8 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import type { adminOptions } from "@/api/lib/auth";
 import type { authClient } from "@/web/features/auth/lib/auth-client";
 
-export type AuthSession = typeof authClient.$Infer["Session"]["session"];
-export type AuthUser = typeof authClient.$Infer["Session"]["user"];
+export type AuthSession = (typeof authClient.$Infer)["Session"]["session"];
+export type AuthUser = (typeof authClient.$Infer)["Session"]["user"];
 export type UserRole = InferAdminRolesFromOption<typeof adminOptions>;
 
 type AuthState = {
@@ -34,9 +34,10 @@ export const useAuthStore = create<AuthStore>()(
         session: null,
         setUser: user => set({ user }),
         setSession: session => set({ session }),
-        setUserRole: (role = "user") => set(state => ({
-          user: state.user ? { ...state.user, role } : null,
-        })),
+        setUserRole: (role = "user") =>
+          set(state => ({
+            user: state.user ? { ...state.user, role } : null,
+          })),
         getUserId: () => get().user?.id,
         getUserRole: () => get().user?.role ?? undefined,
         reset: () => set({ user: null, session: null }),

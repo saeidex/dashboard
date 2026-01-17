@@ -1,4 +1,7 @@
-import type { insertExpensesSchema, patchExpensesSchema } from "@takumitex/api/schema";
+import type {
+  insertExpensesSchema,
+  patchExpensesSchema,
+} from "@takumitex/api/schema";
 
 import { queryOptions } from "@tanstack/react-query";
 
@@ -68,7 +71,13 @@ export async function deleteExpense(id: string) {
   }
 }
 
-export async function updateExpense({ id, expense }: { id: string; expense: patchExpensesSchema }) {
+export async function updateExpense({
+  id,
+  expense,
+}: {
+  id: string;
+  expense: patchExpensesSchema;
+}) {
   const response = await apiClient.api.expenses[":id"].$patch({
     param: {
       id,

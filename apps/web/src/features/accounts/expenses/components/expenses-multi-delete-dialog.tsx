@@ -44,22 +44,25 @@ export function ExpensesMultiDeleteDialog<TData>({
 
     onOpenChange(false);
 
-    toast.promise(async () => {
-      for (const row of selectedRows) {
-        const expense = row.original as { id: string };
-        await deleteMutation.mutateAsync(expense.id);
-      }
-    }, {
-      loading: "Deleting expenses...",
-      success: () => {
-        table.resetRowSelection();
-        queryClient.invalidateQueries(queryKeys.LIST_EXPENSES);
-        return `Deleted ${selectedRows.length} ${
-          selectedRows.length > 1 ? "expenses" : "expense"
-        }`;
+    toast.promise(
+      async () => {
+        for (const row of selectedRows) {
+          const expense = row.original as { id: string };
+          await deleteMutation.mutateAsync(expense.id);
+        }
       },
-      error: "Error",
-    });
+      {
+        loading: "Deleting expenses...",
+        success: () => {
+          table.resetRowSelection();
+          queryClient.invalidateQueries(queryKeys.LIST_EXPENSES);
+          return `Deleted ${selectedRows.length} ${
+            selectedRows.length > 1 ? "expenses" : "expense"
+          }`;
+        },
+        error: "Error",
+      },
+    );
   };
 
   return (

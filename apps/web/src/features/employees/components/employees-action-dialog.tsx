@@ -29,7 +29,11 @@ import {
   FormMessage,
 } from "@/web/components/ui/form";
 import { Input } from "@/web/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/web/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/web/components/ui/popover";
 import { cn } from "@/web/lib/utils";
 
 import type { Employee } from "../data/schema";
@@ -90,9 +94,14 @@ export function EmployeesActionDialog({
         queryKeys.LIST_EMPLOYEES.queryKey,
       );
 
-      const existingEmployeeId = existingEmployees?.find(e => e.employeeId === employeeId);
+      const existingEmployeeId = existingEmployees?.find(
+        e => e.employeeId === employeeId,
+      );
       if (existingEmployeeId) {
-        form.setError("employeeId", { type: "manual", message: "Employee ID must be unique" });
+        form.setError("employeeId", {
+          type: "manual",
+          message: "Employee ID must be unique",
+        });
         throw new Error("Employee ID must be unique");
       }
     },
@@ -326,7 +335,9 @@ export function EmployeesActionDialog({
                 name="hireDate"
                 render={({ field }) => (
                   <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                    <FormLabel className="col-span-2 text-end">Hire Date</FormLabel>
+                    <FormLabel className="col-span-2 text-end">
+                      Hire Date
+                    </FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>

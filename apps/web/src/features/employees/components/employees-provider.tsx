@@ -29,11 +29,7 @@ export function EmployeesProvider({ children }: { children: React.ReactNode }) {
     [open, setOpen, currentRow, setCurrentRow],
   );
 
-  return (
-    <EmployeesContext value={values}>
-      {children}
-    </EmployeesContext>
-  );
+  return <EmployeesContext value={values}>{children}</EmployeesContext>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

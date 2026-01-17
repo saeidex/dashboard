@@ -42,7 +42,9 @@ export function useSidebarData(): SidebarData & { isLoading: boolean } {
               const orderDiff = (b.orderCount ?? 0) - (a.orderCount ?? 0);
               if (orderDiff !== 0)
                 return orderDiff;
-              return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+              return a.name.localeCompare(b.name, undefined, {
+                sensitivity: "base",
+              });
             })
           : [];
 
@@ -61,7 +63,10 @@ export function useSidebarData(): SidebarData & { isLoading: boolean } {
               url: "/orders" as const,
             },
             ...sortedCustomers.map((customer) => {
-              const ranking = getCustomerRanking(customer.orderCount ?? 0, thresholds);
+              const ranking = getCustomerRanking(
+                customer.orderCount ?? 0,
+                thresholds,
+              );
               return {
                 title: customer.name,
                 url: `/orders/${customer.id}` as const,

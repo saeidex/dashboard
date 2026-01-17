@@ -14,7 +14,10 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 
-import { DataTablePagination, DataTableToolbar } from "@/web/components/data-table";
+import {
+  DataTablePagination,
+  DataTableToolbar,
+} from "@/web/components/data-table";
 import {
   Table,
   TableBody,
@@ -38,7 +41,9 @@ const route = getRouteApi("/_authenticated/products/");
 export function ProductsTable() {
   const { data: categories } = useSuspenseQuery(categoriesQueryOptions);
   // TODO: sync pagination state
-  const { data } = useSuspenseQuery(createProductsQueryOptions(route.useSearch()));
+  const { data } = useSuspenseQuery(
+    createProductsQueryOptions(route.useSearch()),
+  );
   const products = data as Product[];
 
   // Local UI-only states

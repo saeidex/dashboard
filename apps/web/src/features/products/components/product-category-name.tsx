@@ -11,7 +11,5 @@ export const ProductCategoryName = ({ row }: { row: Row<Product> }) => {
   const { data: categories } = useSuspenseQuery(categoriesQueryOptions);
   const category = categories.find(({ id }) => id === Number(categoryId));
 
-  return (
-    <div>{category?.name}</div>
-  );
+  return <div>{category?.name}</div>;
 };

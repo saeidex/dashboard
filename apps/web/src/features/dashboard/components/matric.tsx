@@ -1,4 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/web/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/web/components/ui/card";
 
 export const Metric = ({
   label,

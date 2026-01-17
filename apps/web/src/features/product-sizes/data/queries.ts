@@ -1,4 +1,7 @@
-import type { insertProductSizesSchema, patchProductSizesSchema } from "@takumitex/api/schema";
+import type {
+  insertProductSizesSchema,
+  patchProductSizesSchema,
+} from "@takumitex/api/schema";
 
 import { queryOptions } from "@tanstack/react-query";
 
@@ -68,7 +71,13 @@ export async function deleteSize(id: number) {
   }
 }
 
-export async function updateSize({ id, size }: { id: number; size: patchProductSizesSchema }) {
+export async function updateSize({
+  id,
+  size,
+}: {
+  id: number;
+  size: patchProductSizesSchema;
+}) {
   const response = await apiClient.api.sizes[":id"].$patch({
     param: {
       id,

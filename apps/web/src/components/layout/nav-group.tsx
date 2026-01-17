@@ -21,7 +21,12 @@ import {
 } from "@/web/components/ui/sidebar";
 import { cn } from "@/web/lib/utils";
 
-import type { NavCollapsible, NavGroup as NavGroupProps, NavItem, NavLink } from "./types";
+import type {
+  NavCollapsible,
+  NavGroup as NavGroupProps,
+  NavItem,
+  NavLink,
+} from "./types";
 
 import { Badge } from "../ui/badge";
 import {

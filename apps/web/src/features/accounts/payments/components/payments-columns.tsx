@@ -1,7 +1,15 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { format } from "date-fns/format";
-import { Banknote, Building2, CreditCard, MoreHorizontal, Pencil, Smartphone, Trash2 } from "lucide-react";
+import {
+  Banknote,
+  Building2,
+  CreditCard,
+  MoreHorizontal,
+  Pencil,
+  Smartphone,
+  Trash2,
+} from "lucide-react";
 
 import { DataTableColumnHeader } from "@/web/components/data-table";
 import { LongText } from "@/web/components/long-text";
@@ -35,7 +43,11 @@ const paymentMethodLabels: Record<string, string> = {
   "mobile-wallet": "Mobile Wallet",
 };
 
-function DataTableRowActions({ row }: { row: { original: PaymentWithRelations } }) {
+function DataTableRowActions({
+  row,
+}: {
+  row: { original: PaymentWithRelations };
+}) {
   const { setOpen, setCurrentRow } = usePayments();
 
   return (
@@ -191,10 +203,13 @@ export const paymentsColumns: ColumnDef<PaymentWithRelations>[] = [
       const totalPaid = row.original.order?.totalPaid ?? 0;
       const due = Math.max(0, grandTotal - totalPaid);
       return (
-        <div className={cn(
-          "w-fit text-nowrap font-semibold",
-          due > 0 ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400",
-        )}
+        <div
+          className={cn(
+            "w-fit text-nowrap font-semibold",
+            due > 0
+              ? "text-red-600 dark:text-red-400"
+              : "text-green-600 dark:text-green-400",
+          )}
         >
           ৳
           {due.toLocaleString()}
@@ -236,7 +251,11 @@ export const paymentsColumns: ColumnDef<PaymentWithRelations>[] = [
     ),
     cell: ({ row }) => {
       const date = row.getValue("paidAt") as string;
-      return <div className="text-sm">{date ? format(new Date(date), "MMM dd, yyyy") : "-"}</div>;
+      return (
+        <div className="text-sm">
+          {date ? format(new Date(date), "MMM dd, yyyy") : "-"}
+        </div>
+      );
     },
   },
   {
@@ -245,9 +264,7 @@ export const paymentsColumns: ColumnDef<PaymentWithRelations>[] = [
       <DataTableColumnHeader column={column} title="Notes" />
     ),
     cell: ({ row }) => (
-      <LongText className="max-w-48">
-        {row.getValue("notes") || "-"}
-      </LongText>
+      <LongText className="max-w-48">{row.getValue("notes") || "-"}</LongText>
     ),
     enableSorting: false,
   },

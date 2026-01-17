@@ -58,11 +58,7 @@ export function LayoutProvider({ children }: LayoutProviderProps) {
   const setVariant = useCallback(
     (newVariant: Variant) => {
       _setVariant(newVariant);
-      setCookie(
-        LAYOUT_VARIANT_COOKIE_NAME,
-        newVariant,
-        LAYOUT_COOKIE_MAX_AGE,
-      );
+      setCookie(LAYOUT_VARIANT_COOKIE_NAME, newVariant, LAYOUT_COOKIE_MAX_AGE);
     },
     [_setVariant],
   );
@@ -85,11 +81,7 @@ export function LayoutProvider({ children }: LayoutProviderProps) {
     [collapsible, resetLayout, setCollapsible, setVariant, variant],
   );
 
-  return (
-    <LayoutContext value={contextValue}>
-      {children}
-    </LayoutContext>
-  );
+  return <LayoutContext value={contextValue}>{children}</LayoutContext>;
 }
 
 // Define the hook for the provider

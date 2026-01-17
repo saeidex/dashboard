@@ -97,7 +97,11 @@ export function useOrderPrint({
       if (!portalRoot)
         return;
       const Wrapper: React.FC = () =>
-        React.createElement(Invoice, { order, printRef: targetRef, monochrome: true });
+        React.createElement(Invoice, {
+          order,
+          printRef: targetRef,
+          monochrome: true,
+        });
       if (portalRoot)
         portalRoot.render(React.createElement(Wrapper));
       requestAnimationFrame(() => void reactToPrint());
@@ -112,7 +116,11 @@ export function useOrderPrint({
         if (!portalRoot)
           return;
         const Wrapper: React.FC = () =>
-          React.createElement(Invoice, { order, printRef: targetRef, monochrome: true });
+          React.createElement(Invoice, {
+            order,
+            printRef: targetRef,
+            monochrome: true,
+          });
         portalRoot.render(React.createElement(Wrapper));
         await new Promise(r =>
           requestAnimationFrame(() => requestAnimationFrame(r)),

@@ -1,4 +1,7 @@
-import type { insertFactoriesSchema, patchFactoriesSchema } from "@takumitex/api/schema";
+import type {
+  insertFactoriesSchema,
+  patchFactoriesSchema,
+} from "@takumitex/api/schema";
 
 import { queryOptions } from "@tanstack/react-query";
 
@@ -68,7 +71,13 @@ export async function deleteFactory(id: string) {
   }
 }
 
-export async function updateFactory({ id, factory }: { id: string; factory: patchFactoriesSchema }) {
+export async function updateFactory({
+  id,
+  factory,
+}: {
+  id: string;
+  factory: patchFactoriesSchema;
+}) {
   const response = await apiClient.api.factories[":id"].$patch({
     param: {
       id,

@@ -41,7 +41,10 @@ export function PaymentsMultiDeleteDialog({
     },
   });
 
-  const totalAmount = payments.reduce((sum, payment) => sum + payment.amount, 0);
+  const totalAmount = payments.reduce(
+    (sum, payment) => sum + payment.amount,
+    0,
+  );
 
   return (
     <ConfirmDialog
@@ -57,7 +60,8 @@ export function PaymentsMultiDeleteDialog({
           {" "}
           <strong>{payments.length}</strong>
           {" "}
-          payment(s) with a total of
+          payment(s)
+          with a total of
           {" "}
           <strong>
             ৳

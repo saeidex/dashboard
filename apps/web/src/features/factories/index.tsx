@@ -30,7 +30,9 @@ export const Factories = () => {
         <div className="mb-2 flex flex-wrap items-center justify-between space-y-2">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Factories</h2>
-            <p className="text-muted-foreground">Manage your production factories here.</p>
+            <p className="text-muted-foreground">
+              Manage your production factories here.
+            </p>
           </div>
           <FactoriesPrimaryButtons />
         </div>

@@ -23,17 +23,14 @@ import {
 
 // Hook to fetch all dashboard data
 export function useDashboardData() {
-  const [
-    { data: productsData },
-    { data: ordersData },
-    { data: expensesData },
-  ] = useQueries({
-    queries: [
-      dashboardProductsQueryOptions,
-      dashboardOrdersQueryOptions,
-      dashboardExpensesQueryOptions,
-    ],
-  });
+  const [{ data: productsData }, { data: ordersData }, { data: expensesData }]
+    = useQueries({
+      queries: [
+        dashboardProductsQueryOptions,
+        dashboardOrdersQueryOptions,
+        dashboardExpensesQueryOptions,
+      ],
+    });
 
   const products: ProjectedProduct[] = useMemo(
     () =>
@@ -128,7 +125,10 @@ export function useExpenseCategories() {
 
 export function useExpensesTrend(months = 6) {
   const { expenses } = useDashboardData();
-  return useMemo(() => getMonthlyExpensesSeries(expenses, months), [expenses, months]);
+  return useMemo(
+    () => getMonthlyExpensesSeries(expenses, months),
+    [expenses, months],
+  );
 }
 
 export function useSalesTrend(months = 12) {

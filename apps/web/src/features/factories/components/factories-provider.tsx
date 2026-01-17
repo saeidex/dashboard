@@ -24,11 +24,7 @@ export function FactoriesProvider({ children }: { children: React.ReactNode }) {
     [open, setOpen, currentRow, setCurrentRow],
   );
 
-  return (
-    <FactoriesContext value={values}>
-      {children}
-    </FactoriesContext>
-  );
+  return <FactoriesContext value={values}>{children}</FactoriesContext>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

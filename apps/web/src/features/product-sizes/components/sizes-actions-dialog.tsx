@@ -75,19 +75,12 @@ export function SizesActionDialog({
   });
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-    >
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="text-start">
-          <DialogTitle>
-            {isEdit ? "Edit Size" : "Add New Size"}
-          </DialogTitle>
+          <DialogTitle>{isEdit ? "Edit Size" : "Add New Size"}</DialogTitle>
           <DialogDescription>
-            {isEdit
-              ? "Update the size here. "
-              : "Create new size here. "}
+            {isEdit ? "Update the size here. " : "Create new size here. "}
             Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>

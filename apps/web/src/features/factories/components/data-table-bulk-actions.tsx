@@ -36,20 +36,23 @@ export function DataTableBulkActions<TData>({
   });
 
   const handleBulkStatusChange = (status: "active" | "inactive") => {
-    toast.promise(async () => {
-      for (const row of factories) {
-        await updateMutation.mutateAsync({ id: row.id, factory: { status } });
-      }
-    }, {
-      loading: `${status === "active" ? "Activating" : "Deactivating"} factories...`,
-      success: () => {
-        table.resetRowSelection();
-        queryClient.invalidateQueries(queryKeys.LIST_FACTORIES);
-
-        return `${status === "active" ? "Activated" : "Deactivated"} ${selectedRows.length} factor${selectedRows.length > 1 ? "ies" : "y"}`;
+    toast.promise(
+      async () => {
+        for (const row of factories) {
+          await updateMutation.mutateAsync({ id: row.id, factory: { status } });
+        }
       },
-      error: `Error ${status === "active" ? "activating" : "deactivating"} factories`,
-    });
+      {
+        loading: `${status === "active" ? "Activating" : "Deactivating"} factories...`,
+        success: () => {
+          table.resetRowSelection();
+          queryClient.invalidateQueries(queryKeys.LIST_FACTORIES);
+
+          return `${status === "active" ? "Activated" : "Deactivated"} ${selectedRows.length} factor${selectedRows.length > 1 ? "ies" : "y"}`;
+        },
+        error: `Error ${status === "active" ? "activating" : "deactivating"} factories`,
+      },
+    );
     table.resetRowSelection();
   };
 

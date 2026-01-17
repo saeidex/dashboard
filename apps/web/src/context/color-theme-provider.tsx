@@ -1,8 +1,24 @@
-import { createContext, use, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  use,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import { getCookie, removeCookie, setCookie } from "@/web/lib/cookies";
 
-export type ColorTheme = "catppuccin" | "bubblegum" | "caffeine" | "cosmic-night" | "violet-bloom" | "elegant-luxury" | "mono" | "cyberpunk" | "pastel-dreams";
+export type ColorTheme
+  = | "catppuccin"
+    | "bubblegum"
+    | "caffeine"
+    | "cosmic-night"
+    | "violet-bloom"
+    | "elegant-luxury"
+    | "mono"
+    | "cyberpunk"
+    | "pastel-dreams";
 
 const DEFAULT_COLOR_THEME: ColorTheme = "catppuccin";
 const COLOR_THEME_COOKIE_NAME = "vite-ui-color-theme";
@@ -43,7 +59,17 @@ export function ColorThemeProvider({
   // Apply theme class to document root
   useEffect(() => {
     const root = window.document.documentElement;
-    const allColorThemes: ColorTheme[] = ["catppuccin", "bubblegum", "caffeine", "cosmic-night", "violet-bloom", "elegant-luxury", "mono", "cyberpunk", "pastel-dreams"];
+    const allColorThemes: ColorTheme[] = [
+      "catppuccin",
+      "bubblegum",
+      "caffeine",
+      "cosmic-night",
+      "violet-bloom",
+      "elegant-luxury",
+      "mono",
+      "cyberpunk",
+      "pastel-dreams",
+    ];
 
     // Remove all existing color theme classes
     allColorThemes.forEach((theme) => {
@@ -54,22 +80,28 @@ export function ColorThemeProvider({
     root.classList.add(`theme-${colorTheme}`);
   }, [colorTheme]);
 
-  const setColorTheme = useCallback((colorTheme: ColorTheme) => {
-    setCookie(storageKey, colorTheme, COLOR_THEME_COOKIE_MAX_AGE);
-    _setColorTheme(colorTheme);
-  }, [storageKey]);
+  const setColorTheme = useCallback(
+    (colorTheme: ColorTheme) => {
+      setCookie(storageKey, colorTheme, COLOR_THEME_COOKIE_MAX_AGE);
+      _setColorTheme(colorTheme);
+    },
+    [storageKey],
+  );
 
   const resetColorTheme = useCallback(() => {
     removeCookie(storageKey);
     _setColorTheme(DEFAULT_COLOR_THEME);
   }, [storageKey]);
 
-  const contextValue = useMemo(() => ({
-    defaultColorTheme,
-    colorTheme,
-    setColorTheme,
-    resetColorTheme,
-  }), [defaultColorTheme, colorTheme, setColorTheme, resetColorTheme]);
+  const contextValue = useMemo(
+    () => ({
+      defaultColorTheme,
+      colorTheme,
+      setColorTheme,
+      resetColorTheme,
+    }),
+    [defaultColorTheme, colorTheme, setColorTheme, resetColorTheme],
+  );
 
   return (
     <ColorThemeContext value={contextValue} {...props}>

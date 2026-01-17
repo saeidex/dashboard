@@ -37,19 +37,25 @@ export function DataTableBulkActions<TData>({
 
   const handleBulkBannedChange = (banned: boolean) => {
     const selectedUsers = selectedRows.map(row => row.original as User);
-    toast.promise(async () => {
-      for (const user of selectedUsers) {
-        await updateMutation.mutateAsync({ id: user.id, payload: { banned } });
-      }
-    }, {
-      loading: `${banned ? "Banning" : "Unbanning"} users...`,
-      success: () => {
-        table.resetRowSelection();
-        queryClient.invalidateQueries({ queryKey: ["list-users"] });
-        return `${banned ? "Banned" : "Unbanned"} ${selectedUsers.length} user${selectedUsers.length > 1 ? "s" : ""}`;
+    toast.promise(
+      async () => {
+        for (const user of selectedUsers) {
+          await updateMutation.mutateAsync({
+            id: user.id,
+            payload: { banned },
+          });
+        }
       },
-      error: `Error ${banned ? "banning" : "unbanning"} users`,
-    });
+      {
+        loading: `${banned ? "Banning" : "Unbanning"} users...`,
+        success: () => {
+          table.resetRowSelection();
+          queryClient.invalidateQueries({ queryKey: ["list-users"] });
+          return `${banned ? "Banned" : "Unbanned"} ${selectedUsers.length} user${selectedUsers.length > 1 ? "s" : ""}`;
+        },
+        error: `Error ${banned ? "banning" : "unbanning"} users`,
+      },
+    );
     table.resetRowSelection();
   };
 

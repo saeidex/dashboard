@@ -32,9 +32,10 @@ export const shifts: { label: Capitalize<Shift>; value: Shift }[] = [
   { label: "Night", value: "Night" },
 ];
 
-export const statuses: { label: Capitalize<string>; value: EmployeeStatus }[] = [
-  { label: "Active", value: "active" },
-  { label: "Inactive", value: "inactive" },
-  { label: "On Leave", value: "on-leave" },
-  { label: "Terminated", value: "terminated" },
-];
+export const statuses: { label: Capitalize<string>; value: EmployeeStatus }[]
+  = [
+    { label: "Active", value: "active" },
+    { label: "Inactive", value: "inactive" },
+    { label: "On Leave", value: "on-leave" },
+    { label: "Terminated", value: "terminated" },
+  ];

@@ -43,8 +43,16 @@ const PAYMENT_METHODS = [
 const paymentFormSchema = z.object({
   amount: z.number().min(0.01, "Amount must be greater than 0"),
   paymentMethod: z.enum(["cash", "card", "bank-transfer", "mobile-wallet"]),
-  reference: z.string().max(100, "Reference must be less than 100 characters").optional().nullable(),
-  notes: z.string().max(500, "Notes must be less than 500 characters").optional().nullable(),
+  reference: z
+    .string()
+    .max(100, "Reference must be less than 100 characters")
+    .optional()
+    .nullable(),
+  notes: z
+    .string()
+    .max(500, "Notes must be less than 500 characters")
+    .optional()
+    .nullable(),
   paidAt: z.date().optional(),
 });
 
@@ -125,15 +133,11 @@ export function PaymentsActionDialog({
         <div className="rounded-md border bg-muted/50 p-3 text-sm space-y-1">
           <div className="flex justify-between">
             <span className="text-muted-foreground">Order #:</span>
-            <span className="font-mono font-medium">
-              {currentRow.orderId}
-            </span>
+            <span className="font-mono font-medium">{currentRow.orderId}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Customer:</span>
-            <span className="font-medium">
-              {currentRow.customer?.name}
-            </span>
+            <span className="font-medium">{currentRow.customer?.name}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Order Total:</span>
@@ -151,14 +155,21 @@ export function PaymentsActionDialog({
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Due Amount:</span>
-            <span className={`font-semibold ${
-              (currentRow.order?.grandTotal ?? 0) - (currentRow.order?.totalPaid ?? 0) > 0
-                ? "text-red-600 dark:text-red-400"
-                : "text-green-600 dark:text-green-400"
-            }`}
+            <span
+              className={`font-semibold ${
+                (currentRow.order?.grandTotal ?? 0)
+                - (currentRow.order?.totalPaid ?? 0)
+                > 0
+                  ? "text-red-600 dark:text-red-400"
+                  : "text-green-600 dark:text-green-400"
+              }`}
             >
               ৳
-              {Math.max(0, (currentRow.order?.grandTotal ?? 0) - (currentRow.order?.totalPaid ?? 0)).toLocaleString()}
+              {Math.max(
+                0,
+                (currentRow.order?.grandTotal ?? 0)
+                - (currentRow.order?.totalPaid ?? 0),
+              ).toLocaleString()}
             </span>
           </div>
         </div>
@@ -175,7 +186,9 @@ export function PaymentsActionDialog({
                 name="amount"
                 render={({ field }) => (
                   <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                    <FormLabel className="col-span-2 text-end">Amount</FormLabel>
+                    <FormLabel className="col-span-2 text-end">
+                      Amount
+                    </FormLabel>
                     <FormControl>
                       <div className="relative col-span-4">
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
@@ -188,7 +201,10 @@ export function PaymentsActionDialog({
                           className="pl-7"
                           {...field}
                           value={field.value || ""}
-                          onChange={e => field.onChange(Number.parseFloat(e.target.value) || 0)}
+                          onChange={e =>
+                            field.onChange(
+                              Number.parseFloat(e.target.value) || 0,
+                            )}
                         />
                       </div>
                     </FormControl>
@@ -202,7 +218,9 @@ export function PaymentsActionDialog({
                 name="paymentMethod"
                 render={({ field }) => (
                   <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                    <FormLabel className="col-span-2 text-end">Method</FormLabel>
+                    <FormLabel className="col-span-2 text-end">
+                      Method
+                    </FormLabel>
                     <SelectDropdown
                       defaultValue={field.value}
                       onValueChange={field.onChange}
@@ -220,7 +238,9 @@ export function PaymentsActionDialog({
                 name="reference"
                 render={({ field }) => (
                   <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                    <FormLabel className="col-span-2 text-end">Reference</FormLabel>
+                    <FormLabel className="col-span-2 text-end">
+                      Reference
+                    </FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Transaction ID, check #, etc."
@@ -240,7 +260,9 @@ export function PaymentsActionDialog({
                 name="paidAt"
                 render={({ field }) => (
                   <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                    <FormLabel className="col-span-2 text-end">Paid Date</FormLabel>
+                    <FormLabel className="col-span-2 text-end">
+                      Paid Date
+                    </FormLabel>
                     <div className="col-span-4">
                       <DatePicker
                         selected={field.value}
@@ -283,11 +305,7 @@ export function PaymentsActionDialog({
           >
             Cancel
           </Button>
-          <Button
-            type="submit"
-            form="payments-form"
-            disabled={isPending}
-          >
+          <Button type="submit" form="payments-form" disabled={isPending}>
             {isPending ? "Saving..." : "Update Payment"}
           </Button>
         </DialogFooter>

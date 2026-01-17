@@ -1,4 +1,7 @@
-import type { insertEmployeesSchema, patchEmployeesSchema } from "@takumitex/api/schema";
+import type {
+  insertEmployeesSchema,
+  patchEmployeesSchema,
+} from "@takumitex/api/schema";
 
 import { queryOptions } from "@tanstack/react-query";
 
@@ -68,7 +71,13 @@ export async function deleteEmployee(id: string) {
   }
 }
 
-export async function updateEmployee({ id, employee }: { id: string; employee: patchEmployeesSchema }) {
+export async function updateEmployee({
+  id,
+  employee,
+}: {
+  id: string;
+  employee: patchEmployeesSchema;
+}) {
   const response = await apiClient.api.employees[":id"].$patch({
     param: {
       id,

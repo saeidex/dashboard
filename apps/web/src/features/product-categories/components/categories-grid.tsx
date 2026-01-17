@@ -44,12 +44,7 @@ function SortableCategoryCard({ category }: SortableCategoryCardProps) {
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-    >
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <Card className="group overflow-hidden p-0 transition-shadow duration-300 hover:shadow-lg cursor-grab active:cursor-grabbing">
         <CardContent className="p-0">
           <div
@@ -113,7 +108,8 @@ export const CategoriesGrid = () => {
 
     if (over && active.id !== over.id) {
       setItems((currentItems) => {
-        const itemsToUse = currentItems.length > 0 ? currentItems : displayItems;
+        const itemsToUse
+          = currentItems.length > 0 ? currentItems : displayItems;
         const oldIndex = itemsToUse.findIndex(item => item.id === active.id);
         const newIndex = itemsToUse.findIndex(item => item.id === over.id);
 

@@ -1,4 +1,7 @@
-import type { insertUsersSchema, patchUsersSchema } from "@takumitex/api/schema";
+import type {
+  insertUsersSchema,
+  patchUsersSchema,
+} from "@takumitex/api/schema";
 
 import { queryOptions } from "@tanstack/react-query";
 
@@ -36,7 +39,13 @@ export async function createUser(payload: insertUsersSchema) {
   return json;
 }
 
-export async function updateUser({ id, payload }: { id: string; payload: patchUsersSchema }) {
+export async function updateUser({
+  id,
+  payload,
+}: {
+  id: string;
+  payload: patchUsersSchema;
+}) {
   const response = await apiClient.api.users[":id"].$patch({
     param: { id },
     json: payload,

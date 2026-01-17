@@ -7,9 +7,8 @@ export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ location }) => {
     const { data: session } = await authClient.getSession();
 
-    const isValidAdmin = session
-      && session.user?.role?.includes("admin")
-      && !session.user?.banned;
+    const isValidAdmin
+      = session && session.user?.role?.includes("admin") && !session.user?.banned;
 
     if (!isValidAdmin) {
       throw redirect({

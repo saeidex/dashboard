@@ -56,30 +56,26 @@ export function DataTableFacetedFilter<TData, TValue>({
                 {selectedValues.size}
               </Badge>
               <div className="hidden space-x-1 lg:flex">
-                {selectedValues.size > 2
-                  ? (
+                {selectedValues.size > 2 ? (
+                  <Badge
+                    variant="secondary"
+                    className="rounded-sm px-1 font-normal"
+                  >
+                    {selectedValues.size} selected
+                  </Badge>
+                ) : (
+                  options
+                    .filter((option) => selectedValues.has(option.value))
+                    .map((option) => (
                       <Badge
                         variant="secondary"
+                        key={option.value}
                         className="rounded-sm px-1 font-normal"
                       >
-                        {selectedValues.size}
-                        {" "}
-                        selected
+                        {option.label}
                       </Badge>
-                    )
-                  : (
-                      options
-                        .filter(option => selectedValues.has(option.value))
-                        .map(option => (
-                          <Badge
-                            variant="secondary"
-                            key={option.value}
-                            className="rounded-sm px-1 font-normal"
-                          >
-                            {option.label}
-                          </Badge>
-                        ))
-                    )}
+                    ))
+                )}
               </div>
             </>
           )}
@@ -99,8 +95,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                     onSelect={() => {
                       if (isSelected) {
                         selectedValues.delete(option.value);
-                      }
-                      else {
+                      } else {
                         selectedValues.add(option.value);
                       }
                       const filterValues = Array.from(selectedValues);

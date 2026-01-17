@@ -1,7 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EXPENSE_CATEGORIES, insertExpensesSchema } from "@takumitex/api/schema";
+import {
+  EXPENSE_CATEGORIES,
+  insertExpensesSchema,
+} from "@takumitex/api/schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -100,7 +103,9 @@ export function ExpensesActionDialog({
             {isEdit ? "Edit Expense" : "Add New Expense"}
           </DialogTitle>
           <DialogDescription>
-            {isEdit ? "Update the expenses here. " : "Create new expenses here. "}
+            {isEdit
+              ? "Update the expenses here. "
+              : "Create new expenses here. "}
             Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>

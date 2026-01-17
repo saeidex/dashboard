@@ -68,7 +68,8 @@ export function PaymentsDialogs() {
                   {currentRow.amount.toLocaleString()}
                 </strong>
                 {" "}
-                for Order #
+                for Order
+                #
                 {currentRow.orderId}
                 .
                 <br />

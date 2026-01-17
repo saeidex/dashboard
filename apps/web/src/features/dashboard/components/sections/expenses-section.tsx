@@ -98,7 +98,6 @@ export function ExpensesSection() {
                 <CardTitle>Expenses Trend</CardTitle>
                 <CardDescription>
                   Last
-                  {" "}
                   {months}
                   {" "}
                   months
@@ -147,10 +146,9 @@ export function ExpensesSection() {
                         <YAxis
                           width={48}
                           tickFormatter={v =>
-                            `৳${
-                              Number(v).toLocaleString(undefined, {
-                                maximumFractionDigits: 0,
-                              })}`}
+                            `৳${Number(v).toLocaleString(undefined, {
+                              maximumFractionDigits: 0,
+                            })}`}
                           fontSize={12}
                           tickLine={false}
                           axisLine={false}
@@ -164,10 +162,9 @@ export function ExpensesSection() {
                             fontSize: 12,
                           }}
                           formatter={(value?: number) => [
-                            `৳${
-                              Number(value).toLocaleString(undefined, {
-                                maximumFractionDigits: 0,
-                              })}`,
+                            `৳${Number(value).toLocaleString(undefined, {
+                              maximumFractionDigits: 0,
+                            })}`,
                             "Expenses",
                           ]}
                         />

@@ -20,8 +20,9 @@ export function NoPayments() {
         </EmptyMedia>
         <EmptyTitle>No Payments Yet</EmptyTitle>
         <EmptyDescription>
-          Payment records appear here when you record payments for orders.
-          Go to the Orders page and click the "Pay" button on an order to record a payment.
+          Payment records appear here when you record payments for orders. Go to
+          the Orders page and click the "Pay" button on an order to record a
+          payment.
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>

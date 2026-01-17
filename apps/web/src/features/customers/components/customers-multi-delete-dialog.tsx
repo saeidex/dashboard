@@ -45,22 +45,25 @@ export function CustomersMultiDeleteDialog<TData>({
 
     onOpenChange(false);
 
-    toast.promise(async () => {
-      for (const row of selectedRows) {
-        await deleteMutation.mutateAsync(row.getValue("id"));
-      }
-    }, {
-      loading: "Deleting customers...",
-      success: () => {
-        table.resetRowSelection();
-        queryClient.invalidateQueries(queryKeys.LIST_CUSTOMERS);
-
-        return `Deleted ${selectedRows.length} ${
-          selectedRows.length > 1 ? "customers" : "customer"
-        }`;
+    toast.promise(
+      async () => {
+        for (const row of selectedRows) {
+          await deleteMutation.mutateAsync(row.getValue("id"));
+        }
       },
-      error: "Error",
-    });
+      {
+        loading: "Deleting customers...",
+        success: () => {
+          table.resetRowSelection();
+          queryClient.invalidateQueries(queryKeys.LIST_CUSTOMERS);
+
+          return `Deleted ${selectedRows.length} ${
+            selectedRows.length > 1 ? "customers" : "customer"
+          }`;
+        },
+        error: "Error",
+      },
+    );
   };
 
   return (

@@ -36,20 +36,26 @@ export function DataTableBulkActions<TData>({
   });
 
   const handleBulkIsActiveChange = (isActive: boolean) => {
-    toast.promise(async () => {
-      for (const row of customers) {
-        await updateMutation.mutateAsync({ id: row.id, customer: { isActive } });
-      }
-    }, {
-      loading: `${isActive ? "Activating" : "Deactivating"} customers...`,
-      success: () => {
-        table.resetRowSelection();
-        queryClient.invalidateQueries(queryKeys.LIST_CUSTOMERS);
-
-        return `${isActive ? "Activated" : "Deactivated"} ${selectedRows.length} user${selectedRows.length > 1 ? "s" : ""}`;
+    toast.promise(
+      async () => {
+        for (const row of customers) {
+          await updateMutation.mutateAsync({
+            id: row.id,
+            customer: { isActive },
+          });
+        }
       },
-      error: `Error ${isActive ? "activating" : "deactivating"} customers`,
-    });
+      {
+        loading: `${isActive ? "Activating" : "Deactivating"} customers...`,
+        success: () => {
+          table.resetRowSelection();
+          queryClient.invalidateQueries(queryKeys.LIST_CUSTOMERS);
+
+          return `${isActive ? "Activated" : "Deactivated"} ${selectedRows.length} user${selectedRows.length > 1 ? "s" : ""}`;
+        },
+        error: `Error ${isActive ? "activating" : "deactivating"} customers`,
+      },
+    );
     table.resetRowSelection();
   };
 

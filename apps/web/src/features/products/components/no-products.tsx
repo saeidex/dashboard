@@ -2,7 +2,14 @@ import { useNavigate } from "@tanstack/react-router";
 import { BookmarkPlus, Package, Plus } from "lucide-react";
 
 import { Button } from "@/web/components/ui/button";
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/web/components/ui/empty";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/web/components/ui/empty";
 
 import { useProducts } from "./products-provider";
 

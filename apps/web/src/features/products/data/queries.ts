@@ -1,4 +1,7 @@
-import type { insertProductsSchema, patchProductsSchema } from "@takumitex/api/schema";
+import type {
+  insertProductsSchema,
+  patchProductsSchema,
+} from "@takumitex/api/schema";
 
 import { queryOptions } from "@tanstack/react-query";
 
@@ -8,27 +11,30 @@ import apiClient from "@/web/lib/api-client";
 import formatApiError from "@/web/lib/format-api-error";
 
 export const queryKeys = {
-  LIST_PRODUCTS: (query: ProductSearch) => ({ queryKey: ["list-products", query] }),
+  LIST_PRODUCTS: (query: ProductSearch) => ({
+    queryKey: ["list-products", query],
+  }),
   LIST_PRODUCT: (id: string) => ({ queryKey: [`list-product-${id}`] }),
 };
 
-export const createProductsQueryOptions = (query: ProductSearch = {}) => queryOptions({
-  ...queryKeys.LIST_PRODUCTS(query),
-  queryFn: async () => {
-    const response = await apiClient.api.products.$get({
-      query,
-    });
+export const createProductsQueryOptions = (query: ProductSearch = {}) =>
+  queryOptions({
+    ...queryKeys.LIST_PRODUCTS(query),
+    queryFn: async () => {
+      const response = await apiClient.api.products.$get({
+        query,
+      });
 
-    const json = await response.json();
+      const json = await response.json();
 
-    if ("success" in json) {
-      const message = formatApiError(json);
-      throw new Error(message);
-    }
+      if ("success" in json) {
+        const message = formatApiError(json);
+        throw new Error(message);
+      }
 
-    return json;
-  },
-});
+      return json;
+    },
+  });
 
 export function createProductQueryOptions(id: string) {
   return queryOptions({
@@ -80,7 +86,13 @@ export async function deleteProduct(id: string) {
   }
 }
 
-export async function updateProduct({ id, product }: { id: string; product: patchProductsSchema }) {
+export async function updateProduct({
+  id,
+  product,
+}: {
+  id: string;
+  product: patchProductsSchema;
+}) {
   const response = await apiClient.api.products[":id"].$patch({
     param: {
       id,

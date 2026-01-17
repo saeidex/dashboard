@@ -41,7 +41,9 @@ export const productsColumns: ColumnDef<Product>[] = [
       <DataTableColumnHeader column={column} title="Title" />
     ),
     cell: ({ cell }) => {
-      const label = labels.find(l => l.value === cell.getValue<Product["label"]>());
+      const label = labels.find(
+        l => l.value === cell.getValue<Product["label"]>(),
+      );
       return (
         <div className="flex space-x-2">
           {label && <Badge variant="outline">{label.label}</Badge>}

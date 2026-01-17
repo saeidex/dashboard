@@ -47,22 +47,25 @@ export function ProductsMultiDeleteDialog<TData>({
 
     onOpenChange(false);
 
-    toast.promise(async () => {
-      for (const row of selectedRows) {
-        const product = row.original as { id: string };
-        await deleteMutation.mutateAsync(product.id);
-      }
-    }, {
-      loading: "Deleting products...",
-      success: () => {
-        table.resetRowSelection();
-        queryClient.invalidateQueries(queryKeys.LIST_PRODUCTS(search));
-        return `Deleted ${selectedRows.length} ${
-          selectedRows.length > 1 ? "products" : "product"
-        }`;
+    toast.promise(
+      async () => {
+        for (const row of selectedRows) {
+          const product = row.original as { id: string };
+          await deleteMutation.mutateAsync(product.id);
+        }
       },
-      error: "Error",
-    });
+      {
+        loading: "Deleting products...",
+        success: () => {
+          table.resetRowSelection();
+          queryClient.invalidateQueries(queryKeys.LIST_PRODUCTS(search));
+          return `Deleted ${selectedRows.length} ${
+            selectedRows.length > 1 ? "products" : "product"
+          }`;
+        },
+        error: "Error",
+      },
+    );
   };
 
   return (

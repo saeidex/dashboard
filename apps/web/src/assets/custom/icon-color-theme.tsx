@@ -1,27 +1,77 @@
 import type { SVGProps } from "react";
 
-export function IconColorTheme({ color = "purple", ...props }: SVGProps<SVGSVGElement> & { color?: string }) {
+export function IconColorTheme({
+  color = "purple",
+  ...props
+}: SVGProps<SVGSVGElement> & { color?: string }) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 200 120"
-      {...props}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" {...props}>
       <rect width="200" height="120" rx="8" className="fill-sidebar" />
       <rect x="12" y="12" width="40" height="96" rx="6" className="fill-card" />
-      <rect x="60" y="12" width="128" height="96" rx="6" className="fill-card" />
+      <rect
+        x="60"
+        y="12"
+        width="128"
+        height="96"
+        rx="6"
+        className="fill-card"
+      />
 
       {/* Sidebar items */}
-      <rect x="18" y="20" width="28" height="8" rx="2" style={{ fill: color }} opacity="0.8" />
+      <rect
+        x="18"
+        y="20"
+        width="28"
+        height="8"
+        rx="2"
+        style={{ fill: color }}
+        opacity="0.8"
+      />
       <rect x="18" y="34" width="28" height="8" rx="2" className="fill-muted" />
       <rect x="18" y="48" width="28" height="8" rx="2" className="fill-muted" />
 
       {/* Content area */}
-      <rect x="68" y="20" width="48" height="10" rx="2" style={{ fill: color }} />
-      <rect x="68" y="36" width="112" height="6" rx="2" className="fill-muted" />
-      <rect x="68" y="46" width="112" height="6" rx="2" className="fill-muted" />
-      <rect x="68" y="58" width="52" height="20" rx="4" style={{ fill: color }} opacity="0.2" />
-      <rect x="128" y="58" width="52" height="20" rx="4" className="fill-muted" />
+      <rect
+        x="68"
+        y="20"
+        width="48"
+        height="10"
+        rx="2"
+        style={{ fill: color }}
+      />
+      <rect
+        x="68"
+        y="36"
+        width="112"
+        height="6"
+        rx="2"
+        className="fill-muted"
+      />
+      <rect
+        x="68"
+        y="46"
+        width="112"
+        height="6"
+        rx="2"
+        className="fill-muted"
+      />
+      <rect
+        x="68"
+        y="58"
+        width="52"
+        height="20"
+        rx="4"
+        style={{ fill: color }}
+        opacity="0.2"
+      />
+      <rect
+        x="128"
+        y="58"
+        width="52"
+        height="20"
+        rx="4"
+        className="fill-muted"
+      />
     </svg>
   );
 }

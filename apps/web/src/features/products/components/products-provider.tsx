@@ -29,11 +29,7 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     [open, setOpen, currentRow, setCurrentRow],
   );
 
-  return (
-    <ProductsContext value={values}>
-      {children}
-    </ProductsContext>
-  );
+  return <ProductsContext value={values}>{children}</ProductsContext>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

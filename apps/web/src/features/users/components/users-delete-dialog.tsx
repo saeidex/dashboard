@@ -38,7 +38,8 @@ export function UsersDeleteDialog({
     },
     onError: (error) => {
       toast.error(
-        error?.message || "There was an error deleting the user. Please try again.",
+        error?.message
+        || "There was an error deleting the user. Please try again.",
       );
     },
   });
@@ -76,11 +77,10 @@ export function UsersDeleteDialog({
             <br />
             This action will permanently remove the user with the email of
             {" "}
-            <span className="font-bold">
-              {currentRow.email}
-            </span>
+            <span className="font-bold">{currentRow.email}</span>
             {" "}
-            from the system. This cannot be undone.
+            from the
+            system. This cannot be undone.
           </p>
 
           <Label className="my-2">

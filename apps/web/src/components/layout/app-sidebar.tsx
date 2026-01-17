@@ -58,7 +58,10 @@ export function AppSidebar() {
   const filteredNavGroups = navGroups
     .map((group) => {
       if (isToggleableGroup(group.title)) {
-        const filteredItems = filterSidebarItems(group.items, display.sidebarItems);
+        const filteredItems = filterSidebarItems(
+          group.items,
+          display.sidebarItems,
+        );
 
         // Always include Orders (dynamic collapsible) even if not in settings
         const ordersItem = group.items.find(item => item.title === "Orders");
@@ -66,9 +69,10 @@ export function AppSidebar() {
 
         return {
           ...group,
-          items: hasOrders || !ordersItem
-            ? filteredItems
-            : [...filteredItems, ordersItem],
+          items:
+            hasOrders || !ordersItem
+              ? filteredItems
+              : [...filteredItems, ordersItem],
         };
       }
       return group;

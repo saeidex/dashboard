@@ -45,21 +45,24 @@ export function EmployeesMultiDeleteDialog<TData>({
 
     onOpenChange(false);
 
-    toast.promise(async () => {
-      for (const employee of selectedRows) {
-        await deleteMutation.mutateAsync(employee.getValue("id"));
-      }
-    }, {
-      loading: "Deleting employees...",
-      success: () => {
-        table.resetRowSelection();
-        queryClient.invalidateQueries(queryKeys.LIST_EMPLOYEES);
-        return `Deleted ${selectedRows.length} ${
-          selectedRows.length > 1 ? "employees" : "employee"
-        }`;
+    toast.promise(
+      async () => {
+        for (const employee of selectedRows) {
+          await deleteMutation.mutateAsync(employee.getValue("id"));
+        }
       },
-      error: "Error",
-    });
+      {
+        loading: "Deleting employees...",
+        success: () => {
+          table.resetRowSelection();
+          queryClient.invalidateQueries(queryKeys.LIST_EMPLOYEES);
+          return `Deleted ${selectedRows.length} ${
+            selectedRows.length > 1 ? "employees" : "employee"
+          }`;
+        },
+        error: "Error",
+      },
+    );
   };
 
   return (

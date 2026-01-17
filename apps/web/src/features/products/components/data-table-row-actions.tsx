@@ -76,9 +76,7 @@ export function DataTableRowActions<TData>({
         >
           Edit
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => createMutation.mutate(row.original)}
-        >
+        <DropdownMenuItem onClick={() => createMutation.mutate(row.original)}>
           Make a copy
         </DropdownMenuItem>
         <DropdownMenuItem disabled>Favorite</DropdownMenuItem>
@@ -88,7 +86,10 @@ export function DataTableRowActions<TData>({
           <DropdownMenuSubContent>
             <DropdownMenuRadioGroup
               onValueChange={value =>
-                updateMutation.mutate({ id: row.original.id, product: { label: value } })}
+                updateMutation.mutate({
+                  id: row.original.id,
+                  product: { label: value },
+                })}
               value={row.original.label ?? undefined}
             >
               {labels.map(label => (

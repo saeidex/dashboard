@@ -2,7 +2,11 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertProductsSchema } from "@takumitex/api/schema";
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -94,7 +98,7 @@ export function ProductsMutateDrawer({
   useEffect(() => {
     const b = typeof retailPrice === "number" ? retailPrice : 0;
     const tPct = typeof taxPercentage === "number" ? taxPercentage : 0;
-    const taxAmt = +((b) * (tPct / 100)).toFixed(2);
+    const taxAmt = +(b * (tPct / 100)).toFixed(2);
     const total = +(b + taxAmt).toFixed(2);
     form.setValue("taxAmount", taxAmt, { shouldDirty: true });
     form.setValue("total", total, { shouldDirty: true });
@@ -149,25 +153,26 @@ export function ProductsMutateDrawer({
           <form
             id="products-form"
             onSubmit={form.handleSubmit((data) => {
-              isUpdate ? updateMutation.mutate({ id: currentRow.id, product: data }) : createMutation.mutate(data);
+              isUpdate
+                ? updateMutation.mutate({ id: currentRow.id, product: data })
+                : createMutation.mutate(data);
             })}
             className="flex-1 space-y-6 overflow-y-auto px-4"
           >
-            {isUpdate
-              && (
-                <FormField
-                  name="id"
-                  render={() => (
-                    <FormItem className="flex gap-2">
-                      <FormLabel>ID: </FormLabel>
-                      <FormControl>
-                        <Label className="font-medium">{currentRow.id}</Label>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
+            {isUpdate && (
+              <FormField
+                name="id"
+                render={() => (
+                  <FormItem className="flex gap-2">
+                    <FormLabel>ID: </FormLabel>
+                    <FormControl>
+                      <Label className="font-medium">{currentRow.id}</Label>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <FormField
               control={form.control}
               name="title"
@@ -286,7 +291,8 @@ export function ProductsMutateDrawer({
                       <SelectDropdown
                         isControlled
                         defaultValue={field.value?.toString() ?? ""}
-                        onValueChange={v => field.onChange(v ? Number.parseInt(v) : undefined)}
+                        onValueChange={v =>
+                          field.onChange(v ? Number.parseInt(v) : undefined)}
                         placeholder="Select size"
                         items={sizes.map(d => ({
                           value: d.id.toString(),
@@ -324,7 +330,9 @@ export function ProductsMutateDrawer({
                           step="0.1"
                           {...field}
                           onChange={e =>
-                            field.onChange(Number.parseFloat(e.target.value) || 0)}
+                            field.onChange(
+                              Number.parseFloat(e.target.value) || 0,
+                            )}
                         />
                       </FormControl>
                       <FormMessage />
@@ -343,7 +351,9 @@ export function ProductsMutateDrawer({
                           step="0.1"
                           {...field}
                           onChange={e =>
-                            field.onChange(Number.parseFloat(e.target.value) || 0)}
+                            field.onChange(
+                              Number.parseFloat(e.target.value) || 0,
+                            )}
                         />
                       </FormControl>
                       <FormMessage />

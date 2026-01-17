@@ -29,11 +29,7 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
     [open, setOpen, currentRow, setCurrentRow],
   );
 
-  return (
-    <UsersContext value={values}>
-      {children}
-    </UsersContext>
-  );
+  return <UsersContext value={values}>{children}</UsersContext>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

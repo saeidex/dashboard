@@ -88,34 +88,34 @@ const devOnlyPages = () => {
 };
 
 export const sidebarData: SidebarData = {
-//   user: {
-//     id: "1",
-//     name: "Example",
-//     email: "example@mail.com",
-//     image: "/avatars/example.jpg",
-//     emailVerified: false,
-//     role: "admin",
-//     banned: false,
-//     createdAt: new Date(),
-//     updatedAt: new Date(),
-//   },
-//   teams: [
-//     {
-//       name: "Shadcn Admin",
-//       logo: Command,
-//       plan: "Vite + ShadcnUI",
-//     },
-//     {
-//       name: "Acme Inc",
-//       logo: GalleryVerticalEnd,
-//       plan: "Enterprise",
-//     },
-//     {
-//       name: "Acme Corp.",
-//       logo: AudioWaveform,
-//       plan: "Startup",
-//     },
-//   ],
+  //   user: {
+  //     id: "1",
+  //     name: "Example",
+  //     email: "example@mail.com",
+  //     image: "/avatars/example.jpg",
+  //     emailVerified: false,
+  //     role: "admin",
+  //     banned: false,
+  //     createdAt: new Date(),
+  //     updatedAt: new Date(),
+  //   },
+  //   teams: [
+  //     {
+  //       name: "Shadcn Admin",
+  //       logo: Command,
+  //       plan: "Vite + ShadcnUI",
+  //     },
+  //     {
+  //       name: "Acme Inc",
+  //       logo: GalleryVerticalEnd,
+  //       plan: "Enterprise",
+  //     },
+  //     {
+  //       name: "Acme Corp.",
+  //       logo: AudioWaveform,
+  //       plan: "Startup",
+  //     },
+  //   ],
   navGroups: [
     {
       title: "General",

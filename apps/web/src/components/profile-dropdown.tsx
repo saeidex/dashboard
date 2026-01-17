@@ -1,7 +1,11 @@
 import { Link } from "@tanstack/react-router";
 
 import { SignOutDialog } from "@/web/components/sign-out-dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/web/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/web/components/ui/avatar";
 import { Button } from "@/web/components/ui/button";
 import {
   DropdownMenu,
@@ -20,7 +24,8 @@ import { useAuthStore } from "../stores/auth-store";
 export function ProfileDropdown() {
   const [open, setOpen] = useDialogState();
   const user = useAuthStore(state => state.user);
-  const fallbackInitial = user?.name?.charAt(0) ?? user?.email?.charAt(0) ?? "U";
+  const fallbackInitial
+    = user?.name?.charAt(0) ?? user?.email?.charAt(0) ?? "U";
 
   return (
     <>

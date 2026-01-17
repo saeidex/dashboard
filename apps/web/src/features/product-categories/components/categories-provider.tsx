@@ -35,11 +35,7 @@ export function CategoriesProvider({
     [open, setOpen, currentRow, setCurrentRow],
   );
 
-  return (
-    <CategoriesContext value={values}>
-      {children}
-    </CategoriesContext>
-  );
+  return <CategoriesContext value={values}>{children}</CategoriesContext>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

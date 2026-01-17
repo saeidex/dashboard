@@ -24,11 +24,7 @@ export function CustomersProvider({ children }: { children: React.ReactNode }) {
     [open, setOpen, currentRow, setCurrentRow],
   );
 
-  return (
-    <CustomersContext value={values}>
-      {children}
-    </CustomersContext>
-  );
+  return <CustomersContext value={values}>{children}</CustomersContext>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

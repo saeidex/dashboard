@@ -57,11 +57,10 @@ export function DataTableBulkActions<TData>({
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     const buttons = toolbarRef.current?.querySelectorAll("button");
-    if (!buttons)
-      return;
+    if (!buttons) return;
 
     const currentIndex = Array.from(buttons).findIndex(
-      button => button === document.activeElement,
+      (button) => button === document.activeElement,
     );
 
     switch (event.key) {
@@ -73,8 +72,8 @@ export function DataTableBulkActions<TData>({
       }
       case "ArrowLeft": {
         event.preventDefault();
-        const prevIndex
-          = currentIndex === 0 ? buttons.length - 1 : currentIndex - 1;
+        const prevIndex =
+          currentIndex === 0 ? buttons.length - 1 : currentIndex - 1;
         buttons[prevIndex]?.focus();
         break;
       }
@@ -93,17 +92,17 @@ export function DataTableBulkActions<TData>({
         const activeElement = document.activeElement as HTMLElement;
 
         // Check if the event target or currently focused element is a dropdown trigger
-        const isFromDropdownTrigger
-          = target?.getAttribute("data-slot") === "dropdown-menu-trigger"
-            || activeElement?.getAttribute("data-slot")
-            === "dropdown-menu-trigger"
-            || target?.closest("[data-slot=\"dropdown-menu-trigger\"]")
-            || activeElement?.closest("[data-slot=\"dropdown-menu-trigger\"]");
+        const isFromDropdownTrigger =
+          target?.getAttribute("data-slot") === "dropdown-menu-trigger" ||
+          activeElement?.getAttribute("data-slot") ===
+            "dropdown-menu-trigger" ||
+          target?.closest('[data-slot="dropdown-menu-trigger"]') ||
+          activeElement?.closest('[data-slot="dropdown-menu-trigger"]');
 
         // Check if the focused element is inside dropdown content (which is portaled)
-        const isFromDropdownContent
-          = activeElement?.closest("[data-slot=\"dropdown-menu-content\"]")
-            || target?.closest("[data-slot=\"dropdown-menu-content\"]");
+        const isFromDropdownContent =
+          activeElement?.closest('[data-slot="dropdown-menu-content"]') ||
+          target?.closest('[data-slot="dropdown-menu-content"]');
 
         if (isFromDropdownTrigger || isFromDropdownContent) {
           // Escape was meant for the dropdown - don't clear selection
@@ -190,13 +189,11 @@ export function DataTableBulkActions<TData>({
               aria-label={`${selectedCount} selected`}
             >
               {selectedCount}
-            </Badge>
-            {" "}
+            </Badge>{" "}
             <span className="hidden sm:inline">
               {entityName}
               {selectedCount > 1 ? "s" : ""}
-            </span>
-            {" "}
+            </span>{" "}
             selected
           </div>
 

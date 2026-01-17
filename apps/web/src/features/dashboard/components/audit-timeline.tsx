@@ -1,12 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { format, formatDistanceToNow, isToday, isYesterday, startOfDay } from "date-fns";
+import {
+  format,
+  formatDistanceToNow,
+  isToday,
+  isYesterday,
+  startOfDay,
+} from "date-fns";
 import {
   ArrowRightLeft,
   Calendar,
   CircleDollarSign,
   Clock,
-  Download,
   Package,
   Printer,
   RefreshCw,
@@ -26,7 +31,10 @@ import {
 } from "@/web/components/ui/card";
 import { cn } from "@/web/lib/utils";
 
-import { auditLogsQueryOptions, recentAuditLogsQueryOptions } from "../data/audit-queries";
+import {
+  auditLogsQueryOptions,
+  recentAuditLogsQueryOptions,
+} from "../data/audit-queries";
 
 const ACTION_CONFIG: Record<
   AuditActionType,
@@ -192,9 +200,10 @@ export function AuditTimeline({
   });
 
   const isLoading = variant === "compact" ? recentLoading : fullLoading;
-  const logs = variant === "compact"
-    ? (recentData as AuditLog[] | undefined)
-    : ((fullData?.data as AuditLog[] | undefined));
+  const logs
+    = variant === "compact"
+      ? (recentData as AuditLog[] | undefined)
+      : (fullData?.data as AuditLog[] | undefined);
 
   const groupedLogs = logs ? groupLogsByDate(logs) : [];
   const totalActivities = logs?.length ?? 0;
@@ -235,7 +244,9 @@ export function AuditTimeline({
         {/* Print Header - Only visible when printing */}
         <div className="mb-8 hidden print:block">
           <div className="border-b-2 border-gray-300 pb-4">
-            <h1 className="text-2xl font-bold text-gray-900">Activity History Report</h1>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Activity History Report
+            </h1>
             <p className="mt-1 text-sm text-gray-600">
               Generated on
               {" "}
@@ -269,7 +280,9 @@ export function AuditTimeline({
         <div className="grid gap-4 md:grid-cols-3 print:hidden">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Activities</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Total Activities
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalActivities}</div>
@@ -277,7 +290,9 @@ export function AuditTimeline({
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Days Tracked</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Days Tracked
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{groupedLogs.length}</div>
@@ -285,12 +300,16 @@ export function AuditTimeline({
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Last Activity</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Last Activity
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-lg font-bold">
                 {logs && logs.length > 0
-                  ? formatDistanceToNow(new Date(logs[0].createdAt), { addSuffix: true })
+                  ? formatDistanceToNow(new Date(logs[0].createdAt), {
+                      addSuffix: true,
+                    })
                   : "—"}
               </div>
             </CardContent>
@@ -306,10 +325,7 @@ export function AuditTimeline({
             </CardDescription>
           </CardHeader>
           <CardContent className="print:p-0">
-            <TimelineContent
-              groupedLogs={groupedLogs}
-              isPrintable
-            />
+            <TimelineContent groupedLogs={groupedLogs} isPrintable />
           </CardContent>
         </Card>
 
@@ -372,13 +388,33 @@ function TimelineContent({ groupedLogs, isPrintable }: TimelineContentProps) {
                 isPrintable && "print:bg-gray-100",
               )}
             >
-              <Calendar className={cn("size-4 text-primary", isPrintable && "print:text-gray-600")} />
+              <Calendar
+                className={cn(
+                  "size-4 text-primary",
+                  isPrintable && "print:text-gray-600",
+                )}
+              />
             </div>
-            <h3 className={cn("text-sm font-semibold text-foreground", isPrintable && "print:text-gray-900")}>
+            <h3
+              className={cn(
+                "text-sm font-semibold text-foreground",
+                isPrintable && "print:text-gray-900",
+              )}
+            >
               {group.label}
             </h3>
-            <div className={cn("h-px flex-1 bg-border", isPrintable && "print:bg-gray-300")} />
-            <span className={cn("text-xs text-muted-foreground", isPrintable && "print:text-gray-500")}>
+            <div
+              className={cn(
+                "h-px flex-1 bg-border",
+                isPrintable && "print:bg-gray-300",
+              )}
+            />
+            <span
+              className={cn(
+                "text-xs text-muted-foreground",
+                isPrintable && "print:text-gray-500",
+              )}
+            >
               {group.logs.length}
               {" "}
               {group.logs.length === 1 ? "activity" : "activities"}
@@ -396,7 +432,9 @@ function TimelineContent({ groupedLogs, isPrintable }: TimelineContentProps) {
             />
 
             {group.logs.map((log, logIndex) => {
-              const config = ACTION_CONFIG[log.actionType as AuditActionType] ?? {
+              const config = ACTION_CONFIG[
+                log.actionType as AuditActionType
+              ] ?? {
                 icon: Clock,
                 color: "text-gray-600 dark:text-gray-400",
                 bgColor: "bg-gray-100 dark:bg-gray-900/30",
@@ -404,14 +442,17 @@ function TimelineContent({ groupedLogs, isPrintable }: TimelineContentProps) {
                 label: log.actionType,
               };
               const Icon = config.icon;
-              const isLast = logIndex === group.logs.length - 1 && groupIndex === groupedLogs.length - 1;
+              const isLast
+                = logIndex === group.logs.length - 1
+                  && groupIndex === groupedLogs.length - 1;
 
               return (
                 <div
                   key={log.id}
                   className={cn(
                     "group relative flex gap-4 pb-5 transition-colors",
-                    !isLast && "before:absolute before:left-4.5 before:top-10 before:h-full before:w-px",
+                    !isLast
+                    && "before:absolute before:left-4.5 before:top-10 before:h-full before:w-px",
                   )}
                 >
                   {/* Icon */}
@@ -421,10 +462,17 @@ function TimelineContent({ groupedLogs, isPrintable }: TimelineContentProps) {
                         "relative z-10 flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-background shadow-sm transition-transform group-hover:scale-110",
                         config.bgColor,
                         isPrintable && config.printColor,
-                        isPrintable && "print:border-gray-200 print:shadow-none",
+                        isPrintable
+                        && "print:border-gray-200 print:shadow-none",
                       )}
                     >
-                      <Icon className={cn("size-4", config.color, isPrintable && "print:text-inherit")} />
+                      <Icon
+                        className={cn(
+                          "size-4",
+                          config.color,
+                          isPrintable && "print:text-inherit",
+                        )}
+                      />
                     </div>
                   </div>
 
@@ -432,7 +480,8 @@ function TimelineContent({ groupedLogs, isPrintable }: TimelineContentProps) {
                   <div
                     className={cn(
                       "flex-1 rounded-lg border bg-card/50 p-3 shadow-sm transition-all hover:bg-card hover:shadow-md",
-                      isPrintable && "print:border-gray-200 print:bg-white print:shadow-none",
+                      isPrintable
+                      && "print:border-gray-200 print:bg-white print:shadow-none",
                     )}
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -444,16 +493,27 @@ function TimelineContent({ groupedLogs, isPrintable }: TimelineContentProps) {
                               "shrink-0 text-[10px] font-medium uppercase tracking-wide",
                               config.color,
                               config.bgColor,
-                              isPrintable && "print:border print:border-gray-300",
+                              isPrintable
+                              && "print:border print:border-gray-300",
                             )}
                           >
                             {config.label}
                           </Badge>
-                          <time className={cn("text-[11px] text-muted-foreground", isPrintable && "print:text-gray-500")}>
+                          <time
+                            className={cn(
+                              "text-[11px] text-muted-foreground",
+                              isPrintable && "print:text-gray-500",
+                            )}
+                          >
                             {format(new Date(log.createdAt), "h:mm a")}
                           </time>
                         </div>
-                        <p className={cn("text-sm leading-relaxed text-foreground", isPrintable && "print:text-gray-800")}>
+                        <p
+                          className={cn(
+                            "text-sm leading-relaxed text-foreground",
+                            isPrintable && "print:text-gray-800",
+                          )}
+                        >
                           {log.description}
                         </p>
                         {log.customer && (
@@ -462,7 +522,8 @@ function TimelineContent({ groupedLogs, isPrintable }: TimelineContentProps) {
                             params={{ customerId: log.customer.id }}
                             className={cn(
                               "mt-1.5 inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-primary",
-                              isPrintable && "print:text-gray-500 print:no-underline",
+                              isPrintable
+                              && "print:text-gray-500 print:no-underline",
                             )}
                           >
                             <span className="size-1.5 rounded-full bg-current" />
@@ -470,8 +531,15 @@ function TimelineContent({ groupedLogs, isPrintable }: TimelineContentProps) {
                           </Link>
                         )}
                       </div>
-                      <time className={cn("shrink-0 text-[11px] text-muted-foreground", isPrintable && "print:hidden")}>
-                        {formatDistanceToNow(new Date(log.createdAt), { addSuffix: true })}
+                      <time
+                        className={cn(
+                          "shrink-0 text-[11px] text-muted-foreground",
+                          isPrintable && "print:hidden",
+                        )}
+                      >
+                        {formatDistanceToNow(new Date(log.createdAt), {
+                          addSuffix: true,
+                        })}
                       </time>
                     </div>
                   </div>

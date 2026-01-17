@@ -24,11 +24,7 @@ export function ExpensesProvider({ children }: { children: React.ReactNode }) {
     [open, setOpen, currentRow, setCurrentRow],
   );
 
-  return (
-    <ExpensesContext value={values}>
-      {children}
-    </ExpensesContext>
-  );
+  return <ExpensesContext value={values}>{children}</ExpensesContext>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

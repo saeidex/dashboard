@@ -45,12 +45,7 @@ function SortableSizeCard({ size }: SortableSizeCardProps) {
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-    >
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <Card className="group relative overflow-hidden transition-all duration-200 hover:shadow-lg cursor-grab active:cursor-grabbing">
         <CardContent className="p-5 py-2">
           <div className="space-y-4">
@@ -68,11 +63,9 @@ function SortableSizeCard({ size }: SortableSizeCardProps) {
                 {size.length}
                 {" "}
                 ×
-                {" "}
                 {size.width}
                 {" "}
                 ×
-                {" "}
                 {size.height}
               </div>
               {size.description && (
@@ -126,7 +119,8 @@ export function SizesGrid() {
 
     if (over && active.id !== over.id) {
       setItems((currentItems) => {
-        const itemsToUse = currentItems.length > 0 ? currentItems : displayItems;
+        const itemsToUse
+          = currentItems.length > 0 ? currentItems : displayItems;
         const oldIndex = itemsToUse.findIndex(item => item.id === active.id);
         const newIndex = itemsToUse.findIndex(item => item.id === over.id);
 

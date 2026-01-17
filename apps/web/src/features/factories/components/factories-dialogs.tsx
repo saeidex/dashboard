@@ -68,7 +68,6 @@ export function FactoriesDialogs() {
                 <strong>{currentRow.name}</strong>
                 {" "}
                 (Code:
-                {" "}
                 {currentRow.code}
                 ).
                 <br />

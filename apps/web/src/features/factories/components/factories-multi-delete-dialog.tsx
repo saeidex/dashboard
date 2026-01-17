@@ -45,22 +45,25 @@ export function FactoriesMultiDeleteDialog<TData>({
 
     onOpenChange(false);
 
-    toast.promise(async () => {
-      for (const row of selectedRows) {
-        await deleteMutation.mutateAsync(row.getValue("id"));
-      }
-    }, {
-      loading: "Deleting factories...",
-      success: () => {
-        table.resetRowSelection();
-        queryClient.invalidateQueries(queryKeys.LIST_FACTORIES);
-
-        return `Deleted ${selectedRows.length} ${
-          selectedRows.length > 1 ? "factories" : "factory"
-        }`;
+    toast.promise(
+      async () => {
+        for (const row of selectedRows) {
+          await deleteMutation.mutateAsync(row.getValue("id"));
+        }
       },
-      error: "Error",
-    });
+      {
+        loading: "Deleting factories...",
+        success: () => {
+          table.resetRowSelection();
+          queryClient.invalidateQueries(queryKeys.LIST_FACTORIES);
+
+          return `Deleted ${selectedRows.length} ${
+            selectedRows.length > 1 ? "factories" : "factory"
+          }`;
+        },
+        error: "Error",
+      },
+    );
   };
 
   return (
@@ -92,7 +95,8 @@ export function FactoriesMultiDeleteDialog<TData>({
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>Warning</AlertTitle>
             <AlertDescription>
-              This action cannot be undone. All selected factories will be permanently deleted.
+              This action cannot be undone. All selected factories will be
+              permanently deleted.
             </AlertDescription>
           </Alert>
           <p className="text-muted-foreground mb-2">

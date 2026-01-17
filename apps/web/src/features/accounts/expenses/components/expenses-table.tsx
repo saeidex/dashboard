@@ -11,13 +11,14 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-
   useReactTable,
-
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 
-import { DataTablePagination, DataTableToolbar } from "@/web/components/data-table";
+import {
+  DataTablePagination,
+  DataTableToolbar,
+} from "@/web/components/data-table";
 import {
   Table,
   TableBody,
@@ -145,42 +146,40 @@ export function ExpensesTable() {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length
-              ? (
-                  table.getRowModel().rows.map(row => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                      className="group/row"
-                    >
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell
-                          key={cell.id}
-                          className={cn(
-                            "bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted",
-                            // @ts-expect-error className exists
-                            cell.column.columnDef.meta?.className ?? "",
-                          )}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                )
-              : (
-                  <TableRow>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map(row => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  className="group/row"
+                >
+                  {row.getVisibleCells().map(cell => (
                     <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
+                      key={cell.id}
+                      className={cn(
+                        "bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted",
+                        // @ts-expect-error className exists
+                        cell.column.columnDef.meta?.className ?? "",
+                      )}
                     >
-                      No results.
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
                     </TableCell>
-                  </TableRow>
-                )}
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>

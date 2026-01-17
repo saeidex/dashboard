@@ -96,7 +96,8 @@ export function DataTableBulkActions({ table }: DataTableBulkActionsProps) {
             {" "}
             <strong>{selectedCount}</strong>
             {" "}
-            payment(s) with a total of
+            payment(s)
+            with a total of
             {" "}
             <strong>
               ৳

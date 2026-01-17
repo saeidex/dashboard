@@ -102,7 +102,9 @@ export const factoriesColumns: ColumnDef<Factory>[] = [
       <DataTableColumnHeader column={column} title="Lines" />
     ),
     cell: ({ row }) => (
-      <div className="text-center font-mono">{row.getValue("totalLines") ?? 0}</div>
+      <div className="text-center font-mono">
+        {row.getValue("totalLines") ?? 0}
+      </div>
     ),
   },
   {
@@ -111,7 +113,9 @@ export const factoriesColumns: ColumnDef<Factory>[] = [
       <DataTableColumnHeader column={column} title="Max Manpower" />
     ),
     cell: ({ row }) => (
-      <div className="text-center font-mono">{row.getValue("maxManpower") ?? 0}</div>
+      <div className="text-center font-mono">
+        {row.getValue("maxManpower") ?? 0}
+      </div>
     ),
   },
   {
@@ -120,7 +124,9 @@ export const factoriesColumns: ColumnDef<Factory>[] = [
       <DataTableColumnHeader column={column} title="Capacity" />
     ),
     cell: ({ row }) => (
-      <div className="text-center font-mono">{row.getValue("capacity") ?? 0}</div>
+      <div className="text-center font-mono">
+        {row.getValue("capacity") ?? 0}
+      </div>
     ),
   },
   {
@@ -147,9 +153,7 @@ export const factoriesColumns: ColumnDef<Factory>[] = [
       <DataTableColumnHeader column={column} title="Address" />
     ),
     cell: ({ row }) => (
-      <LongText className="max-w-48">
-        {row.getValue("address") || "-"}
-      </LongText>
+      <LongText className="max-w-48">{row.getValue("address") || "-"}</LongText>
     ),
     enableSorting: false,
   },

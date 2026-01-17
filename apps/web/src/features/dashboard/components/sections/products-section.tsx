@@ -5,7 +5,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/web/components/ui/card";
-import { useDashboardKpis, useProductsData } from "@/web/hooks/use-dashboard-data";
+import {
+  useDashboardKpis,
+  useProductsData,
+} from "@/web/hooks/use-dashboard-data";
 
 import { Metric } from "../matric";
 

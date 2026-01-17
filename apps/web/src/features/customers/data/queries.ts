@@ -1,4 +1,7 @@
-import type { insertCustomersSchema, patchCustomersSchema } from "@takumitex/api/schema";
+import type {
+  insertCustomersSchema,
+  patchCustomersSchema,
+} from "@takumitex/api/schema";
 
 import { queryOptions } from "@tanstack/react-query";
 
@@ -70,7 +73,13 @@ export async function deleteCustomer(id: string) {
   }
 }
 
-export async function updateCustomer({ id, customer }: { id: string; customer: patchCustomersSchema }) {
+export async function updateCustomer({
+  id,
+  customer,
+}: {
+  id: string;
+  customer: patchCustomersSchema;
+}) {
   const response = await apiClient.api.customers[":id"].$patch({
     param: {
       id,

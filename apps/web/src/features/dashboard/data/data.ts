@@ -45,8 +45,14 @@ export type ProjectedExpense = {
 };
 
 // Query options for fetching dashboard data
-export const dashboardProductsQueryOptions = createProductsQueryOptions({ page: 1, pageSize: 100 });
-export const dashboardOrdersQueryOptions = createOrdersQueryOptions({ pageIndex: 0, pageSize: 100 });
+export const dashboardProductsQueryOptions = createProductsQueryOptions({
+  page: 1,
+  pageSize: 100,
+});
+export const dashboardOrdersQueryOptions = createOrdersQueryOptions({
+  pageIndex: 0,
+  pageSize: 100,
+});
 export const dashboardExpensesQueryOptions = expensesQueryOptions;
 
 export const sum = (vals: number[]) => vals.reduce((a, b) => a + b, 0);
@@ -89,9 +95,7 @@ export function computeKpis(
   const salesTotal = sum(orders.map(o => o.totals.grandTotal));
   const ordersCount = orders.length;
   const expensesTotal = sum(expenses.map(e => e.amount));
-  const inventoryValue = sum(
-    products.map(p => p.pricingTotal * p.stock),
-  );
+  const inventoryValue = sum(products.map(p => p.pricingTotal * p.stock));
 
   const latestSales = latest ? (orderByMonth[latest]?.sales ?? 0) : 0;
   const prevSales = prev ? (orderByMonth[prev]?.sales ?? 0) : 0;
@@ -120,7 +124,10 @@ export function computeKpis(
   };
 }
 
-export function getMonthlySalesSeries(orders: ProjectedOrder[], limitMonths = 12) {
+export function getMonthlySalesSeries(
+  orders: ProjectedOrder[],
+  limitMonths = 12,
+) {
   const grouped: Record<string, number> = {};
   for (const o of orders) {
     const key = monthKey(o.createdAt);
@@ -135,10 +142,10 @@ export function getMonthlySalesSeries(orders: ProjectedOrder[], limitMonths = 12
   const months: string[] = [];
   const cursor = new Date(endDate);
   for (let i = 0; i < limitMonths; i++) {
-    const k
-      = `${cursor.getFullYear()
-      }-${
-        String(cursor.getMonth() + 1).padStart(2, "0")}`;
+    const k = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(
+      2,
+      "0",
+    )}`;
     months.push(k);
     cursor.setMonth(cursor.getMonth() - 1);
   }
@@ -153,7 +160,10 @@ export function getMonthlySalesSeries(orders: ProjectedOrder[], limitMonths = 12
   });
 }
 
-export function getMonthlyExpensesSeries(expenses: ProjectedExpense[], limitMonths = 12) {
+export function getMonthlyExpensesSeries(
+  expenses: ProjectedExpense[],
+  limitMonths = 12,
+) {
   const grouped: Record<string, number> = {};
   for (const e of expenses) {
     const key = monthKey(e.createdAt);
@@ -168,10 +178,10 @@ export function getMonthlyExpensesSeries(expenses: ProjectedExpense[], limitMont
   const months: string[] = [];
   const cursor = new Date(endDate);
   for (let i = 0; i < limitMonths; i++) {
-    const k
-      = `${cursor.getFullYear()
-      }-${
-        String(cursor.getMonth() + 1).padStart(2, "0")}`;
+    const k = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(
+      2,
+      "0",
+    )}`;
     months.push(k);
     cursor.setMonth(cursor.getMonth() - 1);
   }
@@ -203,7 +213,11 @@ export function getPaymentStatusDistribution(orders: ProjectedOrder[]) {
   return groupCounts(orders.map(o => o.paymentStatus));
 }
 
-export function getTopProducts(products: ProjectedProduct[], orders: ProjectedOrder[], limit = 10) {
+export function getTopProducts(
+  products: ProjectedProduct[],
+  orders: ProjectedOrder[],
+  limit = 10,
+) {
   const agg: Record<
     string,
     { quantity: number; revenue: number; name: string }
@@ -217,8 +231,7 @@ export function getTopProducts(products: ProjectedProduct[], orders: ProjectedOr
       if (!agg[key])
         agg[key] = { quantity: 0, revenue: 0, name: product.name };
       agg[key].quantity += item.quantity;
-      agg[key].revenue
-        += item.unitPrice * item.quantity + item.tax;
+      agg[key].revenue += item.unitPrice * item.quantity + item.tax;
     }
   }
   return Object.entries(agg)

@@ -33,19 +33,25 @@ export function DataTableBulkActions<TData>({
   });
 
   const handleBulkStatusChange = (status: "active" | "inactive") => {
-    toast.promise(async () => {
-      for (const employee of selectedRows) {
-        await updateMutation.mutateAsync({ id: employee.getValue("id"), employee: { status } });
-      }
-    }, {
-      loading: `${status === "active" ? "Activating" : "Deactivating"} employees...`,
-      success: () => {
-        table.resetRowSelection();
-        queryClient.invalidateQueries(queryKeys.LIST_EMPLOYEES);
-        return `${status === "active" ? "Activated" : "Deactivated"} ${selectedRows.length} employee${selectedRows.length > 1 ? "s" : ""}`;
+    toast.promise(
+      async () => {
+        for (const employee of selectedRows) {
+          await updateMutation.mutateAsync({
+            id: employee.getValue("id"),
+            employee: { status },
+          });
+        }
       },
-      error: `Error ${status === "active" ? "activating" : "deactivating"} employees`,
-    });
+      {
+        loading: `${status === "active" ? "Activating" : "Deactivating"} employees...`,
+        success: () => {
+          table.resetRowSelection();
+          queryClient.invalidateQueries(queryKeys.LIST_EMPLOYEES);
+          return `${status === "active" ? "Activated" : "Deactivated"} ${selectedRows.length} employee${selectedRows.length > 1 ? "s" : ""}`;
+        },
+        error: `Error ${status === "active" ? "activating" : "deactivating"} employees`,
+      },
+    );
     table.resetRowSelection();
   };
 

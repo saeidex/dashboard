@@ -46,17 +46,14 @@ export function SizesDeleteDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the
-            size
+            This action cannot be undone. This will permanently delete the size
             {" "}
             {currentRow.length}
             {" "}
             x
-            {" "}
             {currentRow.width}
             {" "}
             x
-            {" "}
             {currentRow.height}
             {" "}
             {currentRow.unit}

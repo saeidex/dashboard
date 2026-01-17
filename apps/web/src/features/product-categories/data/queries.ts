@@ -1,4 +1,7 @@
-import type { insertProductCategoriesSchema, patchProductCategoriesSchema } from "@takumitex/api/schema";
+import type {
+  insertProductCategoriesSchema,
+  patchProductCategoriesSchema,
+} from "@takumitex/api/schema";
 
 import { queryOptions } from "@tanstack/react-query";
 
@@ -68,7 +71,13 @@ export async function deleteCategory(id: number) {
   }
 }
 
-export async function updateCategory({ id, category }: { id: number; category: patchProductCategoriesSchema }) {
+export async function updateCategory({
+  id,
+  category,
+}: {
+  id: number;
+  category: patchProductCategoriesSchema;
+}) {
   const response = await apiClient.api.categories[":id"].$patch({
     param: {
       id,

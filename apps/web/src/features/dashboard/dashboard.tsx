@@ -7,7 +7,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/web/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/web/components/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/web/components/ui/tabs";
 
 import { useDashboardKpis } from "../../hooks/use-dashboard-data";
 import { AuditTimeline } from "./components/audit-timeline";
@@ -155,7 +160,9 @@ export function Dashboard() {
               {section.id === "orders" && <OrdersSection />}
               {section.id === "products" && <ProductsSection />}
               {section.id === "expenses" && <ExpensesSection />}
-              {section.id === "activity" && <AuditTimeline limit={100} variant="full" />}
+              {section.id === "activity" && (
+                <AuditTimeline limit={100} variant="full" />
+              )}
             </TabsContent>
           ))}
         </Tabs>

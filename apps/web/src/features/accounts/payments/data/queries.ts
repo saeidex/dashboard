@@ -1,4 +1,8 @@
-import type { insertPaymentsSchema, patchPaymentsSchema, paymentListQueryParamsSchema } from "@takumitex/api/schema";
+import type {
+  insertPaymentsSchema,
+  patchPaymentsSchema,
+  paymentListQueryParamsSchema,
+} from "@takumitex/api/schema";
 
 import { keepPreviousData, queryOptions } from "@tanstack/react-query";
 
@@ -6,20 +10,29 @@ import apiClient from "@/web/lib/api-client";
 import formatApiError from "@/web/lib/format-api-error";
 
 export const queryKeys = {
-  LIST_PAYMENTS: (query: paymentListQueryParamsSchema = { pageIndex: 0, pageSize: 10 }) => ({ queryKey: ["list-payments", query] }),
+  LIST_PAYMENTS: (
+    query: paymentListQueryParamsSchema = { pageIndex: 0, pageSize: 10 },
+  ) => ({ queryKey: ["list-payments", query] }),
   LIST_PAYMENT: (id: string) => ({ queryKey: [`list-payment-${id}`] }),
-  ORDER_PAYMENTS: (orderId: number) => ({ queryKey: [`order-payments-${orderId}`] }),
-  ORDER_PAYMENT_SUMMARY: (orderId: number) => ({ queryKey: [`order-payment-summary-${orderId}`] }),
+  ORDER_PAYMENTS: (orderId: number) => ({
+    queryKey: [`order-payments-${orderId}`],
+  }),
+  ORDER_PAYMENT_SUMMARY: (orderId: number) => ({
+    queryKey: [`order-payment-summary-${orderId}`],
+  }),
 };
 
-export const createPaymentsQueryOptions = (query: paymentListQueryParamsSchema = { pageIndex: 0, pageSize: 10 }) => queryOptions({
-  ...queryKeys.LIST_PAYMENTS(query),
-  queryFn: async () => {
-    const response = await apiClient.api.payments.$get({ query });
-    return response.json();
-  },
-  placeholderData: keepPreviousData,
-});
+export const createPaymentsQueryOptions = (
+  query: paymentListQueryParamsSchema = { pageIndex: 0, pageSize: 10 },
+) =>
+  queryOptions({
+    ...queryKeys.LIST_PAYMENTS(query),
+    queryFn: async () => {
+      const response = await apiClient.api.payments.$get({ query });
+      return response.json();
+    },
+    placeholderData: keepPreviousData,
+  });
 
 export function createPaymentQueryOptions(id: string) {
   return queryOptions({
@@ -61,7 +74,9 @@ export function createOrderPaymentSummaryQueryOptions(orderId: number) {
   return queryOptions({
     ...queryKeys.ORDER_PAYMENT_SUMMARY(orderId),
     queryFn: async () => {
-      const response = await apiClient.api.payments.order[":orderId"].summary.$get({
+      const response = await apiClient.api.payments.order[
+        ":orderId"
+      ].summary.$get({
         param: { orderId: String(orderId) },
       });
       const json = await response.json();
@@ -102,7 +117,13 @@ export async function deletePayment(id: string) {
   }
 }
 
-export async function updatePayment({ id, payment }: { id: string; payment: patchPaymentsSchema }) {
+export async function updatePayment({
+  id,
+  payment,
+}: {
+  id: string;
+  payment: patchPaymentsSchema;
+}) {
   const response = await apiClient.api.payments[":id"].$patch({
     param: { id },
     json: payment,

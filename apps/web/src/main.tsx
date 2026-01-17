@@ -37,7 +37,8 @@ const getErrorStatus = (error: unknown): number | undefined => {
     typeof error === "object"
     && error !== null
     && "response" in error
-    && typeof (error as { response?: { status?: number } }).response?.status === "number"
+    && typeof (error as { response?: { status?: number } }).response?.status
+    === "number"
   ) {
     return (error as { response: { status: number } }).response.status;
   }
@@ -50,7 +51,7 @@ const queryClient = new QueryClient({
     queries: {
       retry: (failureCount, error) => {
         if (import.meta.env.DEV)
-        // eslint-disable-next-line no-console
+          // eslint-disable-next-line no-console
           console.log({ failureCount, error });
 
         if (failureCount >= 0 && import.meta.env.DEV)

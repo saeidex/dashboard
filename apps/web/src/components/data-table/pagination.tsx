@@ -38,13 +38,7 @@ export function DataTablePagination<TData>({
     >
       <div className="flex w-full items-center justify-between">
         <div className="flex w-[100px] items-center justify-center text-sm font-medium @2xl/content:hidden">
-          Page
-          {" "}
-          {currentPage}
-          {" "}
-          of
-          {" "}
-          {totalPages}
+          Page {currentPage} of {totalPages}
         </div>
         <div className="flex items-center gap-2 @max-2xl/content:flex-row-reverse">
           <Select
@@ -57,7 +51,7 @@ export function DataTablePagination<TData>({
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
-              {[10, 20, 30, 40, 50].map(pageSize => (
+              {[10, 20, 30, 40, 50].map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>
@@ -70,13 +64,7 @@ export function DataTablePagination<TData>({
 
       <div className="flex items-center sm:space-x-6 lg:space-x-8">
         <div className="flex w-[100px] items-center justify-center text-sm font-medium @max-3xl/content:hidden">
-          Page
-          {" "}
-          {currentPage}
-          {" "}
-          of
-          {" "}
-          {totalPages}
+          Page {currentPage} of {totalPages}
         </div>
         <div className="flex items-center space-x-2">
           <Button
@@ -101,23 +89,21 @@ export function DataTablePagination<TData>({
           {/* Page number buttons */}
           {pageNumbers.map((pageNumber, index) => (
             <div key={`${pageNumber}-${index}`} className="flex items-center">
-              {pageNumber === "..."
-                ? (
-                    <span className="text-muted-foreground px-1 text-sm">...</span>
-                  )
-                : (
-                    <Button
-                      variant={currentPage === pageNumber ? "default" : "outline"}
-                      className="h-8 min-w-8 px-2"
-                      onClick={() => table.setPageIndex((pageNumber as number) - 1)}
-                    >
-                      <span className="sr-only">
-                        Go to page
-                        {pageNumber}
-                      </span>
-                      {pageNumber}
-                    </Button>
-                  )}
+              {pageNumber === "..." ? (
+                <span className="text-muted-foreground px-1 text-sm">...</span>
+              ) : (
+                <Button
+                  variant={currentPage === pageNumber ? "default" : "outline"}
+                  className="h-8 min-w-8 px-2"
+                  onClick={() => table.setPageIndex((pageNumber as number) - 1)}
+                >
+                  <span className="sr-only">
+                    Go to page
+                    {pageNumber}
+                  </span>
+                  {pageNumber}
+                </Button>
+              )}
             </div>
           ))}
 

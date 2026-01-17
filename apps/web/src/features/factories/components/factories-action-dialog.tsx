@@ -131,7 +131,9 @@ export function FactoriesActionDialog({
     >
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="text-start">
-          <DialogTitle>{isEdit ? "Edit Factory" : "Add New Factory"}</DialogTitle>
+          <DialogTitle>
+            {isEdit ? "Edit Factory" : "Add New Factory"}
+          </DialogTitle>
           <DialogDescription>
             {isEdit ? "Update the factory details. " : "Add a new factory. "}
             Click save when you&apos;re done.
@@ -312,7 +314,8 @@ export function FactoriesActionDialog({
                           placeholder="0"
                           {...field}
                           value={field.value ?? 0}
-                          onChange={e => field.onChange(Number(e.target.value))}
+                          onChange={e =>
+                            field.onChange(Number(e.target.value))}
                         />
                       </FormControl>
                       <FormMessage />
@@ -332,7 +335,8 @@ export function FactoriesActionDialog({
                           placeholder="0"
                           {...field}
                           value={field.value ?? 0}
-                          onChange={e => field.onChange(Number(e.target.value))}
+                          onChange={e =>
+                            field.onChange(Number(e.target.value))}
                         />
                       </FormControl>
                       <FormMessage />
@@ -352,7 +356,8 @@ export function FactoriesActionDialog({
                           placeholder="0"
                           {...field}
                           value={field.value ?? 0}
-                          onChange={e => field.onChange(Number(e.target.value))}
+                          onChange={e =>
+                            field.onChange(Number(e.target.value))}
                         />
                       </FormControl>
                       <FormMessage />
