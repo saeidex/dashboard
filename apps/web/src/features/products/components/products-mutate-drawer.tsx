@@ -247,6 +247,7 @@ export function ProductsMutateDrawer({
                           value: c.id.toString(),
                           label: c.name,
                         }))}
+                        disabled={categories.length === 0}
                       />
                       <FormMessage />
                     </FormItem>
@@ -291,6 +292,7 @@ export function ProductsMutateDrawer({
                           value: d.id.toString(),
                           label: d.unit,
                         }))}
+                        disabled={sizes.length === 0}
                       />
                       <Button
                         type="button"

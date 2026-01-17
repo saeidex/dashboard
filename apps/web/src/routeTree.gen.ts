@@ -34,6 +34,7 @@ import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_a
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
 import { Route as AuthenticatedOrdersCustomerIdRouteRouteImport } from './routes/_authenticated/orders/$customerId.route'
 import { Route as AuthenticatedOrdersCustomerIdIndexRouteImport } from './routes/_authenticated/orders/$customerId.index'
+import { Route as AuthenticatedAccountsPaymentsIndexRouteImport } from './routes/_authenticated/accounts/payments/index'
 import { Route as AuthenticatedAccountsExpensesIndexRouteImport } from './routes/_authenticated/accounts/expenses/index'
 import { Route as AuthenticatedOrdersCustomerIdIdRouteImport } from './routes/_authenticated/orders/$customerId.$id'
 
@@ -173,6 +174,12 @@ const AuthenticatedOrdersCustomerIdIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedOrdersCustomerIdRouteRoute,
   } as any)
+const AuthenticatedAccountsPaymentsIndexRoute =
+  AuthenticatedAccountsPaymentsIndexRouteImport.update({
+    id: '/accounts/payments/',
+    path: '/accounts/payments/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAccountsExpensesIndexRoute =
   AuthenticatedAccountsExpensesIndexRouteImport.update({
     id: '/accounts/expenses/',
@@ -212,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/users': typeof AuthenticatedUsersIndexRoute
   '/orders/$customerId/$id': typeof AuthenticatedOrdersCustomerIdIdRoute
   '/accounts/expenses': typeof AuthenticatedAccountsExpensesIndexRoute
+  '/accounts/payments': typeof AuthenticatedAccountsPaymentsIndexRoute
   '/orders/$customerId/': typeof AuthenticatedOrdersCustomerIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -238,6 +246,7 @@ export interface FileRoutesByTo {
   '/users': typeof AuthenticatedUsersIndexRoute
   '/orders/$customerId/$id': typeof AuthenticatedOrdersCustomerIdIdRoute
   '/accounts/expenses': typeof AuthenticatedAccountsExpensesIndexRoute
+  '/accounts/payments': typeof AuthenticatedAccountsPaymentsIndexRoute
   '/orders/$customerId': typeof AuthenticatedOrdersCustomerIdIndexRoute
 }
 export interface FileRoutesById {
@@ -268,6 +277,7 @@ export interface FileRoutesById {
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
   '/_authenticated/orders/$customerId/$id': typeof AuthenticatedOrdersCustomerIdIdRoute
   '/_authenticated/accounts/expenses/': typeof AuthenticatedAccountsExpensesIndexRoute
+  '/_authenticated/accounts/payments/': typeof AuthenticatedAccountsPaymentsIndexRoute
   '/_authenticated/orders/$customerId/': typeof AuthenticatedOrdersCustomerIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -298,6 +308,7 @@ export interface FileRouteTypes {
     | '/users'
     | '/orders/$customerId/$id'
     | '/accounts/expenses'
+    | '/accounts/payments'
     | '/orders/$customerId/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -324,6 +335,7 @@ export interface FileRouteTypes {
     | '/users'
     | '/orders/$customerId/$id'
     | '/accounts/expenses'
+    | '/accounts/payments'
     | '/orders/$customerId'
   id:
     | '__root__'
@@ -353,6 +365,7 @@ export interface FileRouteTypes {
     | '/_authenticated/users/'
     | '/_authenticated/orders/$customerId/$id'
     | '/_authenticated/accounts/expenses/'
+    | '/_authenticated/accounts/payments/'
     | '/_authenticated/orders/$customerId/'
   fileRoutesById: FileRoutesById
 }
@@ -546,6 +559,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrdersCustomerIdIndexRouteImport
       parentRoute: typeof AuthenticatedOrdersCustomerIdRouteRoute
     }
+    '/_authenticated/accounts/payments/': {
+      id: '/_authenticated/accounts/payments/'
+      path: '/accounts/payments'
+      fullPath: '/accounts/payments'
+      preLoaderRoute: typeof AuthenticatedAccountsPaymentsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/accounts/expenses/': {
       id: '/_authenticated/accounts/expenses/'
       path: '/accounts/expenses'
@@ -611,6 +631,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSizesIndexRoute: typeof AuthenticatedSizesIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedAccountsExpensesIndexRoute: typeof AuthenticatedAccountsExpensesIndexRoute
+  AuthenticatedAccountsPaymentsIndexRoute: typeof AuthenticatedAccountsPaymentsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -628,6 +649,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
   AuthenticatedAccountsExpensesIndexRoute:
     AuthenticatedAccountsExpensesIndexRoute,
+  AuthenticatedAccountsPaymentsIndexRoute:
+    AuthenticatedAccountsPaymentsIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

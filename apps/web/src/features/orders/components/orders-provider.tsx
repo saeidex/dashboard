@@ -4,7 +4,7 @@ import useDialogState from "@/web/hooks/use-dialog-state";
 
 import type { Order } from "../data/schema";
 
-type OrdersDialogType = "add" | "edit" | "delete";
+type OrdersDialogType = "add" | "edit" | "delete" | "pay";
 
 type OrdersContextType = {
   open: OrdersDialogType | null;

@@ -13,7 +13,7 @@ import { useAuthStore } from "@/web/stores/auth-store";
 import { useSettingsStore } from "@/web/stores/settings-store";
 
 import { AppTitle } from "./app-title";
-import { sidebarData } from "./data/sidebar-data";
+import { useSidebarData } from "./hooks/use-sidebar-data";
 import { NavGroup } from "./nav-group";
 import { NavUser } from "./nav-user";
 
@@ -21,17 +21,26 @@ export function AppSidebar() {
   const { collapsible, variant } = useLayout();
   const { display } = useSettingsStore();
   const user = useAuthStore(state => state.user);
+  const { navGroups } = useSidebarData();
 
   if (!user) {
     throw redirect({ to: "/sign-in" });
   }
 
-  const filteredNavGroups = sidebarData.navGroups
+  const filteredNavGroups = navGroups
     .map((group) => {
       if (isToggleableGroup(group.title)) {
+        const filteredItems = filterSidebarItems(group.items, display.sidebarItems);
+
+        // Always include Orders (dynamic collapsible) even if not in settings
+        const ordersItem = group.items.find(item => item.title === "Orders");
+        const hasOrders = filteredItems.some(item => item.title === "Orders");
+
         return {
           ...group,
-          items: filterSidebarItems(group.items, display.sidebarItems),
+          items: hasOrders || !ordersItem
+            ? filteredItems
+            : [...filteredItems, ordersItem],
         };
       }
       return group;

@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "6e87cd68-63f4-48bb-a0e0-6225c9d0efd3",
-  "prevId": "03e6821b-eb58-431a-9cb8-6c68687eefdc",
+  "id": "67ce1e0d-11ce-4d5e-a362-0e5d3081d65a",
+  "prevId": "acaefb71-b0b2-4cd0-ae40-f8480e86613a",
   "tables": {
     "accounts": {
       "name": "accounts",
@@ -654,7 +654,7 @@
         },
         "order_id": {
           "name": "order_id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -782,10 +782,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": true
         },
         "customer_id": {
           "name": "customer_id",
@@ -922,6 +922,144 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
+    "payments": {
+      "name": "payments",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "order_id": {
+          "name": "order_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "amount": {
+          "name": "amount",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "payment_method": {
+          "name": "payment_method",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'cash'"
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'BDT'"
+        },
+        "reference": {
+          "name": "reference",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "paid_at": {
+          "name": "paid_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "idx_payments_order_id": {
+          "name": "idx_payments_order_id",
+          "columns": [
+            "order_id"
+          ],
+          "isUnique": false
+        },
+        "idx_payments_customer_id": {
+          "name": "idx_payments_customer_id",
+          "columns": [
+            "customer_id"
+          ],
+          "isUnique": false
+        },
+        "idx_payments_paid_at": {
+          "name": "idx_payments_paid_at",
+          "columns": [
+            "paid_at"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "payments_order_id_orders_id_fk": {
+          "name": "payments_order_id_orders_id_fk",
+          "tableFrom": "payments",
+          "tableTo": "orders",
+          "columnsFrom": [
+            "order_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "payments_customer_id_customers_id_fk": {
+          "name": "payments_customer_id_customers_id_fk",
+          "tableFrom": "payments",
+          "tableTo": "customers",
+          "columnsFrom": [
+            "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
     "categories": {
       "name": "categories",
       "columns": {
@@ -974,8 +1112,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "product_dimensions": {
-      "name": "product_dimensions",
+    "product_sizes": {
+      "name": "product_sizes",
       "columns": {
         "id": {
           "name": "id",
@@ -988,21 +1126,21 @@
           "name": "length",
           "type": "real",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "width": {
           "name": "width",
           "type": "real",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "height": {
           "name": "height",
           "type": "real",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "unit": {
@@ -1011,7 +1149,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "'MM'"
+          "default": "'M'"
         },
         "description": {
           "name": "description",
@@ -1079,8 +1217,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "dimension_id": {
-          "name": "dimension_id",
+        "size_id": {
+          "name": "size_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -1157,10 +1295,10 @@
           ],
           "isUnique": false
         },
-        "idx_products_dimension_id": {
-          "name": "idx_products_dimension_id",
+        "idx_products_size_id": {
+          "name": "idx_products_size_id",
           "columns": [
-            "dimension_id"
+            "size_id"
           ],
           "isUnique": false
         },
@@ -1186,12 +1324,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "products_dimension_id_product_dimensions_id_fk": {
-          "name": "products_dimension_id_product_dimensions_id_fk",
+        "products_size_id_product_sizes_id_fk": {
+          "name": "products_size_id_product_sizes_id_fk",
           "tableFrom": "products",
-          "tableTo": "product_dimensions",
+          "tableTo": "product_sizes",
           "columnsFrom": [
-            "dimension_id"
+            "size_id"
           ],
           "columnsTo": [
             "id"

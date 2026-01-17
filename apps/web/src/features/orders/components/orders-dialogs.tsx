@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { ConfirmDialog } from "@/web/components/confirm-dialog";
 
 import { deleteOrder, queryKeys } from "../data/queries";
+import { OrderPaymentDialog } from "./order-payment-dialog";
 import { OrdersActionDialog } from "./orders-action-dialog";
 import { useOrders } from "./orders-provider";
 
@@ -31,6 +32,19 @@ export function OrdersDialogs() {
         key="order-add"
         open={open === "add"}
         onOpenChange={() => setOpen("add")}
+      />
+
+      {/* Payment Dialog for recording payments from orders */}
+      <OrderPaymentDialog
+        key={`order-pay-${currentRow?.id ?? "new"}`}
+        order={currentRow}
+        open={open === "pay"}
+        onOpenChange={() => {
+          setOpen("pay");
+          setTimeout(() => {
+            setCurrentRow(null);
+          }, 500);
+        }}
       />
 
       {currentRow && (

@@ -34,8 +34,6 @@ import { customersQueryOptions } from "../../customers/data/queries";
 import { createProductsQueryOptions } from "../../products/data/queries";
 import {
   orderStatusValues,
-  paymentMethodValues,
-  paymentStatusValues,
 } from "../data/data";
 import { createOrder, queryKeys, updateOrder } from "../data/queries";
 import { OrderItemsEditor } from "./order-items-editor";
@@ -60,7 +58,12 @@ export function OrdersActionDialog({
   const form = useForm<insertOrderWithItemsSchema>({
     resolver: zodResolver(insertOrderWithItemsSchema),
     defaultValues: isEdit
-      ? currentRow
+      ? {
+          ...currentRow,
+          // Don't allow editing payment fields - they're managed by the payments system
+          paymentStatus: currentRow.paymentStatus,
+          paymentMethod: currentRow.paymentMethod,
+        }
       : {
           customerId: params.customerId,
           orderStatus: "pending",
@@ -256,54 +259,6 @@ export function OrdersActionDialog({
                         placeholder="Select status"
                         className="col-span-4"
                         items={orderStatusValues.map(s => ({
-                          label: s
-                            .replace(/-/g, " ")
-                            .replace(/\b\w/g, c => c.toUpperCase()),
-                          value: s,
-                        }))}
-                      />
-                      <FormMessage className="col-span-4 col-start-3" />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="paymentStatus"
-                  render={({ field }) => (
-                    <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                      <FormLabel className="col-span-2 text-end">
-                        Payment
-                      </FormLabel>
-                      <SelectDropdown
-                        defaultValue={field.value}
-                        onValueChange={field.onChange}
-                        placeholder="Payment status"
-                        className="col-span-4"
-                        items={paymentStatusValues.map(s => ({
-                          label: s
-                            .replace(/-/g, " ")
-                            .replace(/\b\w/g, c => c.toUpperCase()),
-                          value: s,
-                        }))}
-                      />
-                      <FormMessage className="col-span-4 col-start-3" />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="paymentMethod"
-                  render={({ field }) => (
-                    <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                      <FormLabel className="col-span-2 text-end">
-                        Method
-                      </FormLabel>
-                      <SelectDropdown
-                        defaultValue={field.value}
-                        onValueChange={field.onChange}
-                        placeholder="Payment method"
-                        className="col-span-4"
-                        items={paymentMethodValues.map(s => ({
                           label: s
                             .replace(/-/g, " ")
                             .replace(/\b\w/g, c => c.toUpperCase()),

@@ -1,4 +1,4 @@
-import { and, eq, sql } from "drizzle-orm"
+import { and, eq, sql, sum } from "drizzle-orm"
 import * as HttpStatusCodes from "stoker/http-status-codes"
 import * as HttpStatusPhrases from "stoker/http-status-phrases"
 
@@ -6,7 +6,7 @@ import type { SizeUnit } from "@/api/db/schema"
 import type { AppRouteHandler } from "@/api/lib/types"
 
 import db from "@/api/db"
-import { customers, orderItems, orders } from "@/api/db/schema"
+import { customers, orderItems, orders, payments } from "@/api/db/schema"
 import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "@/api/lib/constants"
 
 import type {
@@ -72,6 +72,25 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
     },
   })
 
+  // Calculate totalPaid for each order
+  const orderIds = data.map(o => o.id)
+  const totalPaidByOrder = new Map<number, number>()
+
+  if (orderIds.length > 0) {
+    const totals = await db
+      .select({
+        orderId: payments.orderId,
+        totalPaid: sum(payments.amount).mapWith(Number),
+      })
+      .from(payments)
+      .where(sql`${payments.orderId} IN (${sql.join(orderIds.map(id => sql`${id}`), sql`, `)})`)
+      .groupBy(payments.orderId)
+
+    totals.forEach((t) => {
+      totalPaidByOrder.set(t.orderId, t.totalPaid ?? 0)
+    })
+  }
+
   const rowCount = await db
     .select({
       count: sql<number>`count(*)`.mapWith(Number),
@@ -83,7 +102,10 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
     .then(res => res[0]?.count ?? 0)
 
   return c.json({
-    rows: data.map(serializeOrderWithDetails),
+    rows: data.map(order => ({
+      ...serializeOrderWithDetails(order),
+      totalPaid: totalPaidByOrder.get(order.id) ?? 0,
+    })),
     pageCount: Math.ceil(rowCount / pageSize),
     rowCount,
   })
@@ -148,7 +170,20 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
     )
   }
 
-  return c.json(serializeOrderWithDetails(order), HttpStatusCodes.OK)
+  // Calculate totalPaid for this order
+  const totalPaidResult = await db
+    .select({
+      totalPaid: sum(payments.amount).mapWith(Number),
+    })
+    .from(payments)
+    .where(eq(payments.orderId, order.id))
+
+  const totalPaid = totalPaidResult[0]?.totalPaid ?? 0
+
+  return c.json({
+    ...serializeOrderWithDetails(order),
+    totalPaid,
+  }, HttpStatusCodes.OK)
 }
 
 export const patch: AppRouteHandler<PatchRoute> = async (c) => {

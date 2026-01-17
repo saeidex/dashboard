@@ -3,7 +3,7 @@ import type { Row } from "@tanstack/react-table";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import { Copy, Download, Printer, Trash2, UserPen } from "lucide-react";
+import { Copy, CreditCard, Download, Printer, Trash2, UserPen } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/web/components/ui/button";
@@ -24,7 +24,7 @@ import { useOrderPrint } from "@/web/hooks/use-order-print";
 
 import type { Order } from "../data/schema";
 
-import { orderStatusValues, paymentMethodValues, paymentStatusValues } from "../data/data";
+import { orderStatusValues } from "../data/data";
 import { createOrder, queryKeys, updateOrder } from "../data/queries";
 import { useOrders } from "./orders-provider";
 
@@ -114,55 +114,23 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             </DropdownMenuSubContent>
           </DropdownMenuSub>
 
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Payment Status</DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
-              <DropdownMenuRadioGroup
-                onValueChange={value =>
-                  updateMutation.mutate({
-                    id: row.original.id.toString(),
-                    order: {
-                      ...row.original,
-                      paymentStatus: value as typeof paymentStatusValues[number],
-                      paymentMethod: row.getValue("paymentMethod"),
-                      orderStatus: row.getValue("orderStatus"),
-                    },
-                  })}
-                value={row.original.paymentStatus ?? undefined}
+          {/* Record Payment option - only show for unpaid/partial orders */}
+          {row.original.paymentStatus !== "paid" && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => {
+                  setCurrentRow(row.original);
+                  setOpen("pay");
+                }}
               >
-                {paymentStatusValues.map(paymentStatus => (
-                  <DropdownMenuRadioItem key={paymentStatus} value={paymentStatus}>
-                    {paymentStatus.replace(/^./, match => match.toUpperCase())}
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
-
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Payment Methods</DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
-              <DropdownMenuRadioGroup
-                onValueChange={value =>
-                  updateMutation.mutate({
-                    id: row.original.id.toString(),
-                    order: {
-                      ...row.original,
-                      paymentMethod: value as typeof paymentMethodValues[number],
-                      orderStatus: row.getValue("orderStatus"),
-                      paymentStatus: row.getValue("paymentStatus"),
-                    },
-                  })}
-                value={row.original.paymentMethod ?? undefined}
-              >
-                {paymentMethodValues.map(paymentMethod => (
-                  <DropdownMenuRadioItem key={paymentMethod} value={paymentMethod}>
-                    {paymentMethod.replace(/^./, match => match.toUpperCase())}
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
+                Record Payment
+                <DropdownMenuShortcut>
+                  <CreditCard size={16} />
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </>
+          )}
 
           <DropdownMenuSeparator />
           <DropdownMenuItem

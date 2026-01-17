@@ -9,6 +9,7 @@ import expenses from "./expenses/expenses.index"
 import index from "./index.route"
 import onboarding from "./onboarding/onboarding.index"
 import orders from "./orders/orders.index"
+import payments from "./payments/payments.index"
 import productCategories from "./product-categories/product-categories.index"
 import productSizes from "./product-sizes/product-sizes.index"
 import products from "./products/products.index"
@@ -19,6 +20,7 @@ export function registerRoutes(app: AppOpenAPI) {
     .route("/", index)
     .route("/", onboarding)
     .route("/", orders)
+    .route("/", payments)
     .route("/", products)
     .route("/", productCategories)
     .route("/", productSizes)

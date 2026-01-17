@@ -12,6 +12,7 @@ import type { Order } from "../data/schema";
 import { DataTableRowActions } from "./data-table-row-actions";
 import { OrderDetailsPageNavigatorButton } from "./order-details-page-navigator-button";
 import { OrderExpandToggle } from "./order-expand-toggle";
+import { OrderPayButton } from "./order-pay-button";
 
 export const ordersColumns: ColumnDef<Order>[] = [
   {
@@ -94,6 +95,16 @@ export const ordersColumns: ColumnDef<Order>[] = [
     ),
   },
   {
+    id: "pay",
+    header: () => null,
+    cell: ({ row }) => <OrderPayButton row={row} />,
+    enableSorting: false,
+    enableHiding: false,
+    meta: {
+      className: cn("w-16"),
+    },
+  },
+  {
     accessorKey: "paymentMethod",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Payment Method" />
@@ -113,7 +124,7 @@ export const ordersColumns: ColumnDef<Order>[] = [
   {
     accessorKey: "grandTotal",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Total" />
+      <DataTableColumnHeader column={column} title="Order Total" />
     ),
     cell: ({ cell }) => {
       const total = cell.getValue<Order["grandTotal"]>().toFixed(2);
@@ -121,6 +132,41 @@ export const ordersColumns: ColumnDef<Order>[] = [
         <div className="font-bold">
           ৳
           {total}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "totalPaid",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Paid" />
+    ),
+    cell: ({ row }) => {
+      const totalPaid = row.original.totalPaid ?? 0;
+      return (
+        <div className="font-medium text-green-600 dark:text-green-400">
+          ৳
+          {totalPaid.toFixed(2)}
+        </div>
+      );
+    },
+  },
+  {
+    id: "dueAmount",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Due" />
+    ),
+    cell: ({ row }) => {
+      const grandTotal = row.original.grandTotal ?? 0;
+      const totalPaid = row.original.totalPaid ?? 0;
+      const due = Math.max(0, grandTotal - totalPaid);
+      return (
+        <div className={cn(
+          "font-semibold",
+          due > 0 ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"
+        )}>
+          ৳
+          {due.toFixed(2)}
         </div>
       );
     },

@@ -157,13 +157,14 @@ export type selectOrderWithItemsSchema = z.infer<typeof selectOrderWithItemsSche
 
 /**
  * Order with items with product and customer info
- * @example data: { ...orderData, items: OrderItem[{...item, product}], customer: Customer }
+ * @example data: { ...orderData, items: OrderItem[{...item, product}], customer: Customer, totalPaid: number }
  */
 export const selectOrderDetailsSchema = selectOrdersSchema.extend({
   items: z.array(selectOrderItemsSchema.extend({
     product: selectProductWithSizeSchema,
   })),
   customer: selectCustomersSchema,
+  totalPaid: z.number().default(0),
 })
 export type selectOrderDetailsSchema = z.infer<typeof selectOrderDetailsSchema>
 
