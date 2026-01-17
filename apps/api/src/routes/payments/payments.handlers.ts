@@ -6,6 +6,7 @@ import type { AppRouteHandler } from "@/api/lib/types"
 
 import db from "@/api/db"
 import { customers, orders, payments } from "@/api/db/schema"
+import { createAuditLog, formatCurrency } from "@/api/lib/audit"
 import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "@/api/lib/constants"
 
 import type {
@@ -159,6 +160,21 @@ export const create: AppRouteHandler<CreateRoute> = async (c) => {
       .where(eq(orders.id, payload.orderId))
 
     return insertedPayment
+  })
+
+  // Create audit log for payment received
+  await createAuditLog({
+    actionType: "payment_received",
+    entityType: "payment",
+    entityId: result.id,
+    orderId: order.id,
+    customerId: customer.id,
+    description: `Payment of ${formatCurrency(payload.amount, payload.currency || "BDT")} received for order #${order.id} from ${customer.name}`,
+    metadata: {
+      amount: payload.amount,
+      paymentMethod: payload.paymentMethod,
+      currency: payload.currency || "BDT",
+    },
   })
 
   return c.json(result, HttpStatusCodes.OK)

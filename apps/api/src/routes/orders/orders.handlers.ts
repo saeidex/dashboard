@@ -7,6 +7,7 @@ import type { AppRouteHandler } from "@/api/lib/types"
 
 import db from "@/api/db"
 import { customers, orderItems, orders, payments } from "@/api/db/schema"
+import { createAuditLog, formatCurrency } from "@/api/lib/audit"
 import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "@/api/lib/constants"
 
 import type {
@@ -141,6 +142,21 @@ export const create: AppRouteHandler<CreateRoute> = async (c) => {
     return { ...insertedOrderBase, items: insertedOrderItems }
   })
 
+  // Create audit log for order creation
+  await createAuditLog({
+    actionType: "order_created",
+    entityType: "order",
+    entityId: String(insertedOrder.id),
+    orderId: insertedOrder.id,
+    customerId: customer.id,
+    description: `New order #${insertedOrder.id} created for ${customer.name} - Total: ${formatCurrency(insertedOrder.grandTotal, insertedOrder.currency)}`,
+    metadata: {
+      grandTotal: insertedOrder.grandTotal,
+      itemCount: items.length,
+      currency: insertedOrder.currency,
+    },
+  })
+
   return c.json({ ...insertedOrder, customer }, HttpStatusCodes.OK)
 }
 
@@ -237,6 +253,30 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
       { message: HttpStatusPhrases.NOT_FOUND },
       HttpStatusCodes.NOT_FOUND,
     )
+  }
+
+  // Create audit log for order update
+  if (updates.orderStatus) {
+    await createAuditLog({
+      actionType: "order_status_changed",
+      entityType: "order",
+      entityId: String(id),
+      orderId: id,
+      customerId: updatedOrder.customerId,
+      description: `Order #${id} status changed to "${updates.orderStatus}"`,
+      metadata: { newStatus: updates.orderStatus },
+    })
+  }
+  else {
+    await createAuditLog({
+      actionType: "order_updated",
+      entityType: "order",
+      entityId: String(id),
+      orderId: id,
+      customerId: updatedOrder.customerId,
+      description: `Order #${id} was updated`,
+      metadata: { updatedFields: Object.keys(updates) },
+    })
   }
 
   return c.json(updatedOrder, HttpStatusCodes.OK)

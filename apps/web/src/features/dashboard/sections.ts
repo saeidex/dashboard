@@ -25,4 +25,9 @@ export const dashboardSections: DashboardSection[] = [
     label: "Expenses",
     disabled: false,
   },
+  {
+    id: "activity",
+    label: "Activity History",
+    disabled: false,
+  },
 ];

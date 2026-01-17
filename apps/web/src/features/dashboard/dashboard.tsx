@@ -10,6 +10,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/web/components/ui/tabs";
 
 import { useDashboardKpis } from "../../hooks/use-dashboard-data";
+import { AuditTimeline } from "./components/audit-timeline";
 import { Overview } from "./components/overview";
 import { RecentOrders } from "./components/recent-orders";
 import { ExpensesSection } from "./components/sections/expenses-section";
@@ -137,11 +138,24 @@ export function Dashboard() {
                       </CardContent>
                     </Card>
                   </div>
+                  {/* Activity Timeline */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Recent Activity</CardTitle>
+                      <CardDescription>
+                        Track orders, payments, and other business events.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <AuditTimeline limit={8} showViewAll={false} />
+                    </CardContent>
+                  </Card>
                 </>
               )}
               {section.id === "orders" && <OrdersSection />}
               {section.id === "products" && <ProductsSection />}
               {section.id === "expenses" && <ExpensesSection />}
+              {section.id === "activity" && <AuditTimeline limit={100} variant="full" />}
             </TabsContent>
           ))}
         </Tabs>

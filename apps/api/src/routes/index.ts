@@ -3,6 +3,7 @@ import type { AppOpenAPI } from "@/api/lib/types"
 import { BASE_PATH } from "@/api/lib/constants"
 import createRouter from "@/api/lib/create-router"
 
+import auditLogs from "./audit-logs"
 import customers from "./customers/customers.index"
 import employees from "./employees/employees.index"
 import expenses from "./expenses/expenses.index"
@@ -28,6 +29,7 @@ export function registerRoutes(app: AppOpenAPI) {
     .route("/", customers)
     .route("/", expenses)
     .route("/", users)
+    .route("/", auditLogs)
 }
 
 // stand alone router type used for api client

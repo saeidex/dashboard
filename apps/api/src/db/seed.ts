@@ -108,13 +108,13 @@ const FABRIC_ADJECTIVES = ["Premium", "Organic", "Luxury", "Classic", "Modern", 
 const FABRIC_TYPES = ["Cotton", "Silk", "Linen", "Wool", "Polyester", "Rayon", "Velvet", "Satin", "Chiffon", "Denim", "Tweed", "Jersey", "Corduroy"]
 const FABRIC_SUFFIXES = ["Blend", "Twill", "Weave", "Knit", "Print", "Solid", "Stripe", "Check", "Plaid", "Jacquard"]
 
-function generateProducts(categoryIds: number[], sizeIds: number[], countPerCategory: number) {
+function generateProducts(categoryIds: string[], sizeIds: number[], countPerCategory: number) {
   const products: Array<{
     id: string
     title: string
     status: string
     label: string | null
-    categoryId: number
+    categoryId: string
     sizeId: number | null
     retailPrice: number
     taxPercentage: number
@@ -363,6 +363,7 @@ function generatePayments(
 // Tables to drop (in order to respect foreign key constraints)
 // Note: We keep auth tables (user, session, account, verification) intact
 const TABLES_TO_DROP = [
+  "audit_logs",
   "payment",
   "order_item",
   "order",
@@ -443,7 +444,7 @@ async function seed() {
 
     // Seed Products
     console.log("📦 Seeding products...")
-    const categoryIds = insertedCategories.map(c => c.id)
+    const categoryIds = insertedCategories.map(c => String(c.id))
     const sizeIds = insertedSizes.map(s => s.id)
 
     if (categoryIds.length > 0) {

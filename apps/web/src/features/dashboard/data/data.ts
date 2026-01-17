@@ -45,8 +45,8 @@ export type ProjectedExpense = {
 };
 
 // Query options for fetching dashboard data
-export const dashboardProductsQueryOptions = createProductsQueryOptions({ page: 1, pageSize: 1000 });
-export const dashboardOrdersQueryOptions = createOrdersQueryOptions({ pageIndex: 0, pageSize: 1000 });
+export const dashboardProductsQueryOptions = createProductsQueryOptions({ page: 1, pageSize: 100 });
+export const dashboardOrdersQueryOptions = createOrdersQueryOptions({ pageIndex: 0, pageSize: 100 });
 export const dashboardExpensesQueryOptions = expensesQueryOptions;
 
 export const sum = (vals: number[]) => vals.reduce((a, b) => a + b, 0);

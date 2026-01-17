@@ -39,6 +39,7 @@ export type patchUsersSchema = z.infer<typeof patchUsersSchema>
 
 // Export all schemas and tables
 
+export * from "./audit-logs"
 export * from "./auth"
 export * from "./customers"
 export * from "./employees"

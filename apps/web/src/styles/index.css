@@ -87,3 +87,101 @@
     height: 0;
   }
 }
+
+/* Print styles */
+@media print {
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+
+  /* Force light mode for print */
+  html,
+  body,
+  :root {
+    background: white !important;
+    color: black !important;
+    color-scheme: light !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Remove dark class for print */
+  .dark {
+    color-scheme: light !important;
+  }
+
+  /* Override dark mode colors */
+  .dark * {
+    --background: 0 0% 100% !important;
+    --foreground: 0 0% 3.9% !important;
+    --card: 0 0% 100% !important;
+    --card-foreground: 0 0% 3.9% !important;
+    --muted: 0 0% 96.1% !important;
+    --muted-foreground: 0 0% 45.1% !important;
+    --border: 0 0% 89.8% !important;
+    --primary: 0 0% 9% !important;
+    --primary-foreground: 0 0% 98% !important;
+  }
+
+  /* Force light backgrounds */
+  [class*="bg-"] {
+    background-color: white !important;
+  }
+
+  [class*="dark:bg-"] {
+    background-color: transparent !important;
+  }
+
+  /* Force dark text colors */
+  [class*="text-foreground"],
+  [class*="text-card-foreground"] {
+    color: #1f2937 !important;
+  }
+
+  [class*="text-muted-foreground"] {
+    color: #6b7280 !important;
+  }
+
+  /* Hide interactive elements */
+  .print\\:hidden,
+  button,
+  nav,
+  header,
+  aside,
+  [data-sidebar] {
+    display: none !important;
+  }
+
+  /* Show print-only elements */
+  .print\\:block {
+    display: block !important;
+  }
+
+  /* Avoid page breaks inside elements */
+  .print\\:break-inside-avoid {
+    break-inside: avoid;
+  }
+
+  /* Reset shadows and backgrounds for cleaner print */
+  * {
+    box-shadow: none !important;
+  }
+
+  /* Ensure links are visible */
+  a {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+
+  /* Card styling for print */
+  [class*="border"] {
+    border-color: #e5e7eb !important;
+  }
+
+  /* Force card backgrounds to white */
+  [class*="bg-card"],
+  [class*="bg-background"] {
+    background-color: white !important;
+  }
+}
