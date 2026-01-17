@@ -21,10 +21,11 @@ type KanbanColumnProps = {
     color: string;
   };
   orders: Order[];
+  isOver?: boolean;
 };
 
-export function KanbanColumn({ stage, orders }: KanbanColumnProps) {
-  const { setNodeRef, isOver } = useDroppable({
+export function KanbanColumn({ stage, orders, isOver: isOverFromDndContext = false }: KanbanColumnProps) {
+  const { setNodeRef, isOver: isOverFromColumnDroppable } = useDroppable({
     id: stage.id,
   });
 
@@ -38,14 +39,14 @@ export function KanbanColumn({ stage, orders }: KanbanColumnProps) {
     <div
       ref={setNodeRef}
       className={cn(
-        "flex min-w-72 min-h-80 flex-col rounded-lg border bg-primary/10",
-        isOver && "ring-2 ring-primary ring-offset-2",
+        "flex min-w-72 min-h-80 flex-col rounded-lg border bg-secondary/10",
+        (isOverFromDndContext || isOverFromColumnDroppable) && "ring-2 ring-primary ring-offset-2",
       )}
     >
       {/* Column Header */}
       <div className="flex items-center justify-between border-b p-3">
         <div className="flex items-center gap-2">
-          <div className={cn("h-3 w-3 rounded-full", stage.color)} />
+          {/* <div className={cn("h-3 w-3 rounded-full", stage.color)} /> */}
           <h3 className="font-semibold">{stage.label}</h3>
         </div>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
