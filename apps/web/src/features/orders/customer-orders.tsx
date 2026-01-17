@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi, useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 
 import { Header } from "@/web/components/layout/header";
 import { Main } from "@/web/components/layout/main";
@@ -13,6 +14,7 @@ import { OrdersPrimaryButtons } from "./components/orders-primary-buttons";
 import { OrdersProvider } from "./components/orders-provider";
 import { OrdersTable } from "./components/orders-table";
 import { createOrdersQueryOptions } from "./data/queries";
+import { useOrdersUiStore } from "@/web/stores/orders-ui-store";
 
 const Route = getRouteApi("/_authenticated/orders/$customerId/");
 
@@ -21,6 +23,39 @@ export const CustomerOrders = () => {
   const search = Route.useSearch();
   const navigate = useNavigate();
   const view = search.view ?? "table";
+  const kanbanLayout = useOrdersUiStore(s => s.kanbanLayout);
+  const setKanbanLayout = useOrdersUiStore(s => s.setKanbanLayout);
+  const didWriteLayoutToUrlRef = useRef(false);
+
+  useEffect(() => {
+    if (search.kanbanLayout && search.kanbanLayout !== kanbanLayout) {
+      setKanbanLayout(search.kanbanLayout);
+    }
+    if (search.kanbanLayout)
+      didWriteLayoutToUrlRef.current = true;
+  }, [kanbanLayout, search.kanbanLayout, setKanbanLayout]);
+
+  useEffect(() => {
+    if (view !== "kanban") {
+      didWriteLayoutToUrlRef.current = false;
+      return;
+    }
+
+    // If the URL doesn't specify a layout, write the persisted one once.
+    // If the URL does specify a layout, it remains the source of truth.
+    if (search.kanbanLayout)
+      return;
+    if (didWriteLayoutToUrlRef.current)
+      return;
+
+    didWriteLayoutToUrlRef.current = true;
+
+    navigate({
+      to: ".",
+      replace: true,
+      search: prev => ({ ...prev, kanbanLayout }),
+    });
+  }, [kanbanLayout, navigate, search.kanbanLayout, view]);
 
   const { data: customers } = useSuspenseQuery(customersQueryOptions);
   const { data: orders } = useSuspenseQuery(
@@ -70,10 +105,19 @@ export const CustomerOrders = () => {
           </div>
           <OrdersPrimaryButtons
             view={view}
+            kanbanLayout={kanbanLayout}
             onViewChange={(newView) => {
               navigate({
                 to: ".",
                 search: prev => ({ ...prev, view: newView }),
+              });
+            }}
+            onKanbanLayoutChange={(layout) => {
+              setKanbanLayout(layout);
+              navigate({
+                to: ".",
+                replace: true,
+                search: prev => ({ ...prev, kanbanLayout: layout }),
               });
             }}
           />

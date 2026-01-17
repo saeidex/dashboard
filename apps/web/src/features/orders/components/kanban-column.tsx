@@ -8,7 +8,9 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
+import { ScrollArea } from "@/web/components/ui/scroll-area";
 import { cn } from "@/web/lib/utils";
+import { useOrdersUiStore } from "@/web/stores/orders-ui-store";
 
 import type { Order } from "../data/schema";
 
@@ -29,6 +31,8 @@ export function KanbanColumn({ stage, orders, isOver: isOverFromDndContext = fal
     id: stage.id,
   });
 
+  const kanbanLayout = useOrdersUiStore(s => s.kanbanLayout);
+
   const totalQty = orders.reduce((sum, order) => {
     return (
       sum + order.items.reduce((itemSum, item) => itemSum + item.quantity, 0)
@@ -39,8 +43,10 @@ export function KanbanColumn({ stage, orders, isOver: isOverFromDndContext = fal
     <div
       ref={setNodeRef}
       className={cn(
-        "flex min-w-72 min-h-80 flex-col rounded-lg border bg-secondary/10",
+        "flex min-w-72 flex-col rounded-lg border bg-secondary/10",
         (isOverFromDndContext || isOverFromColumnDroppable) && "ring-2 ring-primary ring-offset-2",
+        kanbanLayout === "line" && "min-h-[77dvh] max-h-[77dvh]",
+        kanbanLayout === "grid" && "min-h-80",
       )}
     >
       {/* Column Header */}
@@ -62,18 +68,19 @@ export function KanbanColumn({ stage, orders, isOver: isOverFromDndContext = fal
           )}
         </div>
       </div>
-
       {/* Cards Container */}
-      <div className="flex-1 space-y-2 overflow-y-auto p-2">
+      <ScrollArea className="h-full overflow-hidden">
         <SortableContext
           items={orders.map(o => o.id)}
           strategy={verticalListSortingStrategy}
         >
-          {
-            orders.map(order => <KanbanCard key={order.id} order={order} />)
-          }
+          <div className="p-4 space-y-2">
+            {
+              orders.map(order => <KanbanCard key={order.id} order={order} />)
+            }
+          </div>
         </SortableContext>
-      </div>
+      </ScrollArea>
     </div>
   );
 }

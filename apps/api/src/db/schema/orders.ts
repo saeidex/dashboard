@@ -263,10 +263,11 @@ export type selectOrderDetailsSchema = z.infer<typeof selectOrderDetailsSchema>
  * @example: { pageIndex: 0, pageSize: 10 }
  */
 export const orderListQueryParamsSchema = z.object({
-  customerId: z.string().min(1).optional(),
-  pageIndex : z.coerce.number().min(0).default(0).optional(),
-  pageSize  : z.coerce.number().min(1).default(10).optional(),
-  view      : z.enum(["table", "kanban"]).default("table").optional(),
+  customerId  : z.string().min(1).optional(),
+  pageIndex   : z.coerce.number().min(0).default(0).optional(),
+  pageSize    : z.coerce.number().min(1).default(10).optional(),
+  view        : z.enum(["table", "kanban"]).default("table").optional(),
+  kanbanLayout: z.enum(["grid", "line"]).default("grid").optional(),
 })
 export type orderListQueryParamsSchema = z.infer<typeof orderListQueryParamsSchema>
 

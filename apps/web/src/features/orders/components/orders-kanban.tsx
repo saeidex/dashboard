@@ -25,6 +25,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { ScrollArea } from "@/web/components/ui/scroll-area";
+import { cn } from "@/web/lib/utils";
+import { useOrdersUiStore } from "@/web/stores/orders-ui-store";
+
 import type { Order } from "../data/schema";
 
 import { PRODUCTION_STAGES } from "../data/data";
@@ -39,6 +43,7 @@ type OrdersKanbanProps = {
 export function OrdersKanban({ orders }: OrdersKanbanProps) {
   const [activeOrder, setActiveOrder] = useState<Order | null>(null);
   const [overStage, setOverStage] = useState<ProductionStage | null>(null);
+  const kanbanLayout = useOrdersUiStore(s => s.kanbanLayout);
   const queryClient = useQueryClient();
 
   const stageOrder = PRODUCTION_STAGES.map(s => s.id);
@@ -221,16 +226,28 @@ export function OrdersKanban({ orders }: OrdersKanbanProps) {
         setOverStage(null);
       }}
     >
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-        {PRODUCTION_STAGES.map(stage => (
-          <KanbanColumn
-            key={stage.id}
-            stage={stage}
-            orders={getOrdersByStage(stage.id)}
-            isOver={overStage === stage.id}
-          />
-        ))}
-      </div>
+      <ScrollArea
+        orientation={kanbanLayout === "line" ? "horizontal" : "vertical"}
+        className={cn(kanbanLayout === "line" && "h-[77dvh] w-full")}
+      >
+        <div
+          className={
+            cn(
+              kanbanLayout === "line" && "flex gap-4 overflow-x-auto pb-2",
+              kanbanLayout === "grid" && "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
+            )
+          }
+        >
+          {PRODUCTION_STAGES.map(stage => (
+            <KanbanColumn
+              key={stage.id}
+              stage={stage}
+              orders={getOrdersByStage(stage.id)}
+              isOver={overStage === stage.id}
+            />
+          ))}
+        </div>
+      </ScrollArea>
 
       <DragOverlay>
         {activeOrder ? <KanbanCard order={activeOrder} isDragging /> : null}
