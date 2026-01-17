@@ -1,5 +1,8 @@
 import { redirect } from "@tanstack/react-router";
+import { ChevronUp } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
+import { Button } from "@/web/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -7,6 +10,11 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/web/components/ui/sidebar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/web/components/ui/tooltip";
 import { useLayout } from "@/web/context/layout-provider";
 import { filterSidebarItems, isToggleableGroup } from "@/web/lib/sidebar-utils";
 import { useAuthStore } from "@/web/stores/auth-store";
@@ -18,6 +26,26 @@ import { NavGroup } from "./nav-group";
 import { NavUser } from "./nav-user";
 
 export function AppSidebar() {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  const handleScroll = useCallback(() => {
+    if (contentRef.current) {
+      setShowScrollTop(contentRef.current.scrollTop > 100);
+    }
+  }, []);
+
+  const scrollToTop = useCallback(() => {
+    contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    const content = contentRef.current;
+    if (content) {
+      content.addEventListener("scroll", handleScroll);
+      return () => content.removeEventListener("scroll", handleScroll);
+    }
+  }, [handleScroll]);
   const { collapsible, variant } = useLayout();
   const { display } = useSettingsStore();
   const user = useAuthStore(state => state.user);
@@ -52,10 +80,26 @@ export function AppSidebar() {
       <SidebarHeader>
         <AppTitle />
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent ref={contentRef} className="relative">
         {filteredNavGroups.map(props => (
           <NavGroup key={props.title} {...props} />
         ))}
+        {showScrollTop && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="fixed bottom-16 left-4 z-10 size-8 rounded-full shadow-md transition-opacity group-data-[collapsible=icon]:hidden"
+                onClick={scrollToTop}
+              >
+                <ChevronUp className="size-4" />
+                <span className="sr-only">Scroll to top</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">Scroll to top</TooltipContent>
+          </Tooltip>
+        )}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />
