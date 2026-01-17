@@ -1,6 +1,15 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, Crown, Medal, Search, Sparkles, Star, User, X } from "lucide-react";
+import {
+  ChevronRight,
+  Crown,
+  Medal,
+  Search,
+  Sparkles,
+  Star,
+  User,
+  X,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 
 import type { CustomerTier } from "@/web/lib/customer-ranking";
@@ -18,7 +27,6 @@ import {
 } from "@/web/components/ui/select";
 import {
   calculateTierThresholds,
-
   getCustomerRanking,
   getRankingByTier,
 } from "@/web/lib/customer-ranking";
@@ -62,16 +70,20 @@ export function CustomersGrid() {
     return [...customers]
       .filter((customer) => {
         // Search filter
-        const matchesSearch = searchQuery === ""
-          || customer.name.toLowerCase().includes(searchQuery.toLowerCase())
-          || customer.email?.toLowerCase().includes(searchQuery.toLowerCase())
-          || customer.phone?.includes(searchQuery);
+        const matchesSearch
+          = searchQuery === ""
+            || customer.name.toLowerCase().includes(searchQuery.toLowerCase())
+            || customer.email?.toLowerCase().includes(searchQuery.toLowerCase())
+            || customer.phone?.includes(searchQuery);
 
         // Tier filter
         if (tierFilter === "all")
           return matchesSearch;
 
-        const customerTier = getCustomerRanking(customer.orderCount ?? 0, thresholds).tier;
+        const customerTier = getCustomerRanking(
+          customer.orderCount ?? 0,
+          thresholds,
+        ).tier;
         return matchesSearch && customerTier === tierFilter;
       })
       .sort((a, b) => {
@@ -107,17 +119,30 @@ export function CustomersGrid() {
               className="h-9 w-full pl-8 sm:w-[250px]"
             />
           </div>
-          <Select value={tierFilter} onValueChange={value => setTierFilter(value as CustomerTier | "all")}>
+          <Select
+            value={tierFilter}
+            onValueChange={value =>
+              setTierFilter(value as CustomerTier | "all")}
+          >
             <SelectTrigger className="h-9 w-full sm:w-[150px]">
               <SelectValue placeholder="Filter by tier" />
             </SelectTrigger>
             <SelectContent>
               {TIER_OPTIONS.map((option) => {
-                const ranking = option.value !== "all" ? getRankingByTier(option.value) : null;
-                const Icon = option.value !== "all" ? TierIcon[option.value] : null;
+                const ranking
+                  = option.value !== "all"
+                    ? getRankingByTier(option.value)
+                    : null;
+                const Icon
+                  = option.value !== "all" ? TierIcon[option.value] : null;
                 return (
                   <SelectItem key={option.value} value={option.value}>
-                    <span className={cn("flex items-center gap-2", ranking?.textClass)}>
+                    <span
+                      className={cn(
+                        "flex items-center gap-2",
+                        ranking?.textClass,
+                      )}
+                    >
                       {Icon && <Icon className="size-4" />}
                       {option.label}
                     </span>
@@ -127,7 +152,11 @@ export function CustomersGrid() {
             </SelectContent>
           </Select>
           {isFiltered && (
-            <Button variant="ghost" onClick={clearFilters} className="h-9 px-2 lg:px-3">
+            <Button
+              variant="ghost"
+              onClick={clearFilters}
+              className="h-9 px-2 lg:px-3"
+            >
               Reset
               <X className="ml-2 size-4" />
             </Button>
@@ -137,7 +166,6 @@ export function CustomersGrid() {
           {filteredCustomers.length}
           {" "}
           of
-          {" "}
           {customers.length}
           {" "}
           customers
@@ -154,19 +182,42 @@ export function CustomersGrid() {
         : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {filteredCustomers.map((customer) => {
-                const ranking = getCustomerRanking(customer.orderCount ?? 0, thresholds);
+                const ranking = getCustomerRanking(
+                  customer.orderCount ?? 0,
+                  thresholds,
+                );
                 const Icon = TierIcon[ranking.tier];
 
                 return (
-                  <Link to="/orders/$customerId" params={{ customerId: customer.id }} key={customer.id}>
-                    <Card className={cn("cursor-pointer transition-colors hover:bg-muted/50", ranking.borderClass)}>
+                  <Link
+                    to="/orders/$customerId"
+                    params={{ customerId: customer.id }}
+                    key={customer.id}
+                  >
+                    <Card
+                      className={cn(
+                        "cursor-pointer transition-colors hover:bg-muted/50",
+                        ranking.borderClass,
+                      )}
+                    >
                       <CardContent className="flex flex-1 items-center justify-between gap-2">
                         <div className="flex items-center gap-2 overflow-hidden">
-                          <Icon className={cn("size-4 shrink-0", ranking.textClass)} />
-                          <span className={cn("line-clamp-1", ranking.textClass)}>{customer.name}</span>
+                          <Icon
+                            className={cn("size-4 shrink-0", ranking.textClass)}
+                          />
+                          <span className={cn("line-clamp-1", ranking.textClass)}>
+                            {customer.name}
+                          </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="outline" className={cn("shrink-0 text-xs", ranking.bgClass, ranking.textClass)}>
+                          <Badge
+                            variant="outline"
+                            className={cn(
+                              "shrink-0 text-xs",
+                              ranking.bgClass,
+                              ranking.textClass,
+                            )}
+                          >
                             {customer.orderCount ?? 0}
                             {" "}
                             orders

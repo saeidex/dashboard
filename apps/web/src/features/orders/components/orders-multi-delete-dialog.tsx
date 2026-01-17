@@ -47,21 +47,24 @@ export function OrdersMultiDeleteDialog<TData>({
 
     onOpenChange(false);
 
-    toast.promise(async () => {
-      for (const row of selectedRows) {
-        await deleteMutation.mutateAsync(row.getValue("id"));
-      }
-    }, {
-      loading: "Deleting orders...",
-      success: () => {
-        table.resetRowSelection();
-        queryClient.invalidateQueries(queryKeys.LIST_ORDERS(search));
-        return `Deleted ${selectedRows.length} ${
-          selectedRows.length > 1 ? "orders" : "order"
-        }`;
+    toast.promise(
+      async () => {
+        for (const row of selectedRows) {
+          await deleteMutation.mutateAsync(row.getValue("id"));
+        }
       },
-      error: "Error",
-    });
+      {
+        loading: "Deleting orders...",
+        success: () => {
+          table.resetRowSelection();
+          queryClient.invalidateQueries(queryKeys.LIST_ORDERS(search));
+          return `Deleted ${selectedRows.length} ${
+            selectedRows.length > 1 ? "orders" : "order"
+          }`;
+        },
+        error: "Error",
+      },
+    );
   };
 
   return (

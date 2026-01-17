@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Database Seed Script
  *
@@ -112,7 +113,7 @@ const FABRIC_SUFFIXES = ["Blend", "Twill", "Weave", "Knit", "Print", "Solid", "S
 // Style number counter for generating unique style numbers
 let styleNumberCounter = 54540
 
-function generateProducts(categoryIds: string[], sizeIds: number[], countPerCategory: number) {
+function generateProducts(categoryIds: number[], sizeIds: number[], countPerCategory: number) {
   const products: Array<{
     id: string
     styleNumber: string
@@ -120,7 +121,7 @@ function generateProducts(categoryIds: string[], sizeIds: number[], countPerCate
     description: string | null
     status: string
     label: string | null
-    categoryId: string
+    categoryId: number
     sizeId: number | null
     retailPrice: number
     taxPercentage: number
@@ -252,18 +253,40 @@ const PAYMENT_METHODS = ["cash", "card", "bank-transfer", "mobile-wallet"] as co
 function generateOrders(
   customerIds: string[],
   productData: Array<{ id: string, retailPrice: number, taxAmount: number, total: number }>,
+  factoryIds: string[],
 ) {
   const orders: Array<{
     customerId: string
+    factoryId: string | null
     orderStatus: (typeof ORDER_STATUSES)[number]
     paymentStatus: (typeof PAYMENT_STATUSES)[number]
     paymentMethod: (typeof PAYMENT_METHODS)[number]
+    productionStage: schema.ProductionStage[number]
     currency: "BDT"
     retailPrice: number
     tax: number
     shipping: number
     grandTotal: number
     notes: string | null
+    // Timeline dates
+    orderConfirmDate: Date | null
+    accessoriesInhouseDate: Date | null
+    fabricEtd: Date | null
+    fabricEta: Date | null
+    fabricInhouseDate: Date | null
+    ppSampleDate: Date | null
+    fabricTestDate: Date | null
+    shippingSampleDate: Date | null
+    sewingStartDate: Date | null
+    sewingCompleteDate: Date | null
+    inspectionStartDate: Date | null
+    inspectionEndDate: Date | null
+    exFactoryDate: Date | null
+    portHandoverDate: Date | null
+    // Production metrics
+    productionPerLine: number | null
+    numberOfLinesUsed: number | null
+    manpowerPerLine: number | null
     createdAt: Date
     updatedAt: Date
   }> = []
@@ -320,8 +343,51 @@ function generateOrders(
       const createdAt = faker.date.past({ years: 1 })
       const updatedAt = faker.date.between({ from: createdAt, to: new Date() })
 
+      // Generate production stage based on weighted distribution
+      const productionStage = faker.helpers.weightedArrayElement([
+        { value: "confirmed" as const, weight: 10 },
+        { value: "accessories_inhouse" as const, weight: 10 },
+        { value: "china_fabric_etd" as const, weight: 10 },
+        { value: "china_fabric_eta" as const, weight: 8 },
+        { value: "fabric_inhouse" as const, weight: 8 },
+        { value: "pp_sample" as const, weight: 7 },
+        { value: "fabric_test_inspection" as const, weight: 7 },
+        { value: "shipping_sample" as const, weight: 6 },
+        { value: "sewing_start" as const, weight: 10 },
+        { value: "sewing_complete" as const, weight: 8 },
+        { value: "ken2_inspection_start" as const, weight: 5 },
+        { value: "ken2_inspection_finished" as const, weight: 4 },
+        { value: "ex_factory" as const, weight: 3 },
+        { value: "port_handover" as const, weight: 2 },
+      ])
+
+      // Assign a factory (80% chance)
+      const factoryId = faker.helpers.maybe(() => faker.helpers.arrayElement(factoryIds), { probability: 0.8 }) || null
+
+      // Generate timeline dates based on order created date
+      const orderConfirmDate = new Date(createdAt)
+      const accessoriesInhouseDate = faker.date.between({ from: orderConfirmDate, to: new Date(orderConfirmDate.getTime() + 45 * 24 * 60 * 60 * 1000) })
+      const fabricEtd = faker.date.between({ from: orderConfirmDate, to: new Date(orderConfirmDate.getTime() + 30 * 24 * 60 * 60 * 1000) })
+      const fabricEta = faker.date.between({ from: fabricEtd, to: new Date(fabricEtd.getTime() + 25 * 24 * 60 * 60 * 1000) })
+      const fabricInhouseDate = faker.date.between({ from: fabricEta, to: new Date(fabricEta.getTime() + 15 * 24 * 60 * 60 * 1000) })
+      const ppSampleDate = faker.date.between({ from: fabricInhouseDate, to: new Date(fabricInhouseDate.getTime() + 10 * 24 * 60 * 60 * 1000) })
+      const fabricTestDate = faker.date.between({ from: ppSampleDate, to: new Date(ppSampleDate.getTime() + 5 * 24 * 60 * 60 * 1000) })
+      const shippingSampleDate = faker.date.between({ from: fabricTestDate, to: new Date(fabricTestDate.getTime() + 7 * 24 * 60 * 60 * 1000) })
+      const sewingStartDate = faker.date.between({ from: shippingSampleDate, to: new Date(shippingSampleDate.getTime() + 7 * 24 * 60 * 60 * 1000) })
+      const sewingCompleteDate = faker.date.between({ from: sewingStartDate, to: new Date(sewingStartDate.getTime() + 40 * 24 * 60 * 60 * 1000) })
+      const inspectionStartDate = faker.date.between({ from: sewingStartDate, to: sewingCompleteDate })
+      const inspectionEndDate = faker.date.between({ from: inspectionStartDate, to: new Date(sewingCompleteDate.getTime() + 5 * 24 * 60 * 60 * 1000) })
+      const exFactoryDate = faker.date.between({ from: inspectionEndDate, to: new Date(inspectionEndDate.getTime() + 5 * 24 * 60 * 60 * 1000) })
+      const portHandoverDate = faker.date.between({ from: exFactoryDate, to: new Date(exFactoryDate.getTime() + 3 * 24 * 60 * 60 * 1000) })
+
+      // Production metrics
+      const productionPerLine = faker.number.int({ min: 800, max: 1500 })
+      const numberOfLinesUsed = faker.number.int({ min: 1, max: 4 })
+      const manpowerPerLine = faker.number.int({ min: 30, max: 60 })
+
       orders.push({
         customerId,
+        factoryId,
         orderStatus: faker.helpers.weightedArrayElement([
           { value: "delivered" as const, weight: 40 },
           { value: "shipped" as const, weight: 20 },
@@ -337,12 +403,32 @@ function generateOrders(
           { value: "refunded" as const, weight: 5 },
         ]),
         paymentMethod: faker.helpers.arrayElement(PAYMENT_METHODS),
+        productionStage,
         currency: "BDT",
         retailPrice: +orderRetailPrice.toFixed(2),
         tax: +orderTax.toFixed(2),
         shipping,
         grandTotal,
         notes: faker.helpers.maybe(() => faker.lorem.sentence(), { probability: 0.3 }) || null,
+        // Timeline dates
+        orderConfirmDate,
+        accessoriesInhouseDate,
+        fabricEtd,
+        fabricEta,
+        fabricInhouseDate,
+        ppSampleDate,
+        fabricTestDate,
+        shippingSampleDate,
+        sewingStartDate,
+        sewingCompleteDate,
+        inspectionStartDate,
+        inspectionEndDate,
+        exFactoryDate,
+        portHandoverDate,
+        // Production metrics
+        productionPerLine,
+        numberOfLinesUsed,
+        manpowerPerLine,
         createdAt,
         updatedAt,
       })
@@ -479,8 +565,9 @@ async function seed() {
     // Seed Factories
     console.log("🏭 Seeding factories...")
     const factoriesData = generateFactories(CONFIG.factories)
-    await db.insert(schema.factories).values(factoriesData).onConflictDoNothing()
-    console.log(`   ✓ Inserted ${factoriesData.length} factories\n`)
+    const insertedFactories = await db.insert(schema.factories).values(factoriesData).onConflictDoNothing().returning()
+    console.log(`   ✓ Inserted ${insertedFactories.length} factories\n`)
+    const factoryIds = insertedFactories.map(f => f.id)
 
     // Seed Product Categories
     console.log("📦 Seeding product categories...")
@@ -504,25 +591,25 @@ async function seed() {
 
     // Seed Products
     console.log("📦 Seeding products...")
-    const categoryIds = insertedCategories.map(c => String(c.id))
+    const categoryIds = insertedCategories.map(c => c.id)
     const sizeIds = insertedSizes.map(s => s.id)
 
     if (categoryIds.length > 0) {
       const productsData = generateProducts(categoryIds, sizeIds, CONFIG.productsPerCategory)
-      await db.insert(schema.products).values(productsData).onConflictDoNothing()
-      console.log(`   ✓ Inserted ${productsData.length} products\n`)
+      const insertedProducts = await db.insert(schema.products).values(productsData).returning()
+      console.log(`   ✓ Inserted ${insertedProducts.length} products\n`)
 
       // Seed Orders and Order Items
       console.log("📦 Seeding orders and order items...")
       const customerIds = customersData.map(c => c.id)
-      const productDataForOrders = productsData.map(p => ({
+      const productDataForOrders = insertedProducts.map(p => ({
         id: p.id,
         retailPrice: p.retailPrice,
         taxAmount: p.taxAmount,
         total: p.total,
       }))
 
-      const { orders, orderItems } = generateOrders(customerIds, productDataForOrders)
+      const { orders, orderItems } = generateOrders(customerIds, productDataForOrders, factoryIds)
 
       // Insert orders first
       const insertedOrders = await db

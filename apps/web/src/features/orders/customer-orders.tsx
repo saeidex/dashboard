@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { getRouteApi } from "@tanstack/react-router";
+import { getRouteApi, useNavigate } from "@tanstack/react-router";
 
 import { Header } from "@/web/components/layout/header";
 import { Main } from "@/web/components/layout/main";
@@ -8,18 +8,27 @@ import { customersQueryOptions } from "../customers/data/queries";
 import { createProductsQueryOptions } from "../products/data/queries";
 import { NoOrders } from "./components/no-orders";
 import { OrdersDialogs } from "./components/orders-dialogs";
+import { OrdersKanban } from "./components/orders-kanban";
 import { OrdersPrimaryButtons } from "./components/orders-primary-buttons";
 import { OrdersProvider } from "./components/orders-provider";
 import { OrdersTable } from "./components/orders-table";
 import { createOrdersQueryOptions } from "./data/queries";
 
-const Route = getRouteApi("/_authenticated/orders/$customerId");
+const Route = getRouteApi("/_authenticated/orders/$customerId/");
 
 export const CustomerOrders = () => {
   const params = Route.useParams();
+  const search = Route.useSearch();
+  const navigate = useNavigate();
+  const view = search.view ?? "table";
 
   const { data: customers } = useSuspenseQuery(customersQueryOptions);
-  const { data: orders } = useSuspenseQuery(createOrdersQueryOptions({ customerId: params.customerId }));
+  const { data: orders } = useSuspenseQuery(
+    createOrdersQueryOptions({
+      customerId: params.customerId,
+      view,
+    }),
+  );
   const { data: products } = useSuspenseQuery(createProductsQueryOptions());
 
   const customer = customers.find(c => c.id === params.customerId);
@@ -59,10 +68,24 @@ export const CustomerOrders = () => {
             </h2>
             <p className="text-muted-foreground">Manage customer orders</p>
           </div>
-          <OrdersPrimaryButtons />
+          <OrdersPrimaryButtons
+            view={view}
+            onViewChange={(newView) => {
+              navigate({
+                to: ".",
+                search: prev => ({ ...prev, view: newView }),
+              });
+            }}
+          />
         </div>
         <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
-          <OrdersTable />
+          {view === "table"
+            ? (
+                <OrdersTable />
+              )
+            : (
+                <OrdersKanban orders={orders.rows} />
+              )}
         </div>
       </Main>
 

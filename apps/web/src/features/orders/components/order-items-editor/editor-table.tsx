@@ -8,7 +8,12 @@ import { toast } from "sonner";
 
 import { SelectDropdown } from "@/web/components/select-dropdown";
 import { Button } from "@/web/components/ui/button";
-import { FormControl, FormField, FormItem, FormLabel } from "@/web/components/ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/web/components/ui/form";
 import { Input } from "@/web/components/ui/input";
 import {
   Table,
@@ -26,14 +31,16 @@ export function EditorTable() {
   const { data: products } = useSuspenseQuery(createProductsQueryOptions());
 
   const availableProducts = React.useMemo(
-    () => products.filter(p => p.status !== "out-of-stock" && (p.stock ?? 0) > 0),
+    () =>
+      products.filter(p => p.status !== "out-of-stock" && (p.stock ?? 0) > 0),
     [products],
   );
 
   const { currentRow } = useOrders();
   const isEdit = !!currentRow;
 
-  const { control, setValue, getValues } = useFormContext<insertOrderWithItemsSchema>();
+  const { control, setValue, getValues }
+    = useFormContext<insertOrderWithItemsSchema>();
   const fieldArray = useFieldArray({ name: "items", control });
 
   const isItemsEmpty = !fieldArray.fields.length;
@@ -49,74 +56,98 @@ export function EditorTable() {
       productId: firstProduct.id,
       quantity: 1,
       retailPricePerUnit: firstProduct.retailPrice ?? firstProduct.total ?? 0,
-      taxPerUnit: firstProduct.taxAmount
+      taxPerUnit:
+        firstProduct.taxAmount
         ?? (typeof firstProduct.taxPercentage === "number"
-          ? (firstProduct.taxPercentage / 100) * (firstProduct.retailPrice ?? firstProduct.total ?? 0)
+          ? (firstProduct.taxPercentage / 100)
+          * (firstProduct.retailPrice ?? firstProduct.total ?? 0)
           : 0),
       totalRetailPrice: firstProduct.retailPrice ?? firstProduct.total ?? 0,
-      totalTax: firstProduct.taxAmount
+      totalTax:
+        firstProduct.taxAmount
         ?? (typeof firstProduct.taxPercentage === "number"
-          ? (firstProduct.taxPercentage / 100) * (firstProduct.retailPrice ?? firstProduct.total ?? 0)
+          ? (firstProduct.taxPercentage / 100)
+          * (firstProduct.retailPrice ?? firstProduct.total ?? 0)
           : 0),
-      grandTotal: firstProduct.total ?? (firstProduct.retailPrice ?? 0) + (firstProduct.taxAmount ?? 0),
+      grandTotal:
+        firstProduct.total
+        ?? (firstProduct.retailPrice ?? 0) + (firstProduct.taxAmount ?? 0),
     });
   }, [isEdit, currentRow, fieldArray, availableProducts]);
 
-  const handleProductChange = React.useCallback((index: number, productId: string) => {
-    const product = availableProducts.find(p => p.id === productId);
-    if (!product) {
-      toast.error("Selected product is not available.");
-      return;
-    }
+  const handleProductChange = React.useCallback(
+    (index: number, productId: string) => {
+      const product = availableProducts.find(p => p.id === productId);
+      if (!product) {
+        toast.error("Selected product is not available.");
+        return;
+      }
 
-    const currentQuantity = getValues(`items.${index}.quantity`) ?? 1;
-    const productStock = product.stock ?? 0;
+      const currentQuantity = getValues(`items.${index}.quantity`) ?? 1;
+      const productStock = product.stock ?? 0;
 
-    // Adjust quantity if it exceeds new product's stock
-    let adjustedQuantity = currentQuantity;
-    if (currentQuantity > productStock) {
-      adjustedQuantity = productStock > 0 ? productStock : 1;
-      toast.warning(`Quantity adjusted to ${adjustedQuantity} based on available stock.`);
-    }
+      // Adjust quantity if it exceeds new product's stock
+      let adjustedQuantity = currentQuantity;
+      if (currentQuantity > productStock) {
+        adjustedQuantity = productStock > 0 ? productStock : 1;
+        toast.warning(
+          `Quantity adjusted to ${adjustedQuantity} based on available stock.`,
+        );
+      }
 
-    const unitBasePrice = product.retailPrice ?? product.total ?? 0;
-    const taxPerUnit
-      = product.taxAmount
-        ?? (typeof product.taxPercentage === "number"
-          ? (product.taxPercentage / 100) * unitBasePrice
-          : 0);
+      const unitBasePrice = product.retailPrice ?? product.total ?? 0;
+      const taxPerUnit
+        = product.taxAmount
+          ?? (typeof product.taxPercentage === "number"
+            ? (product.taxPercentage / 100) * unitBasePrice
+            : 0);
 
-    const lineBasePrice = unitBasePrice * adjustedQuantity;
-    const lineTax = taxPerUnit * adjustedQuantity;
-    const lineTotal = lineBasePrice + lineTax;
+      const lineBasePrice = unitBasePrice * adjustedQuantity;
+      const lineTax = taxPerUnit * adjustedQuantity;
+      const lineTotal = lineBasePrice + lineTax;
 
-    fieldArray.update(index, {
-      id: isEdit ? currentRow.id.toString() : crypto.randomUUID(),
-      productId: product.id,
-      quantity: adjustedQuantity,
-      retailPricePerUnit: unitBasePrice,
-      taxPerUnit,
-      totalRetailPrice: lineBasePrice,
-      totalTax: lineTax,
-      grandTotal: lineTotal,
-    });
-  }, [availableProducts, fieldArray, isEdit, currentRow, getValues]);
+      fieldArray.update(index, {
+        id: isEdit ? currentRow.id.toString() : crypto.randomUUID(),
+        productId: product.id,
+        quantity: adjustedQuantity,
+        retailPricePerUnit: unitBasePrice,
+        taxPerUnit,
+        totalRetailPrice: lineBasePrice,
+        totalTax: lineTax,
+        grandTotal: lineTotal,
+      });
+    },
+    [availableProducts, fieldArray, isEdit, currentRow, getValues],
+  );
 
   return (
     <div className="rounded-xl border border-border bg-card shadow-sm">
       <Table className="table-fixed [&_th]:uppercase [&_th]:tracking-wide">
         <TableHeader>
           <TableRow className="divide-x divide-border bg-muted/40">
-            <TableHead className="w-[320px] text-muted-foreground pl-4">Product</TableHead>
-            <TableHead className="w-[120px] text-center text-muted-foreground">Qty</TableHead>
-            <TableHead className="w-[140px] text-center text-muted-foreground">Unit Price</TableHead>
-            <TableHead className="w-[140px] text-right text-muted-foreground">Total</TableHead>
-            <TableHead className="w-[80px] text-center text-muted-foreground">Remove</TableHead>
+            <TableHead className="w-[320px] text-muted-foreground pl-4">
+              Product
+            </TableHead>
+            <TableHead className="w-[120px] text-center text-muted-foreground">
+              Qty
+            </TableHead>
+            <TableHead className="w-[140px] text-center text-muted-foreground">
+              Unit Price
+            </TableHead>
+            <TableHead className="w-[140px] text-right text-muted-foreground">
+              Total
+            </TableHead>
+            <TableHead className="w-[80px] text-center text-muted-foreground">
+              Remove
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {fieldArray.fields.map((field, index) => (
-            <TableRow key={field.id} className="divide-x divide-border [&_td]:!py-3.5 bg-background/60 hover:bg-background/80">
+            <TableRow
+              key={field.id}
+              className="divide-x divide-border [&_td]:!py-3.5 bg-background/60 hover:bg-background/80"
+            >
               <TableCell className="align-top">
                 <FormField
                   control={control}
@@ -149,7 +180,9 @@ export function EditorTable() {
                   control={control}
                   name={`items.${index}.quantity`}
                   render={({ field }) => {
-                    const product = availableProducts.find(p => p.id === fieldArray.fields[index].productId);
+                    const product = availableProducts.find(
+                      p => p.id === fieldArray.fields[index].productId,
+                    );
                     const maxStock = product?.stock ?? 0;
 
                     return (
@@ -163,22 +196,42 @@ export function EditorTable() {
                             max={maxStock}
                             {...field}
                             onChange={(e) => {
-                              const value = Number.parseInt(e.target.value) || 1;
+                              const value
+                                = Number.parseInt(e.target.value) || 1;
 
                               // Validate against stock
                               if (value > maxStock) {
-                                toast.error(`Only ${maxStock} units available in stock.`);
+                                toast.error(
+                                  `Only ${maxStock} units available in stock.`,
+                                );
                                 return;
                               }
 
-                              const unitPrice = fieldArray.fields[index].retailPricePerUnit ?? 0;
-                              const taxPerUnit = fieldArray.fields[index].taxPerUnit ?? 0;
+                              const unitPrice
+                                = fieldArray.fields[index].retailPricePerUnit
+                                  ?? 0;
+                              const taxPerUnit
+                                = fieldArray.fields[index].taxPerUnit ?? 0;
                               const newTotalRetail = unitPrice * value;
                               const newTotalTax = taxPerUnit * value;
-                              setValue(`items.${index}.quantity`, value, { shouldValidate: true, shouldDirty: true });
-                              setValue(`items.${index}.totalRetailPrice`, newTotalRetail, { shouldValidate: true, shouldDirty: true });
-                              setValue(`items.${index}.totalTax`, newTotalTax, { shouldValidate: true, shouldDirty: true });
-                              setValue(`items.${index}.grandTotal`, newTotalRetail + newTotalTax, { shouldValidate: true, shouldDirty: true });
+                              setValue(`items.${index}.quantity`, value, {
+                                shouldValidate: true,
+                                shouldDirty: true,
+                              });
+                              setValue(
+                                `items.${index}.totalRetailPrice`,
+                                newTotalRetail,
+                                { shouldValidate: true, shouldDirty: true },
+                              );
+                              setValue(`items.${index}.totalTax`, newTotalTax, {
+                                shouldValidate: true,
+                                shouldDirty: true,
+                              });
+                              setValue(
+                                `items.${index}.grandTotal`,
+                                newTotalRetail + newTotalTax,
+                                { shouldValidate: true, shouldDirty: true },
+                              );
                               field.onChange(value);
                             }}
                           />
@@ -191,7 +244,8 @@ export function EditorTable() {
 
               <TableCell className="align-top text-center font-medium">
                 <span className="inline-flex h-10 w-full items-center justify-center px-1">
-                  {availableProducts.find(p => p.id === field.productId)?.total ?? "-"}
+                  {availableProducts.find(p => p.id === field.productId)
+                    ?.total ?? "-"}
                 </span>
               </TableCell>
 
@@ -203,7 +257,10 @@ export function EditorTable() {
                     <FormItem>
                       <FormLabel className="sr-only">Total</FormLabel>
                       <FormControl>
-                        <Input {...field} className="h-10 w-full text-right pointer-events-none border-0" />
+                        <Input
+                          {...field}
+                          className="h-10 w-full text-right pointer-events-none border-0"
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -227,7 +284,10 @@ export function EditorTable() {
           ))}
           {isItemsEmpty && (
             <TableRow className="divide-x divide-border">
-              <TableCell colSpan={5} className="py-6 text-center text-sm text-muted-foreground">
+              <TableCell
+                colSpan={5}
+                className="py-6 text-center text-sm text-muted-foreground"
+              >
                 No items added yet.
               </TableCell>
             </TableRow>

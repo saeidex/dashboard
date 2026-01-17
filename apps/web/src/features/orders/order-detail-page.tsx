@@ -44,10 +44,7 @@ const PrimaryButtons = () => {
         Edit
         <Edit2 className="ml-2 h-4 w-4" />
       </Button>
-      <Button
-        variant="secondary"
-        onClick={handleDownload}
-      >
+      <Button variant="secondary" onClick={handleDownload}>
         Download
         <Download className="ml-2 h-4 w-4" />
       </Button>

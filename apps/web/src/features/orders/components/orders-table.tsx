@@ -1,4 +1,8 @@
-import type { ExpandedState, SortingState, VisibilityState } from "@tanstack/react-table";
+import type {
+  ExpandedState,
+  SortingState,
+  VisibilityState,
+} from "@tanstack/react-table";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
@@ -11,13 +15,14 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-
   useReactTable,
-
 } from "@tanstack/react-table";
 import { Fragment, useEffect, useState } from "react";
 
-import { DataTablePagination, DataTableToolbar } from "@/web/components/data-table";
+import {
+  DataTablePagination,
+  DataTableToolbar,
+} from "@/web/components/data-table";
 import {
   Table,
   TableBody,
@@ -46,6 +51,14 @@ export function OrdersTable() {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     id: true,
+    // Hide timeline columns by default
+    sewingStartDate: false,
+    sewingCompleteDate: false,
+    exFactoryDate: false,
+    portHandoverDate: false,
+    // Hide timestamps by default
+    createdAt: false,
+    updatedAt: false,
   });
   const [sorting, setSorting] = useState<SortingState>([
     { id: "createdAt", desc: true },
@@ -55,10 +68,14 @@ export function OrdersTable() {
   const params = route.useParams();
   const search = route.useSearch();
 
-  const { data: { rows: data, rowCount, pageCount } } = useSuspenseQuery(createOrdersQueryOptions({
-    ...search,
-    customerId: params.customerId,
-  }));
+  const {
+    data: { rows: data, rowCount, pageCount },
+  } = useSuspenseQuery(
+    createOrdersQueryOptions({
+      ...search,
+      customerId: params.customerId,
+    }),
+  );
 
   // Local state management for table (uncomment to use local-only state, not synced with URL)
   // const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>([])

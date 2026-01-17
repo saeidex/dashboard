@@ -47,6 +47,20 @@ export function OrdersDialogs() {
         }}
       />
 
+      {/* Refund Dialog for recording refunds from orders */}
+      <OrderPaymentDialog
+        type="refund"
+        key={`order-refund-${currentRow?.id ?? "new"}`}
+        order={currentRow}
+        open={open === "refund"}
+        onOpenChange={() => {
+          setOpen("refund");
+          setTimeout(() => {
+            setCurrentRow(null);
+          }, 500);
+        }}
+      />
+
       {currentRow && (
         <>
           <OrdersActionDialog

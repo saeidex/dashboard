@@ -40,6 +40,7 @@ function serializeSize(size: any): {
 function serializeOrderWithDetails(order: any) {
   return {
     ...order,
+    factory: order.factory ?? null,
     items: order.items.map((item: any) => ({
       ...item,
       product: {
@@ -61,6 +62,7 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
     offset: pageIndex * pageSize,
     with: {
       customer: true,
+      factory: true,
       items: {
         with: {
           product: {
@@ -167,6 +169,7 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
     where: (fields, { eq }) => eq(fields.id, id),
     with: {
       customer: true,
+      factory: true,
       items: {
         with: {
           product: {

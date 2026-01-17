@@ -1,13 +1,63 @@
-import { FilePlus } from "lucide-react";
+import { FilePlus, Kanban, Table } from "lucide-react";
 
 import { Button } from "@/web/components/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@/web/components/ui/toggle-group";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/web/components/ui/tooltip";
 
 import { useOrders } from "./orders-provider";
 
-export function OrdersPrimaryButtons() {
+type OrdersPrimaryButtonsProps = {
+  view?: "table" | "kanban";
+  onViewChange?: (view: "table" | "kanban") => void;
+};
+
+export function OrdersPrimaryButtons({
+  view = "table",
+  onViewChange,
+}: OrdersPrimaryButtonsProps) {
   const { setOpen } = useOrders();
   return (
-    <div className="flex gap-2">
+    <div className="flex items-center gap-3">
+      {onViewChange && (
+        <ToggleGroup
+          type="single"
+          value={view}
+          onValueChange={(value) => {
+            if (value)
+              onViewChange(value as "table" | "kanban");
+          }}
+          className="bg-muted rounded-lg p-1"
+        >
+          <Tooltip>
+            <TooltipTrigger>
+              <ToggleGroupItem
+                value="table"
+                aria-label="Table view"
+                className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+              >
+                <Table className="h-4 w-4" />
+              </ToggleGroupItem>
+            </TooltipTrigger>
+            <TooltipContent>Table View</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger>
+              <ToggleGroupItem
+                value="kanban"
+                aria-label="Kanban view"
+                className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+              >
+                <Kanban className="h-4 w-4" />
+              </ToggleGroupItem>
+            </TooltipTrigger>
+            <TooltipContent>Kanban Board</TooltipContent>
+          </Tooltip>
+        </ToggleGroup>
+      )}
       <Button className="space-x-1" onClick={() => setOpen("add")}>
         <span>Add Order</span>
         {" "}

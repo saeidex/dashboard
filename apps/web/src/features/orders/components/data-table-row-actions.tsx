@@ -3,7 +3,14 @@ import type { Row } from "@tanstack/react-table";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import { Copy, CreditCard, Download, Printer, Trash2, UserPen } from "lucide-react";
+import {
+  Copy,
+  CreditCard,
+  Download,
+  Printer,
+  Trash2,
+  UserPen,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/web/components/ui/button";
@@ -62,7 +69,10 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
 
   const copiedOrder: Order = {
     ...row.original,
-    items: row.original.items.map(({ id, ...item }) => ({ ...item, id: crypto.randomUUID() })),
+    items: row.original.items.map(({ id, ...item }) => ({
+      ...item,
+      id: crypto.randomUUID(),
+    })),
   };
 
   const handlePrint = () => {
@@ -88,7 +98,6 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[160px]">
-
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Order Status</DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
@@ -98,7 +107,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                     id: row.original.id.toString(),
                     order: {
                       ...row.original,
-                      orderStatus: value as typeof orderStatusValues[number],
+                      orderStatus: value as (typeof orderStatusValues)[number],
                       paymentStatus: row.getValue("paymentStatus"),
                       paymentMethod: row.getValue("paymentMethod"),
                     },
@@ -133,9 +142,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           )}
 
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={handlePrint}
-          >
+          <DropdownMenuItem onClick={handlePrint}>
             Print
             <DropdownMenuShortcut>
               <Printer size={16} />
@@ -165,9 +172,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             </DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={handleDownload}
-          >
+          <DropdownMenuItem onClick={handleDownload}>
             Download
             <DropdownMenuShortcut>
               <Download size={16} />

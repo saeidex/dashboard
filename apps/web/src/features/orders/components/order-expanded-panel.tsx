@@ -1,12 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 
 import { format } from "date-fns";
-import {
-  BadgePercent,
-  CreditCard,
-  ShoppingBag,
-  Truck,
-} from "lucide-react";
+import { BadgePercent, CreditCard, ShoppingBag, Truck } from "lucide-react";
 
 import { Badge } from "@/web/components/ui/badge";
 import {
@@ -27,37 +22,45 @@ const amountFormatter = new Intl.NumberFormat(undefined, {
 });
 
 const ORDER_STATUS_STYLES: Record<string, string> = {
-  pending: "bg-amber-500/15 text-amber-600 border-amber-500/20 dark:text-amber-300",
+  pending:
+    "bg-amber-500/15 text-amber-600 border-amber-500/20 dark:text-amber-300",
   processing: "bg-sky-500/15 text-sky-600 border-sky-500/20 dark:text-sky-300",
   shipped: "bg-blue-500/15 text-blue-600 border-blue-500/20 dark:text-blue-300",
-  delivered: "bg-emerald-500/15 text-emerald-600 border-emerald-500/20 dark:text-emerald-300",
+  delivered:
+    "bg-emerald-500/15 text-emerald-600 border-emerald-500/20 dark:text-emerald-300",
   cancelled: "bg-destructive/15 text-destructive border-destructive/20",
-  returned: "bg-purple-500/15 text-purple-600 border-purple-500/20 dark:text-purple-300",
+  returned:
+    "bg-purple-500/15 text-purple-600 border-purple-500/20 dark:text-purple-300",
   default: "bg-muted/60 text-muted-foreground border-muted/40",
 };
 
 const PAYMENT_STATUS_STYLES: Record<string, string> = {
-  unpaid: "bg-amber-500/15 text-amber-600 border-amber-500/20 dark:text-amber-300",
+  unpaid:
+    "bg-amber-500/15 text-amber-600 border-amber-500/20 dark:text-amber-300",
   partial: "bg-sky-500/15 text-sky-600 border-sky-500/20 dark:text-sky-300",
   paid: "bg-emerald-500/15 text-emerald-600 border-emerald-500/20 dark:text-emerald-300",
-  refunded: "bg-purple-500/15 text-purple-600 border-purple-500/20 dark:text-purple-300",
+  refunded:
+    "bg-purple-500/15 text-purple-600 border-purple-500/20 dark:text-purple-300",
   default: "bg-muted/60 text-muted-foreground border-muted/40",
 };
 
-const getCurrencySymbol = (currency: Order["currency"]) => (currency === "BDT" ? "৳" : currency);
+const getCurrencySymbol = (currency: Order["currency"]) =>
+  currency === "BDT" ? "৳" : currency;
 
 const formatAmount = (value: number | string | null | undefined) => {
   const numeric = typeof value === "number" ? value : Number(value ?? 0);
   return amountFormatter.format(Number.isFinite(numeric) ? numeric : 0);
 };
 
-const toTitleCase = (value: string) => value
-  .split(/[-_\s]+/u)
-  .filter(Boolean)
-  .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-  .join(" ");
+const toTitleCase = (value: string) =>
+  value
+    .split(/[-_\s]+/u)
+    .filter(Boolean)
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 
-const formatBadgeLabel = (value?: string | null) => (value ? toTitleCase(value) : undefined);
+const formatBadgeLabel = (value?: string | null) =>
+  value ? toTitleCase(value) : undefined;
 
 type OrderExpandedPanelProps = {
   order: Order;
@@ -72,7 +75,14 @@ type SummaryCardProps = {
   highlight?: boolean;
 };
 
-function SummaryCard({ icon: Icon, label, value, hint, accent, highlight }: SummaryCardProps) {
+function SummaryCard({
+  icon: Icon,
+  label,
+  value,
+  hint,
+  accent,
+  highlight,
+}: SummaryCardProps) {
   return (
     <Card
       className={cn(
@@ -109,7 +119,10 @@ export function OrderExpandedPanel({ order }: OrderExpandedPanelProps) {
   const taxTotal = Number(order.tax ?? 0);
   const shippingTotal = Number(order.shipping ?? 0);
   const uniqueItemCount = items.length;
-  const totalItemQuantity = items.reduce<number>((total, item) => total + Number(item.quantity ?? 0), 0);
+  const totalItemQuantity = items.reduce<number>(
+    (total, item) => total + Number(item.quantity ?? 0),
+    0,
+  );
 
   const orderStatusLabel = formatBadgeLabel(order.orderStatus);
   const paymentStatusLabel = formatBadgeLabel(order.paymentStatus);
@@ -123,28 +136,32 @@ export function OrderExpandedPanel({ order }: OrderExpandedPanelProps) {
       label: "Subtotal",
       value: `${currencySymbol}${formatAmount(order.retailPrice)}`,
       hint: `${totalItemQuantity} item${totalItemQuantity === 1 ? "" : "s"} across ${uniqueItemCount} line${uniqueItemCount === 1 ? "" : "s"}`,
-      accent: "bg-gradient-to-br from-primary/10 via-primary/0 to-transparent dark:from-primary/20",
+      accent:
+        "bg-gradient-to-br from-primary/10 via-primary/0 to-transparent dark:from-primary/20",
     },
     {
       icon: BadgePercent,
       label: "Discounts",
       value: "No discounts",
       hint: "Full price order",
-      accent: "bg-gradient-to-br from-amber-500/10 via-transparent to-transparent dark:from-amber-400/15",
+      accent:
+        "bg-gradient-to-br from-amber-500/10 via-transparent to-transparent dark:from-amber-400/15",
     },
     {
       icon: Truck,
       label: "Tax & Shipping",
       value: `${currencySymbol}${formatAmount(taxTotal + shippingTotal)}`,
       hint: `${taxTotal > 0 ? `Tax ${currencySymbol}${formatAmount(taxTotal)}` : "Tax included"}${shippingTotal > 0 ? ` · Shipping ${currencySymbol}${formatAmount(shippingTotal)}` : ""}`,
-      accent: "bg-gradient-to-br from-sky-500/10 via-transparent to-transparent dark:from-sky-400/15",
+      accent:
+        "bg-gradient-to-br from-sky-500/10 via-transparent to-transparent dark:from-sky-400/15",
     },
     {
       icon: CreditCard,
       label: "Grand Total",
       value: `${currencySymbol}${formatAmount(order.grandTotal)}`,
       hint: paymentStatusLabel ? `Payment: ${paymentStatusLabel}` : undefined,
-      accent: "bg-gradient-to-br from-primary/15 via-primary/5 to-transparent dark:from-primary/25",
+      accent:
+        "bg-gradient-to-br from-primary/15 via-primary/5 to-transparent dark:from-primary/25",
       highlight: true,
     },
   ] as const;
@@ -154,7 +171,10 @@ export function OrderExpandedPanel({ order }: OrderExpandedPanelProps) {
       <div className="overflow-hidden rounded-2xl border border-border/60 bg-gradient-to-br from-background via-background/95 to-background shadow-lg backdrop-blur-sm">
         <div className="flex flex-col gap-6 px-6 py-6 md:flex-row md:items-center md:justify-between">
           <div className="space-y-3">
-            <Badge variant="secondary" className="w-fit bg-primary/10 text-primary border-primary/20 dark:bg-primary/15">
+            <Badge
+              variant="secondary"
+              className="w-fit bg-primary/10 text-primary border-primary/20 dark:bg-primary/15"
+            >
               Order #
               {order.id}
             </Badge>
@@ -168,10 +188,14 @@ export function OrderExpandedPanel({ order }: OrderExpandedPanelProps) {
                   : `${totalItemQuantity} item${totalItemQuantity === 1 ? "" : "s"}`}
               </p>
               {order.customer?.email && (
-                <p className="text-xs text-muted-foreground">{order.customer.email}</p>
+                <p className="text-xs text-muted-foreground">
+                  {order.customer.email}
+                </p>
               )}
               {order.customer?.phone && (
-                <p className="text-xs text-muted-foreground">{order.customer.phone}</p>
+                <p className="text-xs text-muted-foreground">
+                  {order.customer.phone}
+                </p>
               )}
             </div>
           </div>
@@ -181,7 +205,9 @@ export function OrderExpandedPanel({ order }: OrderExpandedPanelProps) {
               <Badge
                 className={cn(
                   "uppercase tracking-wide",
-                  ORDER_STATUS_STYLES[String(order.orderStatus ?? "").toLowerCase()] ?? ORDER_STATUS_STYLES.default,
+                  ORDER_STATUS_STYLES[
+                    String(order.orderStatus ?? "").toLowerCase()
+                  ] ?? ORDER_STATUS_STYLES.default,
                 )}
               >
                 {orderStatusLabel}
@@ -191,7 +217,9 @@ export function OrderExpandedPanel({ order }: OrderExpandedPanelProps) {
               <Badge
                 className={cn(
                   "uppercase tracking-wide",
-                  PAYMENT_STATUS_STYLES[String(order.paymentStatus ?? "").toLowerCase()] ?? PAYMENT_STATUS_STYLES.default,
+                  PAYMENT_STATUS_STYLES[
+                    String(order.paymentStatus ?? "").toLowerCase()
+                  ] ?? PAYMENT_STATUS_STYLES.default,
                 )}
               >
                 {paymentStatusLabel}
@@ -216,7 +244,9 @@ export function OrderExpandedPanel({ order }: OrderExpandedPanelProps) {
       <div className="p-3">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">Line items</p>
+            <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">
+              Line items
+            </p>
             <p className="text-xs text-muted-foreground">
               {uniqueItemCount}
               {" "}
@@ -224,7 +254,10 @@ export function OrderExpandedPanel({ order }: OrderExpandedPanelProps) {
               {uniqueItemCount === 1 ? "" : "s"}
             </p>
           </div>
-          <Badge variant="outline" className="bg-muted/50 text-[0.7rem] uppercase tracking-wide">
+          <Badge
+            variant="outline"
+            className="bg-muted/50 text-[0.7rem] uppercase tracking-wide"
+          >
             Total qty:
             {" "}
             {totalItemQuantity}
@@ -259,20 +292,21 @@ export function OrderExpandedPanel({ order }: OrderExpandedPanelProps) {
                             {item.product.size?.width}
                             {" "}
                             ×
-                            {" "}
                             {item.product.size?.height}
                             {" "}
                             {item.product.size?.unit}
                           </div>
                           <div className="flex flex-wrap items-center gap-1.5 text-[0.7rem] text-muted-foreground">
-                            <Badge variant="outline" className="bg-muted/40 text-[0.65rem] uppercase tracking-wide">
+                            <Badge
+                              variant="outline"
+                              className="bg-muted/40 text-[0.65rem] uppercase tracking-wide"
+                            >
                               Qty
                               {" "}
                               {item.quantity ?? 0}
                             </Badge>
                             <span>
                               ID:
-                              {" "}
                               {item.productId ?? "—"}
                             </span>
                           </div>
@@ -298,9 +332,14 @@ export function OrderExpandedPanel({ order }: OrderExpandedPanelProps) {
 
       {order.notes && (
         <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-primary/5 p-4 text-sm shadow-sm">
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/5 opacity-70" aria-hidden />
+          <div
+            className="pointer-events-none absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/5 opacity-70"
+            aria-hidden
+          />
           <div className="relative space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-primary">Internal notes</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+              Internal notes
+            </p>
             <p className="leading-relaxed text-foreground">{order.notes}</p>
           </div>
         </div>

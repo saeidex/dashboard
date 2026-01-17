@@ -17,7 +17,11 @@ export const Orders = () => {
   const { data: customers } = useSuspenseQuery(customersQueryOptions);
 
   if (!customers || customers.length === 0) {
-    return <OrdersProvider><NoOrders reason="no-customers" /></OrdersProvider>;
+    return (
+      <OrdersProvider>
+        <NoOrders reason="no-customers" />
+      </OrdersProvider>
+    );
   }
 
   return (

@@ -77,14 +77,18 @@ export const Invoice = ({
               <span className="font-medium">{order.id}</span>
             </h2>
             <p
-              className={cn("mt-1 text-xs", !monochrome && "text-muted-foreground")}
+              className={cn(
+                "mt-1 text-xs",
+                !monochrome && "text-muted-foreground",
+              )}
               data-invoice-muted={monochrome ? "" : undefined}
             >
               Created:
               {" "}
               {format(order.createdAt ?? "", "MMMM dd, yyyy")}
               {" "}
-              · Updated:
+              ·
+              Updated:
               {" "}
               {format(order.updatedAt ?? "", "MMMM dd, yyyy")}
             </p>
@@ -232,18 +236,26 @@ export const Invoice = ({
               {orderItems.map((item, index) => (
                 <TableRow
                   key={item.id ?? `${item.productId}-${index}`}
-                  className={cn("last:border-b-0", monochrome && "hover:bg-transparent")}
+                  className={cn(
+                    "last:border-b-0",
+                    monochrome && "hover:bg-transparent",
+                  )}
                   data-invoice-table-row={monochrome ? "" : undefined}
                 >
                   <TableCell
-                    className={cn("w-8", !monochrome && "text-muted-foreground")}
+                    className={cn(
+                      "w-8",
+                      !monochrome && "text-muted-foreground",
+                    )}
                     data-invoice-muted={monochrome ? "" : undefined}
                   >
                     {index + 1}
                   </TableCell>
                   <TableCell>
                     <div className="min-w-40">
-                      <div className="leading-tight font-medium">{item.product.title}</div>
+                      <div className="leading-tight font-medium">
+                        {item.product.title}
+                      </div>
                       {item.product.size && (
                         <div
                           className={cn(
@@ -261,7 +273,6 @@ export const Invoice = ({
                           {item.product.size.width}
                           {" "}
                           ×
-                          {" "}
                           {item.product.size.height}
                           {" "}
                           {item.product.size.unit}
@@ -273,7 +284,10 @@ export const Invoice = ({
                     {item.quantity}
                   </TableCell>
                   <TableCell className="text-right w-24 tabular-nums">
-                    {formatCurrency(item.retailPricePerUnit ?? 0, order.currency)}
+                    {formatCurrency(
+                      item.retailPricePerUnit ?? 0,
+                      order.currency,
+                    )}
                   </TableCell>
                   <TableCell className="text-right w-24 tabular-nums">
                     {item.taxPerUnit && item.taxPerUnit > 0
@@ -289,7 +303,11 @@ export const Invoice = ({
                     {formatCurrency(item.totalRetailPrice ?? 0, order.currency)}
                   </TableCell>
                   <TableCell className="text-right w-32 tabular-nums font-medium">
-                    {formatCurrency(item.grandTotal ?? (item.totalRetailPrice ?? 0) + (item.totalTax ?? 0), order.currency)}
+                    {formatCurrency(
+                      item.grandTotal
+                      ?? (item.totalRetailPrice ?? 0) + (item.totalTax ?? 0),
+                      order.currency,
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -318,10 +336,7 @@ export const Invoice = ({
                 Items Tax
               </span>
               <span className="font-medium">
-                {formatCurrency(
-                  order.tax,
-                  order.currency,
-                )}
+                {formatCurrency(order.tax, order.currency)}
               </span>
             </div>
             {order.shipping > 0 && (

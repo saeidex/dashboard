@@ -17,7 +17,7 @@ export const products = sqliteTable("products", {
   description  : text(), // Sample description
   status       : text().notNull(),
   label        : text(),
-  categoryId   : text().references(() => productCategories.id).notNull(),
+  categoryId   : integer().references(() => productCategories.id).notNull(),
   sizeId       : integer().references(() => productSizes.id),
   retailPrice  : real().default(0).notNull(),
   taxPercentage: real().default(0).notNull(),

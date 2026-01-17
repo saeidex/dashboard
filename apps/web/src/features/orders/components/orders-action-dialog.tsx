@@ -2,7 +2,11 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertOrderWithItemsSchema } from "@takumitex/api/schema";
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { notFound, useParams } from "@tanstack/react-router";
 import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -32,9 +36,7 @@ import type { Order } from "../data/schema";
 
 import { customersQueryOptions } from "../../customers/data/queries";
 import { createProductsQueryOptions } from "../../products/data/queries";
-import {
-  orderStatusValues,
-} from "../data/data";
+import { orderStatusValues } from "../data/data";
 import { createOrder, queryKeys, updateOrder } from "../data/queries";
 import { OrderItemsEditor } from "./order-items-editor";
 
@@ -52,18 +54,27 @@ export function OrdersActionDialog({
   const params = useParams({ from: "/_authenticated/orders/$customerId" });
   const { data: customers } = useSuspenseQuery(customersQueryOptions);
   const { data: products } = useSuspenseQuery(createProductsQueryOptions());
-  const productsById = React.useMemo(() => new Map(products.map(product => [product.id, product])), [products]);
+  const productsById = React.useMemo(
+    () => new Map(products.map(product => [product.id, product])),
+    [products],
+  );
 
   const isEdit = !!currentRow;
-  const form = useForm<insertOrderWithItemsSchema>({
+
+  // Helper to convert string dates from API to Date objects for the form
+  const parseDate = (value: string | Date | null | undefined): Date | null => {
+    if (!value)
+      return null;
+    if (value instanceof Date)
+      return value;
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  };
+
+  const form = useForm({
     resolver: zodResolver(insertOrderWithItemsSchema),
     defaultValues: isEdit
-      ? {
-          ...currentRow,
-          // Don't allow editing payment fields - they're managed by the payments system
-          paymentStatus: currentRow.paymentStatus,
-          paymentMethod: currentRow.paymentMethod,
-        }
+      ? currentRow
       : {
           customerId: params.customerId,
           orderStatus: "pending",
@@ -135,11 +146,28 @@ export function OrdersActionDialog({
             itemsGrandTotal += lineTotal;
 
             // Sync per-item pricing fields with computed values so they are submitted to the API
-            setValue(`items.${index}.retailPricePerUnit`, roundToTwo(unitBasePrice), { shouldDirty: true, shouldValidate: false });
-            setValue(`items.${index}.taxPerUnit`, roundToTwo(taxPerUnit), { shouldDirty: true, shouldValidate: false });
-            setValue(`items.${index}.totalRetailPrice`, roundToTwo(lineBasePrice), { shouldDirty: true, shouldValidate: false });
-            setValue(`items.${index}.totalTax`, roundToTwo(lineTax), { shouldDirty: true, shouldValidate: false });
-            setValue(`items.${index}.grandTotal`, roundToTwo(lineTotal), { shouldDirty: true, shouldValidate: false });
+            setValue(
+              `items.${index}.retailPricePerUnit`,
+              roundToTwo(unitBasePrice),
+              { shouldDirty: true, shouldValidate: false },
+            );
+            setValue(`items.${index}.taxPerUnit`, roundToTwo(taxPerUnit), {
+              shouldDirty: true,
+              shouldValidate: false,
+            });
+            setValue(
+              `items.${index}.totalRetailPrice`,
+              roundToTwo(lineBasePrice),
+              { shouldDirty: true, shouldValidate: false },
+            );
+            setValue(`items.${index}.totalTax`, roundToTwo(lineTax), {
+              shouldDirty: true,
+              shouldValidate: false,
+            });
+            setValue(`items.${index}.grandTotal`, roundToTwo(lineTotal), {
+              shouldDirty: true,
+              shouldValidate: false,
+            });
           });
 
           // Order level calculations
@@ -192,7 +220,9 @@ export function OrdersActionDialog({
       onOpenChange(false);
       queryclient.invalidateQueries({ queryKey: ["list-orders"] });
       if (currentRow) {
-        queryclient.invalidateQueries(queryKeys.LIST_ORDER(currentRow.id.toString()));
+        queryclient.invalidateQueries(
+          queryKeys.LIST_ORDER(currentRow.id.toString()),
+        );
       }
     },
     onError: (error) => {
@@ -215,10 +245,7 @@ export function OrdersActionDialog({
   }
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-    >
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[calc(100vh-6rem)] overflow-y-auto sm:max-w-xl lg:max-w-5xl">
         <DialogHeader className="text-start">
           <DialogTitle>{isEdit ? "Edit Order" : "Add New Order"}</DialogTitle>
@@ -239,9 +266,7 @@ export function OrdersActionDialog({
                 className="space-y-4 px-0.5"
               >
                 <div className="grid grid-cols-6 items-center w-full space-y-0 gap-x-4 gap-y-1">
-                  <span className="col-span-2">
-                    Customer
-                  </span>
+                  <span className="col-span-2">Customer</span>
                   <span>{customer.name}</span>
                 </div>
 
@@ -274,7 +299,9 @@ export function OrdersActionDialog({
                   name="notes"
                   render={({ field }) => (
                     <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                      <FormLabel className="col-span-2 text-end">Notes</FormLabel>
+                      <FormLabel className="col-span-2 text-end">
+                        Notes
+                      </FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}

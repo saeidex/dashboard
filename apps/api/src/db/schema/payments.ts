@@ -75,7 +75,7 @@ export type selectPaymentWithRelationsSchema = z.infer<typeof selectPaymentWithR
 export const insertPaymentsSchema = createInsertSchema(payments, {
   orderId      : schema => schema.min(1, "Order ID is required"),
   customerId   : schema => schema.min(1, "Customer ID is required"),
-  amount       : schema => schema.min(0.01, "Amount must be greater than 0"),
+  amount       : schema => schema.min(0, "Amount must be greater than 0"),
   paymentMethod: paymentMethodSchema.optional(),
   currency     : currencySchema.optional(),
   reference    : schema => schema.max(100, "Reference must be less than 100 characters").optional(),

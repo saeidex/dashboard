@@ -8,7 +8,30 @@ import type { Currency } from "./expenses"
 
 import { customers, selectCustomersSchema } from "./customers"
 import { currencySchema } from "./expenses"
+import { factories, selectFactoriesSchema } from "./factories"
 import { products, selectProductWithSizeSchema } from "./products"
+
+/* -------------------------------------------------------------------------- */
+/*                            Production Stage                                */
+/* -------------------------------------------------------------------------- */
+
+export const productionStageSchema = z.union([
+  z.literal("confirmed"),
+  z.literal("accessories_inhouse"),
+  z.literal("china_fabric_etd"),
+  z.literal("china_fabric_eta"),
+  z.literal("fabric_inhouse"),
+  z.literal("pp_sample"),
+  z.literal("fabric_test_inspection"),
+  z.literal("shipping_sample"),
+  z.literal("sewing_start"),
+  z.literal("sewing_complete"),
+  z.literal("ken2_inspection_start"),
+  z.literal("ken2_inspection_finished"),
+  z.literal("ex_factory"),
+  z.literal("port_handover"),
+]).default("confirmed")
+export type ProductionStage = z.infer<typeof productionStageSchema>
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -17,6 +40,7 @@ import { products, selectProductWithSizeSchema } from "./products"
 export const orders = sqliteTable("orders", {
   id           : integer().primaryKey({ autoIncrement: true }),
   customerId   : text().references(() => customers.id).notNull(),
+  factoryId    : text().references(() => factories.id), // Factory assignment
   orderStatus  : text().$type<OrderStatus>().default("pending").notNull(),
   paymentStatus: text().$type<PaymentStatus>().default("unpaid").notNull(),
   paymentMethod: text().$type<PaymentMethod>().default("cash").notNull(),
@@ -26,12 +50,39 @@ export const orders = sqliteTable("orders", {
   shipping     : real().notNull().default(0).notNull(),
   grandTotal   : real().notNull().default(0).notNull(),
   notes        : text(),
-  createdAt    : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
-  updatedAt    : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
+
+  // Production Stage
+  productionStage: text().$type<ProductionStage>().default("confirmed").notNull(),
+
+  // Timeline Dates
+  orderConfirmDate      : integer({ mode: "timestamp" }),
+  accessoriesInhouseDate: integer({ mode: "timestamp" }),
+  fabricEtd             : integer({ mode: "timestamp" }), // China Fabric ETD
+  fabricEta             : integer({ mode: "timestamp" }), // China Fabric ETA
+  fabricInhouseDate     : integer({ mode: "timestamp" }),
+  ppSampleDate          : integer({ mode: "timestamp" }),
+  fabricTestDate        : integer({ mode: "timestamp" }), // Fabric test and product inspection
+  shippingSampleDate    : integer({ mode: "timestamp" }),
+  sewingStartDate       : integer({ mode: "timestamp" }),
+  sewingCompleteDate    : integer({ mode: "timestamp" }),
+  inspectionStartDate   : integer({ mode: "timestamp" }),
+  inspectionEndDate     : integer({ mode: "timestamp" }),
+  exFactoryDate         : integer({ mode: "timestamp" }),
+  portHandoverDate      : integer({ mode: "timestamp" }), // Ken2 warehouse to Chittagong port
+
+  // Production Metrics
+  productionPerLine: integer({ mode: "number" }),
+  numberOfLinesUsed: integer({ mode: "number" }),
+  manpowerPerLine  : integer({ mode: "number" }),
+
+  createdAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  updatedAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 }, table => [
   index("idx_orders_customer_id").on(table.customerId),
+  index("idx_orders_factory_id").on(table.factoryId),
   index("idx_orders_order_status").on(table.orderStatus),
   index("idx_orders_payment_status").on(table.paymentStatus),
+  index("idx_orders_production_stage").on(table.productionStage),
 ])
 
 export const orderItems = sqliteTable("order_items", {
@@ -58,6 +109,7 @@ export const orderItems = sqliteTable("order_items", {
 export const ordersRelations = relations(orders, ({ one, many }) => ({
   items   : many(orderItems),
   customer: one(customers, { fields: [orders.customerId], references: [customers.id] }),
+  factory : one(factories, { fields: [orders.factoryId], references: [factories.id] }),
 }))
 
 export const orderItemsRelations = relations(orderItems, ({ one }) => ({
@@ -96,12 +148,28 @@ export const paymentMethodSchema = z.union([
 export type PaymentMethod = z.infer<typeof paymentMethodSchema>
 
 const selectOrdersSchema = createSelectSchema(orders, {
-  orderStatus  : orderStatusSchema,
-  paymentStatus: paymentStatusSchema,
-  paymentMethod: paymentMethodSchema,
-  currency     : currencySchema,
-  createdAt    : z.string(),
-  updatedAt    : z.string(),
+  orderStatus           : orderStatusSchema,
+  paymentStatus         : paymentStatusSchema,
+  paymentMethod         : paymentMethodSchema,
+  productionStage       : productionStageSchema,
+  currency              : currencySchema,
+  createdAt             : z.string(),
+  updatedAt             : z.string(),
+  // Timeline dates as ISO strings
+  orderConfirmDate      : z.string().nullable(),
+  accessoriesInhouseDate: z.string().nullable(),
+  fabricEtd             : z.string().nullable(),
+  fabricEta             : z.string().nullable(),
+  fabricInhouseDate     : z.string().nullable(),
+  ppSampleDate          : z.string().nullable(),
+  fabricTestDate        : z.string().nullable(),
+  shippingSampleDate    : z.string().nullable(),
+  sewingStartDate       : z.string().nullable(),
+  sewingCompleteDate    : z.string().nullable(),
+  inspectionStartDate   : z.string().nullable(),
+  inspectionEndDate     : z.string().nullable(),
+  exFactoryDate         : z.string().nullable(),
+  portHandoverDate      : z.string().nullable(),
 })
 const selectOrderItemsSchema = createSelectSchema(orderItems, {
   createdAt: z.string(),
@@ -109,16 +177,37 @@ const selectOrderItemsSchema = createSelectSchema(orderItems, {
 })
 
 const insertOrdersSchema = createInsertSchema(orders, {
-  orderStatus  : orderStatusSchema.optional(),
-  paymentStatus: paymentStatusSchema.optional(),
-  paymentMethod: paymentMethodSchema.optional(),
-  currency     : currencySchema.optional(),
-  customerId   : schema => schema.min(1, "Customer ID is required"),
-  retailPrice  : schema => schema.min(0, "Base price must be a positive number"),
-  tax          : schema => schema.min(0, "Tax must be a positive number"),
-  shipping     : schema => schema.min(0, "Shipping cost must be a positive number"),
-  grandTotal   : schema => schema.min(0, "Grand total must be a positive number"),
-  notes        : schema => schema.max(500, "Notes must be at most 500 characters long"),
+  orderStatus           : orderStatusSchema.optional(),
+  paymentStatus         : paymentStatusSchema.optional(),
+  paymentMethod         : paymentMethodSchema.optional(),
+  productionStage       : productionStageSchema.optional(),
+  currency              : currencySchema.optional(),
+  customerId            : schema => schema.min(1, "Customer ID is required"),
+  factoryId             : schema => schema.optional(),
+  retailPrice           : schema => schema.min(0, "Base price must be a positive number"),
+  tax                   : schema => schema.min(0, "Tax must be a positive number"),
+  shipping              : schema => schema.min(0, "Shipping cost must be a positive number"),
+  grandTotal            : schema => schema.min(0, "Grand total must be a positive number"),
+  notes                 : schema => schema.max(500, "Notes must be at most 500 characters long"),
+  // Timeline dates
+  orderConfirmDate      : z.coerce.date().optional().nullable(),
+  accessoriesInhouseDate: z.coerce.date().optional().nullable(),
+  fabricEtd             : z.coerce.date().optional().nullable(),
+  fabricEta             : z.coerce.date().optional().nullable(),
+  fabricInhouseDate     : z.coerce.date().optional().nullable(),
+  ppSampleDate          : z.coerce.date().optional().nullable(),
+  fabricTestDate        : z.coerce.date().optional().nullable(),
+  shippingSampleDate    : z.coerce.date().optional().nullable(),
+  sewingStartDate       : z.coerce.date().optional().nullable(),
+  sewingCompleteDate    : z.coerce.date().optional().nullable(),
+  inspectionStartDate   : z.coerce.date().optional().nullable(),
+  inspectionEndDate     : z.coerce.date().optional().nullable(),
+  exFactoryDate         : z.coerce.date().optional().nullable(),
+  portHandoverDate      : z.coerce.date().optional().nullable(),
+  // Production metrics
+  productionPerLine     : schema => schema.min(0).optional().nullable(),
+  numberOfLinesUsed     : schema => schema.min(0).optional().nullable(),
+  manpowerPerLine       : schema => schema.min(0).optional().nullable(),
 }).omit({
   id       : true,
   createdAt: true,
@@ -157,13 +246,14 @@ export type selectOrderWithItemsSchema = z.infer<typeof selectOrderWithItemsSche
 
 /**
  * Order with items with product and customer info
- * @example data: { ...orderData, items: OrderItem[{...item, product}], customer: Customer, totalPaid: number }
+ * @example data: { ...orderData, items: OrderItem[{...item, product}], customer: Customer, factory: Factory, totalPaid: number }
  */
 export const selectOrderDetailsSchema = selectOrdersSchema.extend({
   items: z.array(selectOrderItemsSchema.extend({
     product: selectProductWithSizeSchema,
   })),
-  customer: selectCustomersSchema,
+  customer : selectCustomersSchema,
+  factory  : selectFactoriesSchema.nullable().optional(),
   totalPaid: z.number().default(0),
 })
 export type selectOrderDetailsSchema = z.infer<typeof selectOrderDetailsSchema>
@@ -176,6 +266,7 @@ export const orderListQueryParamsSchema = z.object({
   customerId: z.string().min(1).optional(),
   pageIndex : z.coerce.number().min(0).default(0).optional(),
   pageSize  : z.coerce.number().min(1).default(10).optional(),
+  view      : z.enum(["table", "kanban"]).default("table").optional(),
 })
 export type orderListQueryParamsSchema = z.infer<typeof orderListQueryParamsSchema>
 

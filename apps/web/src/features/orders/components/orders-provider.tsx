@@ -4,7 +4,7 @@ import useDialogState from "@/web/hooks/use-dialog-state";
 
 import type { Order } from "../data/schema";
 
-type OrdersDialogType = "add" | "edit" | "delete" | "pay";
+type OrdersDialogType = "add" | "edit" | "delete" | "pay" | "refund";
 
 type OrdersContextType = {
   open: OrdersDialogType | null;
@@ -29,11 +29,7 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     [open, setOpen, currentRow, setCurrentRow],
   );
 
-  return (
-    <OrdersContext value={values}>
-      {children}
-    </OrdersContext>
-  );
+  return <OrdersContext value={values}>{children}</OrdersContext>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
