@@ -1,11 +1,11 @@
-import { eq } from "drizzle-orm"
+import { count, eq } from "drizzle-orm"
 import * as HttpStatusCodes from "stoker/http-status-codes"
 import * as HttpStatusPhrases from "stoker/http-status-phrases"
 
 import type { AppRouteHandler } from "@/api/lib/types"
 
 import db from "@/api/db"
-import { customers } from "@/api/db/schema"
+import { customers, orders } from "@/api/db/schema"
 import { ZOD_ERROR_CODES, ZOD_ERROR_MESSAGES } from "@/api/lib/constants"
 
 import type {
@@ -17,7 +17,29 @@ import type {
 } from "./customers.routes"
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
-  const data = await db.query.customers.findMany()
+  // Get all customers with their order counts
+  const customersData = await db.query.customers.findMany()
+
+  // Get order counts for all customers
+  const orderCounts = await db
+    .select({
+      customerId: orders.customerId,
+      orderCount: count(orders.id),
+    })
+    .from(orders)
+    .groupBy(orders.customerId)
+
+  // Create a map for quick lookup
+  const orderCountMap = new Map(
+    orderCounts.map(oc => [oc.customerId, oc.orderCount]),
+  )
+
+  // Add orderCount to each customer
+  const data = customersData.map(customer => ({
+    ...customer,
+    orderCount: orderCountMap.get(customer.id) ?? 0,
+  }))
+
   return c.json(data)
 }
 

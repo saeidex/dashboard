@@ -8,6 +8,7 @@ import {
   insertCustomersSchema,
   patchCustomersSchema,
   selectCustomersSchema,
+  selectCustomersWithOrderCountSchema,
 } from "@/api/db/schema"
 import { notFoundSchema } from "@/api/lib/constants"
 
@@ -23,8 +24,8 @@ export const list = createRoute({
   tags,
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      z.array(selectCustomersSchema),
-      "List of customers",
+      z.array(selectCustomersWithOrderCountSchema),
+      "List of customers with order counts",
     ),
   },
 })

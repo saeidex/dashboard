@@ -22,6 +22,12 @@ export const selectCustomersSchema = createSelectSchema(customers, {
 })
 export type selectCustomersSchema = z.infer<typeof selectCustomersSchema>
 
+// Extended schema with order count for list response
+export const selectCustomersWithOrderCountSchema = selectCustomersSchema.extend({
+  orderCount: z.number().default(0),
+})
+export type selectCustomersWithOrderCountSchema = z.infer<typeof selectCustomersWithOrderCountSchema>
+
 export const insertCustomersSchema = createInsertSchema(customers, {
   name    : schema => schema.min(1, "Name is required"),
   email   : schema => schema.email("Invalid email address"),

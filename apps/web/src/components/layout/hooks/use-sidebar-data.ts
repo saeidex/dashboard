@@ -2,6 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
 import { customersQueryOptions } from "@/web/features/customers/data/queries";
+import {
+  calculateTierThresholds,
+  getCustomerRanking,
+} from "@/web/lib/customer-ranking";
 
 import type { NavGroup, NavItem, SidebarData } from "../types";
 
@@ -17,6 +21,10 @@ export function useSidebarData(): SidebarData & { isLoading: boolean } {
   });
 
   const dynamicNavGroups = useMemo((): NavGroup[] => {
+    // Calculate tier thresholds based on all customer order counts
+    const orderCounts = customers?.map(c => c.orderCount ?? 0) ?? [];
+    const thresholds = calculateTierThresholds(orderCounts);
+
     return staticSidebarData.navGroups.map((group) => {
       if (group.title !== "General") {
         return group;
@@ -28,11 +36,14 @@ export function useSidebarData(): SidebarData & { isLoading: boolean } {
           return item;
         }
 
-        // Sort customers alphabetically by name
+        // Sort customers by order count (descending), then alphabetically
         const sortedCustomers = customers
-          ? [...customers].sort((a, b) =>
-              a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
-            )
+          ? [...customers].sort((a, b) => {
+              const orderDiff = (b.orderCount ?? 0) - (a.orderCount ?? 0);
+              if (orderDiff !== 0)
+                return orderDiff;
+              return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+            })
           : [];
 
         // If no customers loaded yet, keep as simple link
@@ -49,10 +60,14 @@ export function useSidebarData(): SidebarData & { isLoading: boolean } {
               title: "All Orders",
               url: "/orders" as const,
             },
-            ...sortedCustomers.map(customer => ({
-              title: customer.name,
-              url: `/orders/${customer.id}` as const,
-            })),
+            ...sortedCustomers.map((customer) => {
+              const ranking = getCustomerRanking(customer.orderCount ?? 0, thresholds);
+              return {
+                title: customer.name,
+                url: `/orders/${customer.id}` as const,
+                className: ranking.textClass,
+              };
+            }),
           ],
         };
       });

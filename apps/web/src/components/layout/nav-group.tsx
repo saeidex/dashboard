@@ -19,6 +19,7 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/web/components/ui/sidebar";
+import { cn } from "@/web/lib/utils";
 
 import type { NavCollapsible, NavGroup as NavGroupProps, NavItem, NavLink } from "./types";
 
@@ -111,6 +112,7 @@ function SidebarMenuCollapsible({
                 <SidebarMenuSubButton
                   asChild
                   isActive={checkIsActive(href, subItem)}
+                  className={subItem.className}
                 >
                   <Link to={subItem.url} onClick={() => setOpenMobile(false)}>
                     {subItem.icon && <subItem.icon />}
@@ -159,7 +161,10 @@ function SidebarMenuCollapsedDropdown({
             <DropdownMenuItem key={`${sub.title}-${sub.url}`} asChild>
               <Link
                 to={sub.url}
-                className={`${checkIsActive(href, sub) ? "bg-secondary" : ""}`}
+                className={cn(
+                  checkIsActive(href, sub) ? "bg-secondary" : "",
+                  sub.className,
+                )}
               >
                 {sub.icon && <sub.icon />}
                 <span className="max-w-52 text-wrap">{sub.title}</span>
