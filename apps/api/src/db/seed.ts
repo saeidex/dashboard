@@ -36,6 +36,7 @@ const CONFIG = {
   productSizes: 15,
   productsPerCategory: 8,
   employees: 30,
+  factories: 10,
   ordersPerCustomer: { min: 1, max: 5 },
   itemsPerOrder: { min: 1, max: 4 },
   paymentsPerOrder: { min: 0, max: 2 },
@@ -108,10 +109,15 @@ const FABRIC_ADJECTIVES = ["Premium", "Organic", "Luxury", "Classic", "Modern", 
 const FABRIC_TYPES = ["Cotton", "Silk", "Linen", "Wool", "Polyester", "Rayon", "Velvet", "Satin", "Chiffon", "Denim", "Tweed", "Jersey", "Corduroy"]
 const FABRIC_SUFFIXES = ["Blend", "Twill", "Weave", "Knit", "Print", "Solid", "Stripe", "Check", "Plaid", "Jacquard"]
 
+// Style number counter for generating unique style numbers
+let styleNumberCounter = 54540
+
 function generateProducts(categoryIds: string[], sizeIds: number[], countPerCategory: number) {
   const products: Array<{
     id: string
+    styleNumber: string
     title: string
+    description: string | null
     status: string
     label: string | null
     categoryId: string
@@ -133,7 +139,9 @@ function generateProducts(categoryIds: string[], sizeIds: number[], countPerCate
 
       products.push({
         id: createId(),
+        styleNumber: String(styleNumberCounter++),
         title: `${faker.helpers.arrayElement(FABRIC_ADJECTIVES)} ${faker.helpers.arrayElement(FABRIC_TYPES)} ${faker.helpers.arrayElement(FABRIC_SUFFIXES)}`,
+        description: faker.helpers.maybe(() => faker.lorem.sentence(), { probability: 0.6 }) || null,
         status: faker.helpers.arrayElement(PRODUCT_STATUSES),
         label: faker.helpers.arrayElement(PRODUCT_LABELS),
         categoryId,
@@ -149,6 +157,50 @@ function generateProducts(categoryIds: string[], sizeIds: number[], countPerCate
   }
 
   return products
+}
+
+const FACTORY_NAMES = [
+  "Rajdhani Apparels",
+  "Green Valley Garments",
+  "Excel Textiles Ltd",
+  "Prime Fashion House",
+  "Royal Dress Manufacturing",
+  "Golden Thread Industries",
+  "Sunrise Garments",
+  "Pacific Knitwear",
+  "Elite Clothing Co",
+  "Fashion Forward Ltd",
+  "Diamond Garments",
+  "Star Textiles",
+]
+
+const BD_CITIES = ["Dhaka", "Gazipur", "Narayanganj", "Chittagong", "Savar", "Tongi", "Ashulia", "Mirpur"]
+
+function generateFactories(count: number) {
+  return Array.from({ length: count }, (_, i) => {
+    const name = FACTORY_NAMES[i] || `${faker.company.name()} Garments`
+    const city = faker.helpers.arrayElement(BD_CITIES)
+    return {
+      id: createId(),
+      name,
+      code: `FAC-${String(i + 1).padStart(3, "0")}`,
+      address: faker.location.streetAddress(),
+      city,
+      country: "Bangladesh",
+      contactPerson: faker.person.fullName(),
+      phone: faker.phone.number({ style: "international" }),
+      email: faker.internet.email({ firstName: name.split(" ")[0], lastName: "factory" }).toLowerCase(),
+      capacity: faker.number.int({ min: 500, max: 5000 }),
+      totalLines: faker.number.int({ min: 2, max: 15 }),
+      maxManpower: faker.number.int({ min: 50, max: 500 }),
+      status: faker.helpers.weightedArrayElement([
+        { value: "active" as const, weight: 85 },
+        { value: "inactive" as const, weight: 10 },
+        { value: "suspended" as const, weight: 5 },
+      ]),
+      notes: faker.helpers.maybe(() => faker.lorem.sentence(), { probability: 0.4 }) || null,
+    }
+  })
 }
 
 const POSITIONS = [
@@ -373,6 +425,7 @@ const TABLES_TO_DROP = [
   "customer",
   "employee",
   "expense",
+  "factory",
 ]
 
 async function dropTables() {
@@ -408,6 +461,7 @@ async function seed() {
   await dropTables()
   console.log("📊 Configuration:")
   console.log(`   - Customers: ${CONFIG.customers}`)
+  console.log(`   - Factories: ${CONFIG.factories}`)
   console.log(`   - Product Categories: ${CONFIG.productCategories}`)
   console.log(`   - Product Sizes: ${CONFIG.productSizes}`)
   console.log(`   - Products: ~${CONFIG.productCategories * CONFIG.productsPerCategory}`)
@@ -421,6 +475,12 @@ async function seed() {
     const customersData = generateCustomers(CONFIG.customers)
     await db.insert(schema.customers).values(customersData).onConflictDoNothing()
     console.log(`   ✓ Inserted ${customersData.length} customers\n`)
+
+    // Seed Factories
+    console.log("🏭 Seeding factories...")
+    const factoriesData = generateFactories(CONFIG.factories)
+    await db.insert(schema.factories).values(factoriesData).onConflictDoNothing()
+    console.log(`   ✓ Inserted ${factoriesData.length} factories\n`)
 
     // Seed Product Categories
     console.log("📦 Seeding product categories...")

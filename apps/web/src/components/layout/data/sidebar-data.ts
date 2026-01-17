@@ -5,6 +5,7 @@ import {
   Construction,
   CreditCard,
   DollarSign,
+  Factory,
   FileX,
   IdCard,
   LayoutDashboard,
@@ -148,6 +149,11 @@ export const sidebarData: SidebarData = {
           title: "Sample Sizes",
           url: "/sizes",
           icon: SizeIcon,
+        },
+        {
+          title: "Factories",
+          url: "/factories",
+          icon: Factory,
         },
         {
           title: "Employees",

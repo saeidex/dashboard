@@ -7,6 +7,7 @@ import auditLogs from "./audit-logs"
 import customers from "./customers/customers.index"
 import employees from "./employees/employees.index"
 import expenses from "./expenses/expenses.index"
+import factories from "./factories/factories.index"
 import index from "./index.route"
 import onboarding from "./onboarding/onboarding.index"
 import orders from "./orders/orders.index"
@@ -27,6 +28,7 @@ export function registerRoutes(app: AppOpenAPI) {
     .route("/", productSizes)
     .route("/", employees)
     .route("/", customers)
+    .route("/", factories)
     .route("/", expenses)
     .route("/", users)
     .route("/", auditLogs)

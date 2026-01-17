@@ -1,7 +1,7 @@
 import { z } from "@hono/zod-openapi"
 import { createId } from "@paralleldrive/cuid2"
 import { relations } from "drizzle-orm"
-import { index, integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core"
+import { index, integer, real, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 
 import type { Currency } from "./expenses"
@@ -12,7 +12,9 @@ import { productSizes, selectProductSizesSchema } from "./product-sizes"
 
 export const products = sqliteTable("products", {
   id           : text().primaryKey().$defaultFn(createId),
+  styleNumber  : text().notNull(), // Unique style/sample number (e.g., "54540")
   title        : text().notNull(),
+  description  : text(), // Sample description
   status       : text().notNull(),
   label        : text(),
   categoryId   : text().references(() => productCategories.id).notNull(),
@@ -26,6 +28,7 @@ export const products = sqliteTable("products", {
   createdAt    : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
   updatedAt    : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 }, table => [
+  uniqueIndex("uq_products_style_number").on(table.styleNumber),
   index("idx_products_category_id").on(table.categoryId),
   index("idx_products_size_id").on(table.sizeId),
   index("idx_products_status").on(table.status),
@@ -47,7 +50,9 @@ export type selectProductsSchema = z.infer<typeof selectProductsSchema>
 
 export const insertProductsSchema = createInsertSchema(products, {
   currency     : currencySchema.optional(),
+  styleNumber  : schema => schema.min(1, "Style number is required").max(50, "Style number must be at most 50 characters"),
   title        : schema => schema.min(3, "Title must be at least 3 characters long").max(255, "Title must be at most 255 characters long"),
+  description  : schema => schema.max(500, "Description must be at most 500 characters").optional(),
   status       : schema => schema.min(3, "Status must be at least 3 characters long").max(50, "Status must be at most 50 characters long"),
   label        : schema => schema.max(100, "Label must be at most 100 characters long").optional(),
   sizeId       : schema => schema.optional(),
