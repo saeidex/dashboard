@@ -345,20 +345,20 @@ function generateOrders(
 
       // Generate production stage based on weighted distribution
       const productionStage = faker.helpers.weightedArrayElement([
-        { value: "confirmed" as const, weight: 10 },
-        { value: "accessories_inhouse" as const, weight: 10 },
-        { value: "china_fabric_etd" as const, weight: 10 },
-        { value: "china_fabric_eta" as const, weight: 8 },
-        { value: "fabric_inhouse" as const, weight: 8 },
-        { value: "pp_sample" as const, weight: 7 },
-        { value: "fabric_test_inspection" as const, weight: 7 },
-        { value: "shipping_sample" as const, weight: 6 },
-        { value: "sewing_start" as const, weight: 10 },
-        { value: "sewing_complete" as const, weight: 8 },
-        { value: "ken2_inspection_start" as const, weight: 5 },
-        { value: "ken2_inspection_finished" as const, weight: 4 },
-        { value: "ex_factory" as const, weight: 3 },
-        { value: "port_handover" as const, weight: 2 },
+        { value: "orderConfirmDate" as const, weight: 10 },
+        { value: "accessoriesInhouseDate" as const, weight: 10 },
+        { value: "fabricEtd" as const, weight: 10 },
+        { value: "fabricEta" as const, weight: 8 },
+        { value: "fabricInhouseDate" as const, weight: 8 },
+        { value: "ppSampleDate" as const, weight: 7 },
+        { value: "fabricTestDate" as const, weight: 7 },
+        { value: "shippingSampleDate" as const, weight: 6 },
+        { value: "sewingStartDate" as const, weight: 10 },
+        { value: "sewingCompleteDate" as const, weight: 8 },
+        { value: "inspectionStartDate" as const, weight: 5 },
+        { value: "inspectionEndDate" as const, weight: 4 },
+        { value: "exFactoryDate" as const, weight: 3 },
+        { value: "portHandoverDate" as const, weight: 2 },
       ])
 
       // Assign a factory (80% chance)

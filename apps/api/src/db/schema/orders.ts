@@ -16,21 +16,21 @@ import { products, selectProductWithSizeSchema } from "./products"
 /* -------------------------------------------------------------------------- */
 
 export const productionStageSchema = z.union([
-  z.literal("confirmed"),
-  z.literal("accessories_inhouse"),
-  z.literal("china_fabric_etd"),
-  z.literal("china_fabric_eta"),
-  z.literal("fabric_inhouse"),
-  z.literal("pp_sample"),
-  z.literal("fabric_test_inspection"),
-  z.literal("shipping_sample"),
-  z.literal("sewing_start"),
-  z.literal("sewing_complete"),
-  z.literal("ken2_inspection_start"),
-  z.literal("ken2_inspection_finished"),
-  z.literal("ex_factory"),
-  z.literal("port_handover"),
-]).default("confirmed")
+  z.literal("orderConfirmDate"),
+  z.literal("accessoriesInhouseDate"),
+  z.literal("fabricEtd"),
+  z.literal("fabricEta"),
+  z.literal("fabricInhouseDate"),
+  z.literal("ppSampleDate"),
+  z.literal("fabricTestDate"),
+  z.literal("shippingSampleDate"),
+  z.literal("sewingStartDate"),
+  z.literal("sewingCompleteDate"),
+  z.literal("inspectionStartDate"),
+  z.literal("inspectionEndDate"),
+  z.literal("exFactoryDate"),
+  z.literal("portHandoverDate"),
+]).default("orderConfirmDate")
 export type ProductionStage = z.infer<typeof productionStageSchema>
 
 /* -------------------------------------------------------------------------- */
@@ -52,7 +52,7 @@ export const orders = sqliteTable("orders", {
   notes        : text(),
 
   // Production Stage
-  productionStage: text().$type<ProductionStage>().default("confirmed").notNull(),
+  productionStage: text().$type<ProductionStage>().default("orderConfirmDate").notNull(),
 
   // Timeline Dates
   orderConfirmDate      : integer({ mode: "timestamp" }),
@@ -321,6 +321,6 @@ export type insertOrderWithItemsSchema = z.infer<typeof insertOrderWithItemsSche
  * }
  */
 export const patchOrderWithItemsSchema = patchOrdersSchema.extend({
-  items: z.array(patchOrderItemsSchema).min(1, "At least one item is required"),
+  items: z.array(patchOrderItemsSchema).default([]).optional(),
 })
 export type patchOrderWithItemsSchema = z.infer<typeof patchOrderWithItemsSchema>

@@ -33,26 +33,30 @@ export function OrdersPrimaryButtons({
           className="bg-muted rounded-lg p-1"
         >
           <Tooltip>
-            <TooltipTrigger>
-              <ToggleGroupItem
-                value="table"
-                aria-label="Table view"
-                className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-              >
-                <Table className="h-4 w-4" />
-              </ToggleGroupItem>
+            <TooltipTrigger asChild>
+              <div>
+                <ToggleGroupItem
+                  value="table"
+                  aria-label="Table view"
+                  className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  <Table className="h-4 w-4" />
+                </ToggleGroupItem>
+              </div>
             </TooltipTrigger>
             <TooltipContent>Table View</TooltipContent>
           </Tooltip>
           <Tooltip>
-            <TooltipTrigger>
-              <ToggleGroupItem
-                value="kanban"
-                aria-label="Kanban view"
-                className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-              >
-                <Kanban className="h-4 w-4" />
-              </ToggleGroupItem>
+            <TooltipTrigger asChild>
+              <div>
+                <ToggleGroupItem
+                  value="kanban"
+                  aria-label="Kanban view"
+                  className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  <Kanban className="h-4 w-4" />
+                </ToggleGroupItem>
+              </div>
             </TooltipTrigger>
             <TooltipContent>Kanban Board</TooltipContent>
           </Tooltip>

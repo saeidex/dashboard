@@ -38,7 +38,7 @@ export function KanbanColumn({ stage, orders }: KanbanColumnProps) {
     <div
       ref={setNodeRef}
       className={cn(
-        "flex min-w-72 flex-col rounded-lg border bg-primary/10",
+        "flex min-w-72 min-h-80 flex-col rounded-lg border bg-primary/10",
         isOver && "ring-2 ring-primary ring-offset-2",
       )}
     >

@@ -1,3 +1,5 @@
+import type { ProductionStage } from "@/api/db/schema/orders";
+
 export const orderStatusValues = [
   "pending",
   "processing",
@@ -28,3 +30,24 @@ export const OwnerInfo = {
   phone: "(123) 456-7890",
   email: "support@example.com",
 };
+
+export const PRODUCTION_STAGES: {
+  id: ProductionStage;
+  label: string;
+  color: string;
+}[] = [
+  { id: "orderConfirmDate", label: "Confirmed", color: "bg-slate-500" },
+  { id: "accessoriesInhouseDate", label: "Accessories Inhouse", color: "bg-blue-500" },
+  { id: "fabricEtd", label: "China Fabric ETD", color: "bg-green-500" },
+  { id: "fabricEta", label: "China Fabric ETA", color: "bg-yellow-500" },
+  { id: "fabricInhouseDate", label: "Fabric Inhouse", color: "bg-purple-500" },
+  { id: "ppSampleDate", label: "PP Sample", color: "bg-pink-500" },
+  { id: "fabricTestDate", label: "Fabric Test Inspection", color: "bg-indigo-500" },
+  { id: "shippingSampleDate", label: "Shipping Sample", color: "bg-red-500" },
+  { id: "sewingStartDate", label: "Sewing Start", color: "bg-orange-500" },
+  { id: "sewingCompleteDate", label: "Sewing Complete", color: "bg-teal-500" },
+  { id: "inspectionStartDate", label: "Ken2 Inspection Start", color: "bg-cyan-500" },
+  { id: "inspectionEndDate", label: "Ken2 Inspection Finished", color: "bg-lime-500" },
+  { id: "exFactoryDate", label: "Ex Factory", color: "bg-emerald-500" },
+  { id: "portHandoverDate", label: "Port Handover", color: "bg-violet-500" },
+];
