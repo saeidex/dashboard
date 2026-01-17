@@ -3,6 +3,7 @@ import {
   Bookmark,
   Bug,
   Construction,
+  CreditCard,
   DollarSign,
   FileX,
   IdCard,
@@ -162,11 +163,11 @@ export const sidebarData: SidebarData = {
               url: "/accounts/expenses",
               icon: WalletMinimal,
             },
-            // {
-            //   title: 'Sales',
-            //   url: '/accounts/sales',
-            //   icon: Coins,
-            // },
+            {
+              title: "Sales",
+              url: "/accounts/payments",
+              icon: CreditCard,
+            },
           ],
         },
         {
