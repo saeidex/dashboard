@@ -19,7 +19,7 @@ export function CustomersGrid() {
         <Link to="/orders/$customerId" params={{ customerId: customer.id }} key={customer.id}>
           <Card className="cursor-pointer">
             <CardContent className="flex flex-1 justify-between items-center">
-              {customer.name}
+              <span className="line-clamp-1">{customer.name}</span>
               <span className="flex gap-1"><ChevronRight /></span>
             </CardContent>
           </Card>
