@@ -10,6 +10,7 @@
     "clean:workspaces": "pnpm run -r clean",
     "db:push": "pnpm -F @takumitex/api db:push",
     "db:generate": "pnpm -F @takumitex/api db:generate",
+    "db:seed": "pnpm -F @takumitex/api db:seed",
     "db:studio": "pnpm -F @takumitex/api db:studio",
     "dev": "pnpm run -r --parallel --aggregate-output dev",
     "dev:web": "pnpm -F @takumitex/web dev",
