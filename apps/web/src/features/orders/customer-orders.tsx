@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 
 import { Header } from "@/web/components/layout/header";
 import { Main } from "@/web/components/layout/main";
+import { useOrdersUiStore } from "@/web/stores/orders-ui-store";
 
 import { customersQueryOptions } from "../customers/data/queries";
 import { createProductsQueryOptions } from "../products/data/queries";
@@ -14,7 +15,6 @@ import { OrdersPrimaryButtons } from "./components/orders-primary-buttons";
 import { OrdersProvider } from "./components/orders-provider";
 import { OrdersTable } from "./components/orders-table";
 import { createOrdersQueryOptions } from "./data/queries";
-import { useOrdersUiStore } from "@/web/stores/orders-ui-store";
 
 const Route = getRouteApi("/_authenticated/orders/$customerId/");
 
