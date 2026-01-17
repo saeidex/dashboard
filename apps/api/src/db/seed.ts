@@ -8,6 +8,7 @@
 
 import { faker } from "@faker-js/faker"
 import { createId } from "@paralleldrive/cuid2"
+import { sql } from "drizzle-orm"
 import { drizzle } from "drizzle-orm/libsql"
 
 import env from "../env"
@@ -45,6 +46,7 @@ const CONFIG = {
 /* -------------------------------------------------------------------------- */
 
 // Placeholder 1x1 PNG image
+// eslint-disable-next-line node/prefer-global/buffer
 const PLACEHOLDER_IMAGE = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
   "base64",
@@ -163,7 +165,6 @@ const POSITIONS = [
 ] as const
 
 const SHIFTS = ["Day", "Evening", "Night"] as const
-const EMPLOYEE_STATUSES = ["active", "inactive", "on-leave", "terminated"] as const
 
 function generateEmployees(count: number) {
   return Array.from({ length: count }, (_, i) => {
@@ -190,7 +191,9 @@ function generateEmployees(count: number) {
   })
 }
 
+// eslint-disable-next-line unused-imports/no-unused-vars
 const ORDER_STATUSES = ["pending", "processing", "shipped", "delivered", "cancelled", "returned"] as const
+// eslint-disable-next-line unused-imports/no-unused-vars
 const PAYMENT_STATUSES = ["unpaid", "partial", "paid", "refunded"] as const
 const PAYMENT_METHODS = ["cash", "card", "bank-transfer", "mobile-wallet"] as const
 
@@ -354,11 +357,54 @@ function generatePayments(
 }
 
 /* -------------------------------------------------------------------------- */
+/*                            Drop Tables Function                            */
+/* -------------------------------------------------------------------------- */
+
+// Tables to drop (in order to respect foreign key constraints)
+// Note: We keep auth tables (user, session, account, verification) intact
+const TABLES_TO_DROP = [
+  "payment",
+  "order_item",
+  "order",
+  "product",
+  "product_size",
+  "product_category",
+  "customer",
+  "employee",
+  "expense",
+]
+
+async function dropTables() {
+  console.log("🗑️  Dropping existing tables (keeping auth tables)...\n")
+
+  // Disable foreign key checks temporarily
+  await db.run(sql`PRAGMA foreign_keys = OFF`)
+
+  for (const table of TABLES_TO_DROP) {
+    try {
+      await db.run(sql.raw(`DELETE FROM ${table}`))
+      console.log(`   ✓ Cleared table: ${table}`)
+    }
+    catch {
+      // Table might not exist, which is fine
+      console.log(`   ⚠ Table not found or empty: ${table}`)
+    }
+  }
+
+  // Re-enable foreign key checks
+  await db.run(sql`PRAGMA foreign_keys = ON`)
+  console.log("")
+}
+
+/* -------------------------------------------------------------------------- */
 /*                                 Seed Function                              */
 /* -------------------------------------------------------------------------- */
 
 async function seed() {
   console.log("🌱 Starting database seed with Faker.js...\n")
+
+  // Drop existing data first
+  await dropTables()
   console.log("📊 Configuration:")
   console.log(`   - Customers: ${CONFIG.customers}`)
   console.log(`   - Product Categories: ${CONFIG.productCategories}`)
