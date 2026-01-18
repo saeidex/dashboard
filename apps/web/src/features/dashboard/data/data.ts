@@ -51,7 +51,7 @@ export const dashboardProductsQueryOptions = createProductsQueryOptions({
 });
 export const dashboardOrdersQueryOptions = createOrdersQueryOptions({
   pageIndex: 0,
-  pageSize: 100,
+  pageSize: 1000,
 });
 export const dashboardExpensesQueryOptions = expensesQueryOptions;
 
