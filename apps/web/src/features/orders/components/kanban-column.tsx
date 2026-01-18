@@ -45,8 +45,8 @@ export function KanbanColumn({ stage, orders, isOver: isOverFromDndContext = fal
       className={cn(
         "flex min-w-72 flex-col rounded-lg border bg-secondary/10",
         (isOverFromDndContext || isOverFromColumnDroppable) && "ring-2 ring-primary ring-offset-2",
-        kanbanLayout === "line" && "min-h-[calc(77dvh-0.5rem)] my-1",
         kanbanLayout === "grid" && "min-h-80",
+        kanbanLayout === "line" && "min-h-[calc(77dvh-0.5rem)]",
       )}
     >
       {/* Column Header */}

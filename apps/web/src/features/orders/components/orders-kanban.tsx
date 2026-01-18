@@ -233,8 +233,8 @@ export function OrdersKanban({ orders }: OrdersKanbanProps) {
         <div
           className={
             cn(
-              kanbanLayout === "line" && "flex gap-4 overflow-x-auto",
-              kanbanLayout === "grid" && "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
+              kanbanLayout === "line" && "grid grid-rows-1 grid-flow-col-dense p-1 gap-4 overflow-x-auto",
+              kanbanLayout === "grid" && "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 p-1",
             )
           }
         >
