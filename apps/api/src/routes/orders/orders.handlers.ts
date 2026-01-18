@@ -209,6 +209,17 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
   const { id } = c.req.valid("param")
   const { items, ...updates } = c.req.valid("json")
 
+  const existingOrder = await db.query.orders.findFirst({
+    where: (fields, { eq }) => eq(fields.id, id),
+  })
+
+  if (!existingOrder) {
+    return c.json(
+      { message: HttpStatusPhrases.NOT_FOUND },
+      HttpStatusCodes.NOT_FOUND,
+    )
+  }
+
   const hasOrderUpdates = Object.keys(updates).length > 0
   const hasItemUpdates = typeof items !== "undefined" && items.length > 0
 
@@ -258,27 +269,84 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
     )
   }
 
-  // Create audit log for order update
-  if (updates.orderStatus) {
+  // Create audit logs based on specific changes
+
+  // 1. Order Status Change
+  if (updates.orderStatus && updates.orderStatus !== existingOrder.orderStatus) {
     await createAuditLog({
       actionType: "order_status_changed",
       entityType: "order",
       entityId: String(id),
       orderId: id,
       customerId: updatedOrder.customerId,
-      description: `Order #${id} status changed to "${updates.orderStatus}"`,
-      metadata: { newStatus: updates.orderStatus },
+      description: `Order #${id} status changed from "${existingOrder.orderStatus}" to "${updates.orderStatus}"`,
+      metadata: {
+        previousStatus: existingOrder.orderStatus,
+        newStatus: updates.orderStatus,
+      },
     })
   }
-  else {
+
+  // 2. Production Stage Change
+  if (updates.productionStage && updates.productionStage !== existingOrder.productionStage) {
     await createAuditLog({
       actionType: "order_updated",
       entityType: "order",
       entityId: String(id),
       orderId: id,
       customerId: updatedOrder.customerId,
-      description: `Order #${id} was updated`,
-      metadata: { updatedFields: Object.keys(updates) },
+      description: `Order #${id} production stage updated to "${updates.productionStage}"`,
+      metadata: {
+        previousStage: existingOrder.productionStage,
+        newStage: updates.productionStage,
+      },
+    })
+  }
+
+  // 3. Payment Status Change
+  if (updates.paymentStatus && updates.paymentStatus !== existingOrder.paymentStatus) {
+    await createAuditLog({
+      actionType: "order_updated",
+      entityType: "order",
+      entityId: String(id),
+      orderId: id,
+      customerId: updatedOrder.customerId,
+      description: `Order #${id} payment status changed to "${updates.paymentStatus}"`,
+      metadata: {
+        previousPaymentStatus: existingOrder.paymentStatus,
+        newPaymentStatus: updates.paymentStatus,
+      },
+    })
+  }
+
+  // 4. Other Field Updates
+  const specialFields = ["orderStatus", "productionStage", "paymentStatus"]
+  // eslint-disable-next-line ts/ban-ts-comment
+  // @ts-expect-error
+  const otherUpdatedFields = Object.keys(updates).filter(key => !specialFields.includes(key) && updates[key] !== existingOrder[key])
+
+  if (otherUpdatedFields.length > 0) {
+    await createAuditLog({
+      actionType: "order_updated",
+      entityType: "order",
+      entityId: String(id),
+      orderId: id,
+      customerId: updatedOrder.customerId,
+      description: `Order #${id} updated`,
+      metadata: { updatedFields: otherUpdatedFields },
+    })
+  }
+
+  // 5. Item Updates
+  if (hasItemUpdates) {
+    await createAuditLog({
+      actionType: "order_updated",
+      entityType: "order",
+      entityId: String(id),
+      orderId: id,
+      customerId: updatedOrder.customerId,
+      description: `Order #${id} items updated`,
+      metadata: { itemCount: items.length },
     })
   }
 
