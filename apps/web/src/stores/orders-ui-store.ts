@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 export type OrdersKanbanLayout = "grid" | "line";
 
@@ -22,6 +22,7 @@ export const useOrdersUiStore = create<OrdersUiState>()(
     {
       name: "orders-ui-store",
       partialize: state => ({ kanbanLayout: state.kanbanLayout }),
+      storage: createJSONStorage(() => localStorage),
     },
   ),
 );

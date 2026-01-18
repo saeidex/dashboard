@@ -266,8 +266,8 @@ export const orderListQueryParamsSchema = z.object({
   customerId  : z.string().min(1).optional(),
   pageIndex   : z.coerce.number().min(0).default(0).optional(),
   pageSize    : z.coerce.number().min(1).default(10).optional(),
-  view        : z.enum(["table", "kanban"]).default("table").optional(),
-  kanbanLayout: z.enum(["grid", "line"]).default("grid").optional(),
+  view        : z.enum(["table", "kanban"]).optional(),
+  kanbanLayout: z.enum(["grid", "line"]).optional(),
 })
 export type orderListQueryParamsSchema = z.infer<typeof orderListQueryParamsSchema>
 

@@ -45,6 +45,7 @@ export function OrdersPrimaryButtons({
                   className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
                 >
                   <Table className="h-4 w-4" />
+                  All Orders
                 </ToggleGroupItem>
               </div>
             </TooltipTrigger>
@@ -59,6 +60,7 @@ export function OrdersPrimaryButtons({
                   className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
                 >
                   <Kanban className="h-4 w-4" />
+                  Production Line
                 </ToggleGroupItem>
               </div>
             </TooltipTrigger>
@@ -86,6 +88,7 @@ export function OrdersPrimaryButtons({
                   className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
                 >
                   <LayoutGrid className="h-4 w-4" />
+                  Grid
                 </ToggleGroupItem>
               </div>
             </TooltipTrigger>
@@ -100,6 +103,7 @@ export function OrdersPrimaryButtons({
                   className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
                 >
                   <Rows3 className="h-4 w-4" />
+                  Line
                 </ToggleGroupItem>
               </div>
             </TooltipTrigger>
