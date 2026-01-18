@@ -1,4 +1,4 @@
-import { and, eq, inArray, like } from "drizzle-orm"
+import { and, eq, inArray, isNull, like } from "drizzle-orm"
 import * as HttpStatusCodes from "stoker/http-status-codes"
 
 import type { AppRouteHandler } from "@/api/lib/types"
@@ -29,6 +29,8 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
 
   // Build where conditions
   const conditions = [] as any[]
+  // Always exclude soft-deleted products
+  conditions.push(isNull(products.deletedAt))
   if (filter) {
     const likeValue = `%${filter}%`
     conditions.push(like(products.title, likeValue))
@@ -70,7 +72,7 @@ export const create: AppRouteHandler<CreateRoute> = async (c) => {
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const { id } = c.req.valid("param")
   const row = await db.query.products.findFirst({
-    where: (p, { eq }) => eq(p.id, id),
+    where: (p, { eq, and, isNull }) => and(eq(p.id, id), isNull(p.deletedAt)),
     with: {
       size: true,
     },
@@ -109,7 +111,7 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
   const [row] = await db
     .update(products)
     .set(updates)
-    .where(eq(products.id, id))
+    .where(and(eq(products.id, id), isNull(products.deletedAt)))
     .returning()
 
   if (!row) {
@@ -121,7 +123,11 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
 
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
   const { id } = c.req.valid("param")
-  const result = await db.delete(products).where(eq(products.id, id))
+  // Soft delete: set deletedAt timestamp instead of actually deleting
+  const result = await db
+    .update(products)
+    .set({ deletedAt: new Date() })
+    .where(and(eq(products.id, id), isNull(products.deletedAt)))
 
   if (result.rowsAffected === 0) {
     return c.json({ message: "Not found" }, HttpStatusCodes.NOT_FOUND)

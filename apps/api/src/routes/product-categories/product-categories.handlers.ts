@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm"
+import { and, eq, isNull } from "drizzle-orm"
 import { Buffer } from "node:buffer"
 import * as HttpStatusCodes from "stoker/http-status-codes"
 import * as HttpStatusPhrases from "stoker/http-status-phrases"
@@ -32,7 +32,9 @@ function encodeImage(image?: string) {
 }
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
-  const data = await db.query.productCategories.findMany()
+  const data = await db.query.productCategories.findMany({
+    where: (fields, { isNull }) => isNull(fields.deletedAt),
+  })
   return c.json(data.map(serializeCategory))
 }
 
@@ -51,8 +53,8 @@ export const create: AppRouteHandler<CreateRoute> = async (c) => {
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const { id } = c.req.valid("param")
   const category = await db.query.productCategories.findFirst({
-    where: (fields, { eq }) => {
-      return eq(fields.id, id)
+    where: (fields, { eq, and, isNull }) => {
+      return and(eq(fields.id, id), isNull(fields.deletedAt))
     },
   })
 
@@ -101,7 +103,7 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
   const [updated] = await db
     .update(productCategories)
     .set(updateValues)
-    .where(eq(productCategories.id, id))
+    .where(and(eq(productCategories.id, id), isNull(productCategories.deletedAt)))
     .returning()
 
   if (!updated) {
@@ -116,9 +118,11 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
 
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
   const { id } = c.req.valid("param")
+  // Soft delete: set deletedAt timestamp instead of actually deleting
   const result = await db
-    .delete(productCategories)
-    .where(eq(productCategories.id, id))
+    .update(productCategories)
+    .set({ deletedAt: new Date() })
+    .where(and(eq(productCategories.id, id), isNull(productCategories.deletedAt)))
 
   if (result.rowsAffected === 0) {
     return c.json(

@@ -1,4 +1,4 @@
-import { and, eq, sql, sum } from "drizzle-orm"
+import { and, eq, isNull, sql, sum } from "drizzle-orm"
 import * as HttpStatusCodes from "stoker/http-status-codes"
 import * as HttpStatusPhrases from "stoker/http-status-phrases"
 
@@ -55,8 +55,11 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
   const { pageIndex = 0, pageSize = 10, customerId } = c.req.valid("query")
 
   const data = await db.query.orders.findMany({
-    where: (orders, { eq, and }) => {
-      return customerId ? and(eq(orders.customerId, customerId)) : undefined
+    where: (orders, { eq, and, isNull }) => {
+      const conditions = [isNull(orders.deletedAt)]
+      if (customerId)
+        conditions.push(eq(orders.customerId, customerId))
+      return and(...conditions)
     },
     limit: pageSize,
     offset: pageIndex * pageSize,
@@ -75,7 +78,7 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
     },
   })
 
-  // Calculate totalPaid for each order
+  // Calculate totalPaid for each order (excluding soft-deleted payments)
   const orderIds = data.map(o => o.id)
   const totalPaidByOrder = new Map<number, number>()
 
@@ -86,7 +89,10 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
         totalPaid: sum(payments.amount).mapWith(Number),
       })
       .from(payments)
-      .where(sql`${payments.orderId} IN (${sql.join(orderIds.map(id => sql`${id}`), sql`, `)})`)
+      .where(and(
+        sql`${payments.orderId} IN (${sql.join(orderIds.map(id => sql`${id}`), sql`, `)})`,
+        isNull(payments.deletedAt),
+      ))
       .groupBy(payments.orderId)
 
     totals.forEach((t) => {
@@ -100,6 +106,7 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
     })
     .from(orders)
     .where(and(
+      isNull(orders.deletedAt),
       customerId ? eq(orders.customerId, customerId) : undefined,
     ))
     .then(res => res[0]?.count ?? 0)
@@ -166,7 +173,7 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const { id } = c.req.valid("param")
 
   const order = await db.query.orders.findFirst({
-    where: (fields, { eq }) => eq(fields.id, id),
+    where: (fields, { eq, and, isNull }) => and(eq(fields.id, id), isNull(fields.deletedAt)),
     with: {
       customer: true,
       factory: true,
@@ -189,13 +196,13 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
     )
   }
 
-  // Calculate totalPaid for this order
+  // Calculate totalPaid for this order (excluding soft-deleted payments)
   const totalPaidResult = await db
     .select({
       totalPaid: sum(payments.amount).mapWith(Number),
     })
     .from(payments)
-    .where(eq(payments.orderId, order.id))
+    .where(and(eq(payments.orderId, order.id), isNull(payments.deletedAt)))
 
   const totalPaid = totalPaidResult[0]?.totalPaid ?? 0
 
@@ -210,7 +217,7 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
   const { items, ...updates } = c.req.valid("json")
 
   const existingOrder = await db.query.orders.findFirst({
-    where: (fields, { eq }) => eq(fields.id, id),
+    where: (fields, { eq, and, isNull }) => and(eq(fields.id, id), isNull(fields.deletedAt)),
   })
 
   if (!existingOrder) {
@@ -355,7 +362,11 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
 
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
   const { id } = c.req.valid("param")
-  const result = await db.delete(orders).where(eq(orders.id, id))
+  // Soft delete: set deletedAt timestamp instead of actually deleting
+  const result = await db
+    .update(orders)
+    .set({ deletedAt: new Date() })
+    .where(and(eq(orders.id, id), isNull(orders.deletedAt)))
 
   if (result.rowsAffected === 0) {
     return c.json(

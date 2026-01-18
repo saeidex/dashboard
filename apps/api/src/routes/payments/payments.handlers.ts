@@ -1,4 +1,4 @@
-import { and, eq, sql, sum } from "drizzle-orm"
+import { and, eq, isNull, sql, sum } from "drizzle-orm"
 import * as HttpStatusCodes from "stoker/http-status-codes"
 import * as HttpStatusPhrases from "stoker/http-status-phrases"
 
@@ -23,13 +23,13 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
   const { pageIndex = 0, pageSize = 10, orderId, customerId } = c.req.valid("query")
 
   const data = await db.query.payments.findMany({
-    where: (payments, { eq, and }) => {
-      const conditions = []
+    where: (payments, { eq, and, isNull }) => {
+      const conditions = [isNull(payments.deletedAt)]
       if (orderId)
         conditions.push(eq(payments.orderId, orderId))
       if (customerId)
         conditions.push(eq(payments.customerId, customerId))
-      return conditions.length ? and(...conditions) : undefined
+      return and(...conditions)
     },
     limit: pageSize,
     offset: pageIndex * pageSize,
@@ -65,7 +65,10 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
         totalPaid: sum(payments.amount).mapWith(Number),
       })
       .from(payments)
-      .where(sql`${payments.orderId} IN (${sql.join(orderIds.map(id => sql`${id}`), sql`, `)})`)
+      .where(and(
+        sql`${payments.orderId} IN (${sql.join(orderIds.map(id => sql`${id}`), sql`, `)})`,
+        isNull(payments.deletedAt),
+      ))
       .groupBy(payments.orderId)
 
     totals.forEach((t) => {
@@ -88,6 +91,7 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
     })
     .from(payments)
     .where(and(
+      isNull(payments.deletedAt),
       orderId ? eq(payments.orderId, orderId) : undefined,
       customerId ? eq(payments.customerId, customerId) : undefined,
     ))
@@ -134,13 +138,13 @@ export const create: AppRouteHandler<CreateRoute> = async (c) => {
       .values(payload)
       .returning()
 
-    // Calculate total paid for this order
+    // Calculate total paid for this order (excluding soft-deleted)
     const totalPaidResult = await tx
       .select({
         totalPaid: sum(payments.amount).mapWith(Number),
       })
       .from(payments)
-      .where(eq(payments.orderId, payload.orderId))
+      .where(and(eq(payments.orderId, payload.orderId), isNull(payments.deletedAt)))
 
     const totalPaid = totalPaidResult[0]?.totalPaid ?? 0
 
@@ -184,7 +188,7 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const { id } = c.req.valid("param")
 
   const payment = await db.query.payments.findFirst({
-    where: (fields, { eq }) => eq(fields.id, id),
+    where: (fields, { eq, and, isNull }) => and(eq(fields.id, id), isNull(fields.deletedAt)),
     with: {
       order: {
         columns: {
@@ -212,13 +216,13 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
     )
   }
 
-  // Calculate totalPaid for this order
+  // Calculate totalPaid for this order (excluding soft-deleted)
   const totalPaidResult = await db
     .select({
       totalPaid: sum(payments.amount).mapWith(Number),
     })
     .from(payments)
-    .where(eq(payments.orderId, payment.orderId))
+    .where(and(eq(payments.orderId, payment.orderId), isNull(payments.deletedAt)))
 
   const totalPaid = totalPaidResult[0]?.totalPaid ?? 0
 
@@ -256,7 +260,7 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
 
   // Get original payment to know the order
   const originalPayment = await db.query.payments.findFirst({
-    where: eq(payments.id, id),
+    where: and(eq(payments.id, id), isNull(payments.deletedAt)),
   })
 
   if (!originalPayment) {
@@ -270,7 +274,7 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
     const [updated] = await tx
       .update(payments)
       .set(updates)
-      .where(eq(payments.id, id))
+      .where(and(eq(payments.id, id), isNull(payments.deletedAt)))
       .returning()
 
     if (!updated) {
@@ -288,7 +292,7 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
           totalPaid: sum(payments.amount).mapWith(Number),
         })
         .from(payments)
-        .where(eq(payments.orderId, originalPayment.orderId))
+        .where(and(eq(payments.orderId, originalPayment.orderId), isNull(payments.deletedAt)))
 
       const totalPaid = totalPaidResult[0]?.totalPaid ?? 0
 
@@ -324,7 +328,7 @@ export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
 
   // Get original payment to know the order
   const originalPayment = await db.query.payments.findFirst({
-    where: eq(payments.id, id),
+    where: and(eq(payments.id, id), isNull(payments.deletedAt)),
   })
 
   if (!originalPayment) {
@@ -335,9 +339,10 @@ export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
   }
 
   await db.transaction(async (tx) => {
-    await tx.delete(payments).where(eq(payments.id, id))
+    // Soft delete: set deletedAt timestamp instead of actually deleting
+    await tx.update(payments).set({ deletedAt: new Date() }).where(eq(payments.id, id))
 
-    // Recalculate and update order payment status
+    // Recalculate and update order payment status (excluding soft-deleted payments)
     const order = await tx.query.orders.findFirst({
       where: eq(orders.id, originalPayment.orderId),
     })
@@ -348,7 +353,7 @@ export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
           totalPaid: sum(payments.amount).mapWith(Number),
         })
         .from(payments)
-        .where(eq(payments.orderId, originalPayment.orderId))
+        .where(and(eq(payments.orderId, originalPayment.orderId), isNull(payments.deletedAt)))
 
       const totalPaid = totalPaidResult[0]?.totalPaid ?? 0
 
@@ -390,7 +395,7 @@ export const getOrderPaymentSummary: AppRouteHandler<GetOrderPaymentSummaryRoute
       paymentCount: sql<number>`count(*)`.mapWith(Number),
     })
     .from(payments)
-    .where(eq(payments.orderId, orderId))
+    .where(and(eq(payments.orderId, orderId), isNull(payments.deletedAt)))
 
   const totalPaid = paymentsData[0]?.totalPaid ?? 0
   const paymentCount = paymentsData[0]?.paymentCount ?? 0
@@ -419,7 +424,7 @@ export const listOrderPayments: AppRouteHandler<ListOrderPaymentsRoute> = async 
   }
 
   const data = await db.query.payments.findMany({
-    where: eq(payments.orderId, orderId),
+    where: (fields, { eq, and, isNull }) => and(eq(fields.orderId, orderId), isNull(fields.deletedAt)),
     orderBy: (payments, { desc }) => [desc(payments.paidAt)],
   })
 

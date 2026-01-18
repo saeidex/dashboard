@@ -43,6 +43,20 @@
       "when": 1768631527872,
       "tag": "0005_same_quasar",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1768752609096,
+      "tag": "0006_overconfident_rumiko_fujikawa",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1768754027760,
+      "tag": "0007_late_grim_reaper",
+      "breakpoints": true
     }
   ]
 }

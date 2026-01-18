@@ -7,6 +7,7 @@ export const productCategories = sqliteTable("categories", {
   name       : text().notNull(),
   description: text(),
   image      : blob({ mode: "buffer" }).notNull(),
+  deletedAt  : integer({ mode: "timestamp" }), // Soft delete timestamp
   createdAt  : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
   updatedAt  : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 })
@@ -30,6 +31,7 @@ const imageDataUrlSchema = z
 
 export const selectProductCategoriesSchema = createSelectSchema(productCategories, {
   image    : imageDataUrlSchema,
+  deletedAt: z.iso.date().nullable(),
   createdAt: z.iso.date(),
   updatedAt: z.iso.date(),
 })

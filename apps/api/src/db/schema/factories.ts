@@ -25,6 +25,7 @@ export const factories = sqliteTable("factories", {
   maxManpower  : integer({ mode: "number" }).default(0), // Maximum workers
   status       : text().$type<FactoryStatus>().default("active").notNull(),
   notes        : text(),
+  deletedAt    : integer({ mode: "timestamp" }), // Soft delete timestamp
   createdAt    : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
   updatedAt    : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 }, table => [
@@ -34,6 +35,7 @@ export const factories = sqliteTable("factories", {
 
 export const selectFactoriesSchema = createSelectSchema(factories, {
   status   : factoryStatusSchema,
+  deletedAt: z.iso.date().nullable(),
   createdAt: z.iso.date(),
   updatedAt: z.iso.date(),
 })

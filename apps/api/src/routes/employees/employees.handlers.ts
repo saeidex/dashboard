@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm"
+import { and, eq, isNull } from "drizzle-orm"
 import * as HttpStatusCodes from "stoker/http-status-codes"
 import * as HttpStatusPhrases from "stoker/http-status-phrases"
 
@@ -17,7 +17,9 @@ import type {
 } from "./employees.routes"
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
-  const data = await db.query.employees.findMany()
+  const data = await db.query.employees.findMany({
+    where: (fields, { isNull }) => isNull(fields.deletedAt),
+  })
   return c.json(data)
 }
 
@@ -30,8 +32,8 @@ export const create: AppRouteHandler<CreateRoute> = async (c) => {
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const { id } = c.req.valid("param")
   const employee = await db.query.employees.findFirst({
-    where(fields, { eq }) {
-      return eq(fields.id, id)
+    where(fields, { eq, and, isNull }) {
+      return and(eq(fields.id, id), isNull(fields.deletedAt))
     },
   })
 
@@ -71,7 +73,7 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
   const [updated] = await db
     .update(employees)
     .set(updates)
-    .where(eq(employees.id, id))
+    .where(and(eq(employees.id, id), isNull(employees.deletedAt)))
     .returning()
 
   if (!updated) {
@@ -86,7 +88,11 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
 
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
   const { id } = c.req.valid("param")
-  const result = await db.delete(employees).where(eq(employees.id, id))
+  // Soft delete: set deletedAt timestamp instead of actually deleting
+  const result = await db
+    .update(employees)
+    .set({ deletedAt: new Date() })
+    .where(and(eq(employees.id, id), isNull(employees.deletedAt)))
 
   if (result.rowsAffected === 0) {
     return c.json(

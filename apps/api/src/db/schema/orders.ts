@@ -75,6 +75,7 @@ export const orders = sqliteTable("orders", {
   numberOfLinesUsed: integer({ mode: "number" }),
   manpowerPerLine  : integer({ mode: "number" }),
 
+  deletedAt: integer({ mode: "timestamp" }), // Soft delete timestamp
   createdAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
   updatedAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 }, table => [
@@ -153,6 +154,7 @@ const selectOrdersSchema = createSelectSchema(orders, {
   paymentMethod         : paymentMethodSchema,
   productionStage       : productionStageSchema,
   currency              : currencySchema,
+  deletedAt             : z.string().nullable(),
   createdAt             : z.string(),
   updatedAt             : z.string(),
   // Timeline dates as ISO strings

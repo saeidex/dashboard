@@ -44,6 +44,7 @@ export const employees = sqliteTable("employees", {
   status     : text().$type<EmployeeStatus>().$default(() => "active").notNull(),
   salary     : integer({ mode: "number" }).notNull(),
   hireDate   : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  deletedAt  : integer({ mode: "timestamp" }), // Soft delete timestamp
   createdAt  : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
   updatedAt  : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 }, table => [
@@ -56,6 +57,7 @@ export const selectEmployeesSchema = createSelectSchema(employees, {
   shift    : shiftSchema,
   status   : employeeStatusSchema,
   hireDate : z.iso.date(),
+  deletedAt: z.iso.date().nullable(),
   createdAt: z.iso.date(),
   updatedAt: z.iso.date(),
 })

@@ -9,6 +9,7 @@ export const productSizes = sqliteTable("product_sizes", {
   height     : real(),
   unit       : text().notNull().default("M"),
   description: text(),
+  deletedAt  : integer({ mode: "timestamp" }), // Soft delete timestamp
   createdAt  : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
   updatedAt  : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 })
@@ -19,6 +20,7 @@ export type SizeUnit<T extends string = "M"> = z.infer<typeof sizeUnitSchema> | 
 
 export const selectProductSizesSchema = createSelectSchema(productSizes).extend({
   unit     : sizeUnitSchema,
+  deletedAt: z.iso.date().nullable(),
   createdAt: z.iso.date(),
   updatedAt: z.iso.date(),
 })

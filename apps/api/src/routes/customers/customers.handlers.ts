@@ -1,4 +1,4 @@
-import { count, eq } from "drizzle-orm"
+import { and, count, eq, isNull } from "drizzle-orm"
 import * as HttpStatusCodes from "stoker/http-status-codes"
 import * as HttpStatusPhrases from "stoker/http-status-phrases"
 
@@ -17,8 +17,10 @@ import type {
 } from "./customers.routes"
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
-  // Get all customers with their order counts
-  const customersData = await db.query.customers.findMany()
+  // Get all customers with their order counts (excluding soft-deleted)
+  const customersData = await db.query.customers.findMany({
+    where: (fields, { isNull }) => isNull(fields.deletedAt),
+  })
 
   // Get order counts for all customers
   const orderCounts = await db
@@ -52,8 +54,8 @@ export const create: AppRouteHandler<CreateRoute> = async (c) => {
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const { id } = c.req.valid("param")
   const customer = await db.query.customers.findFirst({
-    where(fields, { eq }) {
-      return eq(fields.id, id)
+    where(fields, { eq, and, isNull }) {
+      return and(eq(fields.id, id), isNull(fields.deletedAt))
     },
   })
 
@@ -93,7 +95,7 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
   const [updated] = await db
     .update(customers)
     .set(updates)
-    .where(eq(customers.id, id))
+    .where(and(eq(customers.id, id), isNull(customers.deletedAt)))
     .returning()
 
   if (!updated) {
@@ -108,7 +110,11 @@ export const patch: AppRouteHandler<PatchRoute> = async (c) => {
 
 export const remove: AppRouteHandler<RemoveRoute> = async (c) => {
   const { id } = c.req.valid("param")
-  const result = await db.delete(customers).where(eq(customers.id, id))
+  // Soft delete: set deletedAt timestamp instead of actually deleting
+  const result = await db
+    .update(customers)
+    .set({ deletedAt: new Date() })
+    .where(and(eq(customers.id, id), isNull(customers.deletedAt)))
 
   if (result.rowsAffected === 0) {
     return c.json(

@@ -25,6 +25,7 @@ export const payments = sqliteTable("payments", {
   reference    : text(), // Transaction ID, check number, etc.
   notes        : text(),
   paidAt       : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  deletedAt    : integer({ mode: "timestamp" }), // Soft delete timestamp
   createdAt    : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
   updatedAt    : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 }, table => [
@@ -50,6 +51,7 @@ export const selectPaymentsSchema = createSelectSchema(payments, {
   paymentMethod: paymentMethodSchema,
   currency     : currencySchema,
   paidAt       : z.string(),
+  deletedAt    : z.string().nullable(),
   createdAt    : z.string(),
   updatedAt    : z.string(),
 })

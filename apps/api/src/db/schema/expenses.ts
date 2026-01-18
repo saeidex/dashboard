@@ -38,6 +38,7 @@ export const expenses = sqliteTable("expenses", {
   currency : text().$type<Currency>().default("BDT").notNull(),
   amount   : real().notNull(),
   notes    : text(),
+  deletedAt: integer({ mode: "timestamp" }), // Soft delete timestamp
   createdAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
   updatedAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 }, table => [
@@ -47,6 +48,7 @@ export const expenses = sqliteTable("expenses", {
 export const selectExpensesSchema = createSelectSchema(expenses, {
   category : expenseCategorySchema,
   currency : currencySchema,
+  deletedAt: z.iso.date().nullable(),
   createdAt: z.iso.date(),
   updatedAt: z.iso.date(),
 })

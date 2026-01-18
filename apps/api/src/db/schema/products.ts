@@ -25,6 +25,7 @@ export const products = sqliteTable("products", {
   total        : real().default(0).notNull(),
   currency     : text().$type<Currency>().default("BDT").notNull(),
   stock        : integer({ mode: "number" }).default(0).notNull(),
+  deletedAt    : integer({ mode: "timestamp" }), // Soft delete timestamp
   createdAt    : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
   updatedAt    : integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 }, table => [
@@ -43,6 +44,7 @@ export const productsRelations = relations(products, ({ one }) => ({
 
 export const selectProductsSchema = createSelectSchema(products, {
   currency : currencySchema,
+  deletedAt: z.iso.date().nullable(),
   createdAt: z.iso.date(),
   updatedAt: z.iso.date(),
 })

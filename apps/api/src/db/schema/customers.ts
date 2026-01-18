@@ -12,11 +12,13 @@ export const customers = sqliteTable("customers", {
   city     : text(),
   notes    : text(),
   isActive : integer({ mode: "boolean" }).default(true).notNull(),
+  deletedAt: integer({ mode: "timestamp" }), // Soft delete timestamp
   createdAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
   updatedAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
 })
 
 export const selectCustomersSchema = createSelectSchema(customers, {
+  deletedAt: z.iso.date().nullable(),
   createdAt: z.iso.date(),
   updatedAt: z.iso.date(),
 })

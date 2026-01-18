@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "2b9df7e1-0bc8-4697-afde-041bf1d54cf2",
-  "prevId": "67ce1e0d-11ce-4d5e-a362-0e5d3081d65a",
+  "id": "00cc8ba9-2d5f-4fe7-b76b-65a3dd690448",
+  "prevId": "2b9df7e1-0bc8-4697-afde-041bf1d54cf2",
   "tables": {
     "audit_logs": {
       "name": "audit_logs",
@@ -1079,6 +1079,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "factory_id": {
+          "name": "factory_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "order_status": {
           "name": "order_status",
           "type": "text",
@@ -1150,6 +1157,133 @@
           "notNull": false,
           "autoincrement": false
         },
+        "production_stage": {
+          "name": "production_stage",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'orderConfirmDate'"
+        },
+        "order_confirm_date": {
+          "name": "order_confirm_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "accessories_inhouse_date": {
+          "name": "accessories_inhouse_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "fabric_etd": {
+          "name": "fabric_etd",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "fabric_eta": {
+          "name": "fabric_eta",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "fabric_inhouse_date": {
+          "name": "fabric_inhouse_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "pp_sample_date": {
+          "name": "pp_sample_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "fabric_test_date": {
+          "name": "fabric_test_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "shipping_sample_date": {
+          "name": "shipping_sample_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "sewing_start_date": {
+          "name": "sewing_start_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "sewing_complete_date": {
+          "name": "sewing_complete_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "inspection_start_date": {
+          "name": "inspection_start_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "inspection_end_date": {
+          "name": "inspection_end_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "ex_factory_date": {
+          "name": "ex_factory_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "port_handover_date": {
+          "name": "port_handover_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "production_per_line": {
+          "name": "production_per_line",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "number_of_lines_used": {
+          "name": "number_of_lines_used",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "manpower_per_line": {
+          "name": "manpower_per_line",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "integer",
@@ -1173,6 +1307,13 @@
           ],
           "isUnique": false
         },
+        "idx_orders_factory_id": {
+          "name": "idx_orders_factory_id",
+          "columns": [
+            "factory_id"
+          ],
+          "isUnique": false
+        },
         "idx_orders_order_status": {
           "name": "idx_orders_order_status",
           "columns": [
@@ -1186,6 +1327,13 @@
             "payment_status"
           ],
           "isUnique": false
+        },
+        "idx_orders_production_stage": {
+          "name": "idx_orders_production_stage",
+          "columns": [
+            "production_stage"
+          ],
+          "isUnique": false
         }
       },
       "foreignKeys": {
@@ -1195,6 +1343,19 @@
           "tableTo": "customers",
           "columnsFrom": [
             "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "orders_factory_id_factories_id_fk": {
+          "name": "orders_factory_id_factories_id_fk",
+          "tableFrom": "orders",
+          "tableTo": "factories",
+          "columnsFrom": [
+            "factory_id"
           ],
           "columnsTo": [
             "id"
@@ -1511,7 +1672,7 @@
         },
         "category_id": {
           "name": "category_id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -1570,6 +1731,13 @@
           "notNull": true,
           "autoincrement": false,
           "default": 0
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         },
         "created_at": {
           "name": "created_at",
@@ -1653,12 +1821,8 @@
   "enums": {},
   "_meta": {
     "schemas": {},
-    "tables": {
-      "\"product_dimensions\"": "\"product_sizes\""
-    },
-    "columns": {
-      "\"products\".\"dimension_id\"": "\"products\".\"size_id\""
-    }
+    "tables": {},
+    "columns": {}
   },
   "internal": {
     "indexes": {}
