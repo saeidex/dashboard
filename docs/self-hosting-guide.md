@@ -2,7 +2,7 @@
 
 <p dir="rtl">takumitex Self-Hosting Guidebook (Single Windows PC + PM2)</p>
 
-This guide walks through every step required to run the Universal Packaging and Accessories takumitex on a single Windows computer. It covers installing prerequisites, fetching the repository, preparing the build, configuring the process manager, and operating the stack day to day. Follow the sections in order for a smooth setup.
+This guide walks through every step required to run the Takumitex Sourcing Hub on a single Windows computer. It covers installing prerequisites, fetching the repository, preparing the build, configuring the process manager, and operating the stack day to day. Follow the sections in order for a smooth setup.
 
 ## 1. System prerequisites
 

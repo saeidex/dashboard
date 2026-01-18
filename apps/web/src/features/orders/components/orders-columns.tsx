@@ -185,14 +185,20 @@ export const ordersColumns: ColumnDef<Order>[] = [
           variant: "default" | "secondary" | "destructive" | "outline";
         }
       > = {
-        "confirmed": { label: "Confirmed", variant: "outline" },
-        "accessories": { label: "Accessories", variant: "secondary" },
-        "fabric-transit": { label: "Fabric Transit", variant: "secondary" },
-        "fabric-ready": { label: "Fabric Ready", variant: "secondary" },
-        "sewing": { label: "Sewing", variant: "default" },
-        "inspection": { label: "Inspection", variant: "default" },
-        "ex-factory": { label: "Ex-Factory", variant: "default" },
-        "delivered": { label: "Delivered", variant: "default" },
+        orderConfirmDate: { label: "Order Confirmed", variant: "outline" },
+        accessoriesInhouseDate: { label: "Accessories Inhouse", variant: "secondary" },
+        fabricEtd: { label: "Fabric ETD", variant: "secondary" },
+        fabricEta: { label: "Fabric ETA", variant: "secondary" },
+        fabricInhouseDate: { label: "Fabric Inhouse", variant: "secondary" },
+        ppSampleDate: { label: "PP Sample", variant: "secondary" },
+        fabricTestDate: { label: "Fabric Test", variant: "secondary" },
+        shippingSampleDate: { label: "Shipping Sample", variant: "secondary" },
+        sewingStartDate: { label: "Sewing Started", variant: "default" },
+        sewingCompleteDate: { label: "Sewing Complete", variant: "default" },
+        inspectionStartDate: { label: "Inspection Started", variant: "default" },
+        inspectionEndDate: { label: "Inspection Complete", variant: "default" },
+        exFactoryDate: { label: "Ex-Factory", variant: "default" },
+        portHandoverDate: { label: "Port Handover", variant: "default" },
       };
       const config = stageConfig[stage] ?? { label: stage, variant: "outline" };
       return (

@@ -1,3 +1,5 @@
+import { add } from "date-fns";
+
 import type { ProductionStage } from "@/api/db/schema/orders";
 
 export const orderStatusValues = [
@@ -24,11 +26,11 @@ export const paymentMethodValues = [
 ] as const;
 
 export const OwnerInfo = {
-  name: "Universal Packaging & Accessories",
-  address: "Tongi, Gazipur",
-  city: "Dhaka",
-  phone: "(123) 456-7890",
-  email: "support@example.com",
+  name: "Takumitex Sourcing Hub",
+  address: "House-73F, Road-12B, Sector-10, Uttara",
+  city: "Dhaka-1230, Bangladesh",
+  email: "surjo@takumitex.com",
+  phone: "+8801633317047",
 };
 
 export const PRODUCTION_STAGES: {
