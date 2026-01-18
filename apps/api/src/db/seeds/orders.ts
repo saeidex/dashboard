@@ -220,9 +220,12 @@ export async function seedOrders(
     currentOrderIdx++
   }
 
-  // Insert order items
-  if (allOrderItems.length > 0) {
-    await database.insert(schema.orderItems).values(allOrderItems)
+  // Insert order items in batches (SQLite has a limit of ~32766 variables)
+  // With 11 columns per row, we can safely insert ~200 rows at a time
+  const BATCH_SIZE = 200
+  for (let i = 0; i < allOrderItems.length; i += BATCH_SIZE) {
+    const batch = allOrderItems.slice(i, i + BATCH_SIZE)
+    await database.insert(schema.orderItems).values(batch)
   }
 
   return insertedOrders
