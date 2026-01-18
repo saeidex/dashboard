@@ -37,7 +37,7 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
     conditions.push(inArray(products.status, statuses))
   }
   if (categoryIds) {
-    conditions.push(inArray(products.categoryId, categoryIds))
+    conditions.push(inArray(products.categoryId, categoryIds.map(Number)))
   }
 
   const where

@@ -3,7 +3,7 @@ import type { insertOrderWithItemsSchema } from "@takumitex/api/schema";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Plus, X } from "lucide-react";
 import React from "react";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
 import { SelectDropdown } from "@/web/components/select-dropdown";
@@ -28,7 +28,9 @@ import { createProductsQueryOptions } from "@/web/features/products/data/queries
 import { useOrders } from "../orders-provider";
 
 export function EditorTable() {
-  const { data: products } = useSuspenseQuery(createProductsQueryOptions());
+  const { data: products } = useSuspenseQuery(
+    createProductsQueryOptions({ pageSize: 10000 }),
+  );
 
   const availableProducts = React.useMemo(
     () =>
@@ -42,44 +44,49 @@ export function EditorTable() {
   const { control, setValue, getValues }
     = useFormContext<insertOrderWithItemsSchema>();
   const fieldArray = useFieldArray({ name: "items", control });
+  const watchedItems = useWatch({ name: "items", control }) || [];
 
   const isItemsEmpty = !fieldArray.fields.length;
 
   const handleAddItem = React.useCallback(() => {
-    const firstProduct = availableProducts[0];
-    if (!firstProduct) {
-      toast.error("No products available in stock to add.");
+    const currentItems = getValues("items") ?? [];
+    const usedProductIds = new Set(currentItems.map(i => i.productId));
+    const nextProduct = availableProducts.find(p => !usedProductIds.has(p.id));
+
+    if (!nextProduct) {
+      toast.error("No more samples available to add.");
       return;
     }
+
     fieldArray.append({
       id: isEdit ? currentRow.id.toString() : crypto.randomUUID(),
-      productId: firstProduct.id,
+      productId: nextProduct.id,
       quantity: 1,
-      retailPricePerUnit: firstProduct.retailPrice ?? firstProduct.total ?? 0,
+      retailPricePerUnit: nextProduct.retailPrice ?? nextProduct.total ?? 0,
       taxPerUnit:
-        firstProduct.taxAmount
-        ?? (typeof firstProduct.taxPercentage === "number"
-          ? (firstProduct.taxPercentage / 100)
-          * (firstProduct.retailPrice ?? firstProduct.total ?? 0)
+        nextProduct.taxAmount
+        ?? (typeof nextProduct.taxPercentage === "number"
+          ? (nextProduct.taxPercentage / 100)
+          * (nextProduct.retailPrice ?? nextProduct.total ?? 0)
           : 0),
-      totalRetailPrice: firstProduct.retailPrice ?? firstProduct.total ?? 0,
+      totalRetailPrice: nextProduct.retailPrice ?? nextProduct.total ?? 0,
       totalTax:
-        firstProduct.taxAmount
-        ?? (typeof firstProduct.taxPercentage === "number"
-          ? (firstProduct.taxPercentage / 100)
-          * (firstProduct.retailPrice ?? firstProduct.total ?? 0)
+        nextProduct.taxAmount
+        ?? (typeof nextProduct.taxPercentage === "number"
+          ? (nextProduct.taxPercentage / 100)
+          * (nextProduct.retailPrice ?? nextProduct.total ?? 0)
           : 0),
       grandTotal:
-        firstProduct.total
-        ?? (firstProduct.retailPrice ?? 0) + (firstProduct.taxAmount ?? 0),
+        nextProduct.total
+        ?? (nextProduct.retailPrice ?? 0) + (nextProduct.taxAmount ?? 0),
     });
-  }, [isEdit, currentRow, fieldArray, availableProducts]);
+  }, [isEdit, currentRow, fieldArray, availableProducts, getValues]);
 
   const handleProductChange = React.useCallback(
     (index: number, productId: string) => {
       const product = availableProducts.find(p => p.id === productId);
       if (!product) {
-        toast.error("Selected product is not available.");
+        toast.error("Selected sample is not available.");
         return;
       }
 
@@ -161,10 +168,19 @@ export function EditorTable() {
                           className="h-10 w-full text-sm"
                           defaultValue={field.value}
                           placeholder="Select product"
-                          items={availableProducts.map(product => ({
-                            label: `${product.title} (Stock: ${product.stock ?? 0})`,
-                            value: product.id,
-                          }))}
+                          items={availableProducts
+                            .filter((product) => {
+                              const isSelectedIdx = watchedItems.findIndex(
+                                item => item.productId === product.id,
+                              );
+                              return (
+                                isSelectedIdx === -1 || isSelectedIdx === index
+                              );
+                            })
+                            .map(product => ({
+                              label: `${product.title} (Stock: ${product.stock ?? 0})`,
+                              value: product.id,
+                            }))}
                           onValueChange={(value) => {
                             handleProductChange(index, value);
                           }}

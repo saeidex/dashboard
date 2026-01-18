@@ -23,7 +23,6 @@ export const listQuerySchema = z.object({
     .number()
     .int()
     .min(1)
-    .max(100)
     .optional()
     .openapi({ example: 10 }),
   status: z
