@@ -78,6 +78,7 @@ export const insertEmployeesSchema = createInsertSchema(employees, {
   id       : true,
   createdAt: true,
   updatedAt: true,
+  deletedAt: true,
 })
 export type insertEmployeesSchema = z.infer<typeof insertEmployeesSchema>
 

@@ -67,6 +67,7 @@ export const insertProductsSchema = createInsertSchema(products, {
   id       : true,
   createdAt: true,
   updatedAt: true,
+  deletedAt: true,
 })
 export type insertProductsSchema = z.infer<typeof insertProductsSchema>
 

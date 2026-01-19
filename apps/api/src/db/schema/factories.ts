@@ -59,6 +59,7 @@ export const insertFactoriesSchema = createInsertSchema(factories, {
   id       : true,
   createdAt: true,
   updatedAt: true,
+  deletedAt: true,
 })
 export type insertFactoriesSchema = z.infer<typeof insertFactoriesSchema>
 

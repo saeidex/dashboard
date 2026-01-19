@@ -27,7 +27,6 @@ import { cn } from "@/web/lib/utils";
 
 import type { PaymentWithRelations } from "../data/schema";
 
-import { } from "./data-table-row-actions";
 import { usePayments } from "./payments-provider";
 
 const paymentMethodIcons: Record<string, React.ReactNode> = {

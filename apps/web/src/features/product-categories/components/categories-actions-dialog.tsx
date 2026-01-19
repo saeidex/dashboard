@@ -48,10 +48,7 @@ export function CategoriesActionDialog({
   const form = useForm<insertProductCategoriesSchema>({
     resolver: zodResolver(insertProductCategoriesSchema),
     defaultValues: isEdit
-      ? {
-          ...currentRow,
-          deletedAt: null,
-        }
+      ? currentRow
       : {
           name: "",
           description: "",

@@ -154,9 +154,9 @@ const selectOrdersSchema = createSelectSchema(orders, {
   paymentMethod         : paymentMethodSchema,
   productionStage       : productionStageSchema,
   currency              : currencySchema,
-  deletedAt             : z.string().nullable(),
   createdAt             : z.string(),
   updatedAt             : z.string(),
+  deletedAt             : z.string().nullable(),
   // Timeline dates as ISO strings
   orderConfirmDate      : z.string().nullable(),
   accessoriesInhouseDate: z.string().nullable(),
@@ -214,6 +214,7 @@ const insertOrdersSchema = createInsertSchema(orders, {
   id       : true,
   createdAt: true,
   updatedAt: true,
+  deletedAt: true,
 })
 const insertOrderItemsSchema = createInsertSchema(orderItems, {
   id                : schema => schema.min(1, "Order Item ID is required"),
@@ -228,6 +229,7 @@ const insertOrderItemsSchema = createInsertSchema(orderItems, {
   orderId  : true,
   createdAt: true,
   updatedAt: true,
+  deletedAt: true,
 })
 
 const patchOrdersSchema = insertOrdersSchema.omit({ customerId: true }).partial()
@@ -304,7 +306,7 @@ export type selectPaginatedOrderDetailsSchema = z.infer<typeof selectPaginatedOr
  * }
  */
 export const insertOrderWithItemsSchema = insertOrdersSchema.extend({
-  items: z.array(insertOrderItemsSchema).min(1, "At least one item is required"),
+  items: z.array(insertOrderItemsSchema),
 })
 export type insertOrderWithItemsSchema = z.infer<typeof insertOrderWithItemsSchema>
 

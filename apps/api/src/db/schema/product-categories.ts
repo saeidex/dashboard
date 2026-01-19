@@ -45,6 +45,7 @@ const insertProductCategoriesSchemaBase = createInsertSchema(productCategories, 
   id       : true,
   createdAt: true,
   updatedAt: true,
+  deletedAt: true,
 })
 
 export const insertProductCategoriesSchema = insertProductCategoriesSchemaBase

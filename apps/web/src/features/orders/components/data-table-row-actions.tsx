@@ -1,4 +1,5 @@
 import type { Row } from "@tanstack/react-table";
+import type z from "zod";
 
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -12,6 +13,8 @@ import {
   UserPen,
 } from "lucide-react";
 import { toast } from "sonner";
+
+import type { insertOrderWithItemsSchema } from "@/api/db/schema";
 
 import { Button } from "@/web/components/ui/button";
 import {
@@ -67,12 +70,26 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
     },
   });
 
-  const copiedOrder: Order = {
+  const copiedOrder: z.infer<typeof insertOrderWithItemsSchema> = {
     ...row.original,
     items: row.original.items.map(({ id, ...item }) => ({
       ...item,
       id: crypto.randomUUID(),
     })),
+    orderConfirmDate: new Date(),
+    accessoriesInhouseDate: null,
+    fabricEtd: null,
+    fabricEta: null,
+    fabricInhouseDate: null,
+    ppSampleDate: null,
+    fabricTestDate: null,
+    shippingSampleDate: null,
+    sewingStartDate: null,
+    sewingCompleteDate: null,
+    inspectionStartDate: null,
+    inspectionEndDate: null,
+    exFactoryDate: null,
+    portHandoverDate: null,
   };
 
   const handlePrint = () => {
@@ -97,7 +114,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             <span className="sr-only">Open menu</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-[160px]">
+        <DropdownMenuContent align="end" className="w-40">
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Order Status</DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
@@ -106,7 +123,6 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                   updateMutation.mutate({
                     id: row.original.id.toString(),
                     order: {
-                      ...row.original,
                       orderStatus: value as (typeof orderStatusValues)[number],
                       paymentStatus: row.getValue("paymentStatus"),
                       paymentMethod: row.getValue("paymentMethod"),

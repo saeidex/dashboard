@@ -76,7 +76,7 @@ export function DataTableBulkActions<TData>({
     table.resetRowSelection();
   };
 
-  const handleBulkCategoryChange = (categoryId: string) => {
+  const handleBulkCategoryChange = (categoryId: number) => {
     const selectedProducts = selectedRows.map(row => row.original as Product);
     toast.promise(
       async () => {
@@ -177,7 +177,7 @@ export function DataTableBulkActions<TData>({
               <DropdownMenuItem
                 key={category.id}
                 defaultValue={category.id}
-                onClick={() => handleBulkCategoryChange(category.id.toString())}
+                onClick={() => handleBulkCategoryChange(category.id)}
               >
                 {category.name}
               </DropdownMenuItem>

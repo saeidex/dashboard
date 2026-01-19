@@ -42,6 +42,7 @@ export const insertCustomersSchema = createInsertSchema(customers, {
   id       : true,
   createdAt: true,
   updatedAt: true,
+  deletedAt: true,
 })
 export type insertCustomersSchema = z.infer<typeof insertCustomersSchema>
 

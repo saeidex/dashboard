@@ -87,6 +87,7 @@ export const insertPaymentsSchema = createInsertSchema(payments, {
   id       : true,
   createdAt: true,
   updatedAt: true,
+  deletedAt: true,
 })
 export type insertPaymentsSchema = z.infer<typeof insertPaymentsSchema>
 
