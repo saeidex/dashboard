@@ -8,10 +8,11 @@
  */
 
 import { faker } from "@faker-js/faker"
-import { sql } from "drizzle-orm"
+import { eq, sql } from "drizzle-orm"
 import { drizzle } from "drizzle-orm/libsql"
 
 import env from "../env"
+import { auth } from "../lib/auth"
 import * as schema from "./schema"
 import { seedCustomers } from "./seeds/customers"
 import { seedEmployees } from "./seeds/employees"
@@ -112,6 +113,47 @@ async function seed() {
   console.log("")
 
   try {
+    // Ensure default auth users exist
+    const defaultAdmin = {
+      email: "admin@example.com",
+      password: "password123",
+      name: "Admin",
+      role: "admin" as const,
+    }
+
+    const defaultUser = {
+      email: "user@example.com",
+      password: "password123",
+      name: "User",
+      role: "user" as const,
+    }
+
+    const existingAdmin = await db.query.users.findFirst({
+      where: fields => eq(fields.email, defaultAdmin.email),
+    })
+
+    if (!existingAdmin) {
+      console.log("👤 Creating default admin user...")
+      await auth.api.createUser({ body: defaultAdmin })
+      console.log(`   ✓ Admin created: ${defaultAdmin.email} / ${defaultAdmin.password}\n`)
+    }
+    else {
+      console.log("👤 Default admin user already exists\n")
+    }
+
+    const existingUser = await db.query.users.findFirst({
+      where: fields => eq(fields.email, defaultUser.email),
+    })
+
+    if (!existingUser) {
+      console.log("👤 Creating default user...")
+      await auth.api.createUser({ body: defaultUser })
+      console.log(`   ✓ User created: ${defaultUser.email} / ${defaultUser.password}\n`)
+    }
+    else {
+      console.log("👤 Default user already exists\n")
+    }
+
     // Seed Customers
     console.log("📦 Seeding customers...")
     const customersData = await seedCustomers(db, CONFIG.customers)
