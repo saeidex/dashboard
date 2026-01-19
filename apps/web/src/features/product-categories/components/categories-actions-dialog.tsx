@@ -48,7 +48,10 @@ export function CategoriesActionDialog({
   const form = useForm<insertProductCategoriesSchema>({
     resolver: zodResolver(insertProductCategoriesSchema),
     defaultValues: isEdit
-      ? currentRow
+      ? {
+          ...currentRow,
+          deletedAt: null,
+        }
       : {
           name: "",
           description: "",
@@ -76,6 +79,7 @@ export function CategoriesActionDialog({
       try {
         reader.readAsDataURL(acceptedFiles[0]);
       }
+      // eslint-disable-next-line unused-imports/no-unused-vars
       catch (error) {
         form.resetField("image");
       }

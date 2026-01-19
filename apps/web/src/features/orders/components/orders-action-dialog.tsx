@@ -1,5 +1,8 @@
 "use client";
 
+import type { Resolver, SubmitHandler } from "react-hook-form";
+import type { z } from "zod";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertOrderWithItemsSchema } from "@takumitex/api/schema";
 import {
@@ -9,7 +12,7 @@ import {
 } from "@tanstack/react-query";
 import { notFound, useParams } from "@tanstack/react-router";
 import React from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { SelectDropdown } from "@/web/components/select-dropdown";
@@ -46,6 +49,11 @@ type OrderActionDialogProps = {
   onOpenChange: (open: boolean) => void;
 };
 
+type InsertOrderWithItems = z.infer<typeof insertOrderWithItemsSchema>;
+
+const toOptionalDate = (value?: string | Date | null) =>
+  value ? new Date(value) : null;
+
 export function OrdersActionDialog({
   currentRow,
   open,
@@ -61,33 +69,34 @@ export function OrdersActionDialog({
 
   const isEdit = !!currentRow;
 
-  // Helper to convert string dates from API to Date objects for the form
-  const parseDate = (value: string | Date | null | undefined): Date | null => {
-    if (!value)
-      return null;
-    if (value instanceof Date)
-      return value;
-    const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? null : date;
-  };
+  const defaultValues = React.useMemo<InsertOrderWithItems>(() => {
+    if (isEdit && currentRow) {
+      return insertOrderWithItemsSchema.parse({
+        ...currentRow,
+        deletedAt: toOptionalDate(currentRow.deletedAt),
+        createdAt: toOptionalDate(currentRow.createdAt),
+        updatedAt: toOptionalDate(currentRow.updatedAt),
+      });
+    }
 
-  const form = useForm({
-    resolver: zodResolver(insertOrderWithItemsSchema),
-    defaultValues: isEdit
-      ? currentRow
-      : {
-          customerId: params.customerId,
-          orderStatus: "pending",
-          paymentStatus: "unpaid",
-          paymentMethod: "cash",
-          currency: "BDT",
-          notes: "",
-          items: [],
-          retailPrice: 0,
-          tax: 0,
-          shipping: 0,
-          grandTotal: 0,
-        },
+    return insertOrderWithItemsSchema.parse({
+      customerId: params.customerId,
+      orderStatus: "pending",
+      paymentStatus: "unpaid",
+      paymentMethod: "cash",
+      currency: "BDT",
+      notes: "",
+      items: [],
+      retailPrice: 0,
+      tax: 0,
+      shipping: 0,
+      grandTotal: 0,
+    });
+  }, [currentRow, isEdit, params.customerId]);
+
+  const form = useForm<InsertOrderWithItems>({
+    resolver: zodResolver(insertOrderWithItemsSchema) as Resolver<InsertOrderWithItems>,
+    defaultValues,
   });
 
   const { setValue, subscribe } = form;
@@ -230,7 +239,7 @@ export function OrdersActionDialog({
     },
   });
 
-  const onSubmit = (values: insertOrderWithItemsSchema) => {
+  const onSubmit: SubmitHandler<InsertOrderWithItems> = (values) => {
     if (isEdit) {
       updateMutation.mutate({ id: currentRow.id.toString(), order: values });
     }
@@ -258,66 +267,62 @@ export function OrdersActionDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="h-auto w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3">
-          <FormProvider {...form}>
-            <Form {...form}>
-              <form
-                id="order-form"
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4 px-0.5"
-              >
-                <div className="grid grid-cols-6 items-center w-full space-y-0 gap-x-4 gap-y-1">
-                  <span className="col-span-2">Customer</span>
-                  <span>{customer.name}</span>
-                </div>
+          <Form {...form}>
+            <form
+              id="order-form"
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4 px-0.5"
+            >
+              <div className="grid grid-cols-6 items-center w-full space-y-0 gap-x-4 gap-y-1">
+                <span className="col-span-2">Customer</span>
+                <span>{customer.name}</span>
+              </div>
 
-                <FormField
-                  control={form.control}
-                  name="orderStatus"
-                  render={({ field }) => (
-                    <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                      <FormLabel className="col-span-2 text-end">
-                        Status
-                      </FormLabel>
-                      <SelectDropdown
-                        defaultValue={field.value}
-                        onValueChange={field.onChange}
-                        placeholder="Select status"
+              <FormField
+                name="orderStatus"
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
+                    <FormLabel className="col-span-2 text-end">
+                      Status
+                    </FormLabel>
+                    <SelectDropdown
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
+                      placeholder="Select status"
+                      className="col-span-4"
+                      items={orderStatusValues.map(s => ({
+                        label: s
+                          .replace(/-/g, " ")
+                          .replace(/\b\w/g, c => c.toUpperCase()),
+                        value: s,
+                      }))}
+                    />
+                    <FormMessage className="col-span-4 col-start-3" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name="notes"
+                render={({ field }) => (
+                  <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
+                    <FormLabel className="col-span-2 text-end">
+                      Notes
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        value={field.value ?? ""}
+                        placeholder="Additional notes"
                         className="col-span-4"
-                        items={orderStatusValues.map(s => ({
-                          label: s
-                            .replace(/-/g, " ")
-                            .replace(/\b\w/g, c => c.toUpperCase()),
-                          value: s,
-                        }))}
                       />
-                      <FormMessage className="col-span-4 col-start-3" />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="notes"
-                  render={({ field }) => (
-                    <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                      <FormLabel className="col-span-2 text-end">
-                        Notes
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          {...field}
-                          value={field.value ?? ""}
-                          placeholder="Additional notes"
-                          className="col-span-4"
-                        />
-                      </FormControl>
-                      <FormMessage className="col-span-4 col-start-3" />
-                    </FormItem>
-                  )}
-                />
-                <OrderItemsEditor />
-              </form>
-            </Form>
-          </FormProvider>
+                    </FormControl>
+                    <FormMessage className="col-span-4 col-start-3" />
+                  </FormItem>
+                )}
+              />
+              <OrderItemsEditor />
+            </form>
+          </Form>
         </div>
         <DialogFooter>
           <Button

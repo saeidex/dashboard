@@ -27,6 +27,7 @@ import { cn } from "@/web/lib/utils";
 
 import type { PaymentWithRelations } from "../data/schema";
 
+import { } from "./data-table-row-actions";
 import { usePayments } from "./payments-provider";
 
 const paymentMethodIcons: Record<string, React.ReactNode> = {
@@ -43,6 +44,7 @@ const paymentMethodLabels: Record<string, string> = {
   "mobile-wallet": "Mobile Wallet",
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 function DataTableRowActions({
   row,
 }: {
